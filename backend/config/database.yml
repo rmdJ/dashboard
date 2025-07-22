@@ -85,4 +85,4 @@ production:
   database: postgres
   username: postgres
   password: iBGu_848-xpBHzdkyhn-
-  port: 5432
+  port: 6543
