@@ -1,0 +1,28 @@
+# Dockerfile pour le développement du backend Rails
+FROM ruby:3.1.4
+
+# Installer les dépendances système
+RUN apt-get update -qq && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    nodejs \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Définir le répertoire de travail
+WORKDIR /rails
+
+# Copier Gemfile et Gemfile.lock
+COPY Gemfile Gemfile.lock ./
+
+# Installer les gems
+RUN bundle install
+
+# Copier le code source
+COPY . .
+
+# Exposer le port 3000
+EXPOSE 3000
+
+# Commande de démarrage pour le mode développement
+CMD ["rails", "server", "-b", "0.0.0.0"]
