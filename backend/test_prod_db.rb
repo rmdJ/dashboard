@@ -12,7 +12,7 @@ begin
     sslmode: 'disable',
     gssencmode: 'disable'
   )
-  
+
   result = conn.exec("SELECT version();")
   puts "✅ Session Pooler connection successful!"
   puts "PostgreSQL version: #{result[0]['version'][0..50]}..."

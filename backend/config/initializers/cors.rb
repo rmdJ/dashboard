@@ -7,12 +7,12 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
     allow do
-        origins ENV.fetch('FRONTEND_URL', 'http://localhost:5174'),
-                ENV.fetch('FRONTEND_PROD_URL', 'https://dashboard-phi-orcin-20.vercel.app')
-    
+        origins ENV.fetch("FRONTEND_URL", "http://localhost:5174"),
+                ENV.fetch("FRONTEND_PROD_URL", "https://dashboard-phi-orcin-20.vercel.app")
+
         resource "*",
           headers: :any,
-          methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          methods: [ :get, :post, :put, :patch, :delete, :options, :head ],
           credentials: false
       end
 end

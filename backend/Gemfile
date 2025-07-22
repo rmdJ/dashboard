@@ -22,13 +22,13 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 # Pagination
-gem 'kaminari'
+gem "kaminari"
 
 # Serialization JSON
-gem 'jsonapi-serializer'
+gem "jsonapi-serializer"
 
 # Auth
-gem 'bcrypt'
+gem "bcrypt"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
@@ -43,17 +43,17 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 
-  gem 'rspec-rails'
-  gem 'factory_bot_rails'
-  gem 'faker'
-  gem 'pry-rails'
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "pry-rails"
 end
 
 group :development do
-  gem 'annotate'
+  gem "annotate"
 end
 
 group :test do
-  gem 'shoulda-matchers'
-  gem 'database_cleaner-active_record'
+  gem "shoulda-matchers"
+  gem "database_cleaner-active_record"
 end
