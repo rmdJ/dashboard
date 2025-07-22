@@ -81,8 +81,10 @@ production:
   adapter: postgresql
   encoding: unicode
   pool: 5
-  host: db.oibhhuluobahlvkovtav.supabase.co # ❌ Retire :5432 d'ici !
-  database: postgres
-  username: postgres
-  password: iBGu_848-xpBHzdkyhn-
-  port: 5432
+  host: <%= ENV['DB_HOST'] %>
+  database: <%= ENV['DB_NAME'] %>
+  username: <%= ENV['DB_USER'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  port: <%= ENV['DB_PORT'] %>
+  sslmode: disable # À tester avec 'require' après
+  gssencmode: disable
