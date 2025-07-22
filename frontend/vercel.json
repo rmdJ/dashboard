@@ -2,5 +2,16 @@
   "buildCommand": "yarn build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "installCommand": "yarn install"
+  "installCommand": "yarn install",
+  "functions": {
+    "api/keep-alive.ts": {
+      "maxDuration": 30
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/keep-alive",
+      "schedule": "*/10 * * * *"
+    }
+  ]
 }
