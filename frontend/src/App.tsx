@@ -1,4 +1,3 @@
-import { LoginForm } from "./app/login";
 import { Dashboard } from "./app/dashboard";
 import { ThemeProvider } from "@/provider/theme";
 
