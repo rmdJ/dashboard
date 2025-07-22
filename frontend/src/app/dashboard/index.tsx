@@ -10,7 +10,7 @@ import data from "./data.json";
 export const Dashboard = () => {
   return (
     <SidebarProvider>
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="floating" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
