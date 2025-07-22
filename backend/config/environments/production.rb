@@ -84,10 +84,17 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
+  config.hosts = [
+    "dashboard-ut3o.onrender.com",
+    /.*\.onrender\.com/
+  ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  config.middleware.insert_before 0, Rack::Cors do
+    allow do
+      origins ENV.fetch("FRONTEND_PROD_URL", "https://dashboard-phi-orcin-20.vercel.app/")
+      resource "*", headers: :any, methods: :any
+    end
+  end
 end

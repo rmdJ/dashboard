@@ -86,5 +86,5 @@ production:
   username: <%= ENV['DB_USER'] %>
   password: <%= ENV['DB_PASSWORD'] %>
   port: <%= ENV['DB_PORT'] %>
-  sslmode: disable # À tester avec 'require' après
+  sslmode: require
   gssencmode: disable
