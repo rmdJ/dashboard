@@ -26,4 +26,5 @@ COPY . .
 EXPOSE 3000
 
 # Migration et démarrage pour la production
-CMD ["sh", "-c", "bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p $PORT"]
+# CMD ["sh", "-c", "bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p $PORT"]
+CMD ["sh", "-c", "echo 'Host:' $DB_HOST && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p $PORT"]
