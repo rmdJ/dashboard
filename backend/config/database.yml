@@ -81,8 +81,8 @@ production:
   adapter: postgresql
   encoding: unicode
   pool: 5
-  host: 3.75.158.163
+  host: db.oibhhuluobahlvkovtav.supabase.co # ❌ Retire :5432 d'ici !
   database: postgres
   username: postgres
   password: iBGu_848-xpBHzdkyhn-
-  port: 6543
+  port: 5432
