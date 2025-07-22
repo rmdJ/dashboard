@@ -1,5 +1,5 @@
 # Dockerfile pour le frontend React/Vite
-FROM node:20.19.0-alpine
+FROM node:20.19.3-alpine
 
 # Définir le répertoire de travail
 WORKDIR /app
