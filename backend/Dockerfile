@@ -29,4 +29,4 @@ EXPOSE 3000
 # Migration et démarrage pour la production
 # CMD ["sh", "-c", "bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p $PORT"]
 # Option 1 : Test avec netcat + psql
-CMD ["sh", "-c", "echo '=== NETWORK TEST ===' && nc -zv $DB_HOST $DB_PORT && echo '=== PSQL TEST ===' && PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c 'SELECT 1;' && echo '=== RUNNING MIGRATIONS ===' && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p $PORT"]
+CMD ["sh", "-c", "echo '=== TESTING DB CONNECTION ===' && PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c 'SELECT version();' && echo '=== CONNECTION OK, RUNNING MIGRATIONS ===' && bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p $PORT"]
