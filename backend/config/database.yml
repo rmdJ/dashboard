@@ -81,7 +81,7 @@ production:
   adapter: postgresql
   encoding: unicode
   pool: 5
-  host: db.oibhhuluobahlvkovtav.supabase.co
+  host: 3.75.158.163
   database: postgres
   username: postgres
   password: iBGu_848-xpBHzdkyhn-
