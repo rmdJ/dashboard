@@ -1,6 +1,9 @@
+// Import depuis les Vercel runtimes
 import { MongoClient } from "mongodb";
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://vercel-admin-user:njpU1JTwQk62vYG6@cluster0.bzgwoko.mongodb.net/?retryWrites=true&w=majority";
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  "mongodb+srv://vercel-admin-user:njpU1JTwQk62vYG6@cluster0.bzgwoko.mongodb.net/?retryWrites=true&w=majority";
 const MONGODB_DB_NAME = "scrapper";
 
 let client;
@@ -16,6 +19,7 @@ async function connectDB() {
   return db;
 }
 
+// ✅ Export par défaut pour Vercel
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -30,15 +34,22 @@ export default async function handler(req, res) {
     return;
   }
 
+  if (req.method !== "GET") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
   try {
     const database = await connectDB();
     const collection = database.collection("crypto");
-    
-    // Filtrer seulement les documents qui ont un tableau 'data' (format signal)
-    const data = await collection.find({ 
-      data: { $exists: true, $type: "array" } 
-    }).sort({ date: -1 }).toArray();
-    
+
+    const data = await collection
+      .find({
+        data: { $exists: true, $type: "array" },
+      })
+      .sort({ date: -1 })
+      .toArray();
+
     res.status(200).json(data);
   } catch (error) {
     console.error("API Error:", error);

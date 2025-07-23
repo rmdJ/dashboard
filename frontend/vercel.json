@@ -1,6 +1,17 @@
 {
   "buildCommand": "yarn build",
-  "outputDirectory": "dist", 
+  "outputDirectory": "dist",
   "framework": "vite",
-  "installCommand": "yarn install"
+  "installCommand": "yarn install",
+  "functions": {
+    "api/signal.js": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    }
+  ]
 }
