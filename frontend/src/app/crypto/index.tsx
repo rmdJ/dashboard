@@ -55,17 +55,14 @@ const getCardData = (
     return signalItem ? signalItem.value : null;
   };
 
-  // Valeurs actuelles - utiliser Signal ou fallback
+  // Valeurs actuelles - utiliser Signal seulement, pas de fallback
   const currentValues = {
     "BTC Value": prices["BTCUSDT"] || 0,
     "Portfolio vs Investment": pnlPercentage,
-    "TradingView BTC.D": getLatestSignalValue("TradingView BTC.D") || 42.3,
-    "AppFigures Finance Rank":
-      getLatestSignalValue("AppFigures Finance Rank") || 127,
-    "NewHedge MVRV Z-Score":
-      getLatestSignalValue("NewHedge MVRV Z-Score") || 1.23,
-    "TradingView ETH/BTC":
-      getLatestSignalValue("TradingView ETH/BTC") || prices["ETHBTC"] || 0,
+    "TradingView BTC.D": getLatestSignalValue("TradingView BTC.D"),
+    "AppFigures Finance Rank": getLatestSignalValue("AppFigures Finance Rank"),
+    "NewHedge MVRV Z-Score": getLatestSignalValue("NewHedge MVRV Z-Score"),
+    "TradingView ETH/BTC": getLatestSignalValue("TradingView ETH/BTC") || prices["ETHBTC"] || 0,
   };
 
   // Valeurs d'hier - utiliser Signal uniquement pour les vraies données
@@ -123,7 +120,9 @@ const getCardData = (
     },
     {
       title: "AppFigures Finance Rank",
-      value: `#${Math.round(currentValues["AppFigures Finance Rank"])}`,
+      value: currentValues["AppFigures Finance Rank"]
+        ? `#${Math.round(currentValues["AppFigures Finance Rank"])}`
+        : "Loading...",
       yesterday: yesterdayValues["AppFigures Finance Rank"]
         ? `#${Math.round(yesterdayValues["AppFigures Finance Rank"])}`
         : "N/A",
@@ -131,18 +130,22 @@ const getCardData = (
       objective:
         signalObjectives.find((o) => o.name === "AppFigures Finance Rank")
           ?.value || 4,
-      progress: Math.min(
-        100,
-        Math.max(
-          0,
-          ((25 - currentValues["AppFigures Finance Rank"]) / (25 - 4)) * 100
-        )
-      ),
+      progress: currentValues["AppFigures Finance Rank"]
+        ? Math.min(
+            100,
+            Math.max(
+              0,
+              ((25 - currentValues["AppFigures Finance Rank"]) / (25 - 4)) * 100
+            )
+          )
+        : null,
       icon: TrendingDown,
     },
     {
       title: "NewHedge MVRV Z-Score",
-      value: currentValues["NewHedge MVRV Z-Score"].toFixed(2),
+      value: currentValues["NewHedge MVRV Z-Score"]
+        ? currentValues["NewHedge MVRV Z-Score"].toFixed(2)
+        : "Loading...",
       yesterday: yesterdayValues["NewHedge MVRV Z-Score"]
         ? yesterdayValues["NewHedge MVRV Z-Score"].toFixed(2)
         : "N/A",
@@ -150,15 +153,19 @@ const getCardData = (
       objective:
         signalObjectives.find((o) => o.name === "NewHedge MVRV Z-Score")
           ?.value || 5.8,
-      progress: Math.min(
-        100,
-        Math.max(0, (currentValues["NewHedge MVRV Z-Score"] / 5.8) * 100)
-      ),
+      progress: currentValues["NewHedge MVRV Z-Score"]
+        ? Math.min(
+            100,
+            Math.max(0, (currentValues["NewHedge MVRV Z-Score"] / 5.8) * 100)
+          )
+        : null,
       icon: TrendingUp,
     },
     {
       title: "TradingView BTC.D",
-      value: `${currentValues["TradingView BTC.D"].toFixed(1)}%`,
+      value: currentValues["TradingView BTC.D"] 
+        ? `${currentValues["TradingView BTC.D"].toFixed(1)}%`
+        : "Loading...",
       yesterday: yesterdayValues["TradingView BTC.D"]
         ? `${yesterdayValues["TradingView BTC.D"].toFixed(1)}%`
         : "N/A",
@@ -166,13 +173,15 @@ const getCardData = (
       objective:
         signalObjectives.find((o) => o.name === "TradingView BTC.D")?.value ||
         41,
-      progress: Math.min(
-        100,
-        Math.max(
-          0,
-          ((70 - currentValues["TradingView BTC.D"]) / (70 - 41)) * 100
-        )
-      ),
+      progress: currentValues["TradingView BTC.D"]
+        ? Math.min(
+            100,
+            Math.max(
+              0,
+              ((70 - currentValues["TradingView BTC.D"]) / (70 - 41)) * 100
+            )
+          )
+        : null,
       icon: TrendingDown,
     },
     {
@@ -302,7 +311,7 @@ export function Crypto() {
                 <div className="text-2xl font-bold">{card.value}</div>
 
                 {/* Progress bar pour les objectifs */}
-                {card.progress !== null && card.objective !== null && (
+                {card.objective !== null && (
                   <div className="mt-2">
                     <div className="flex justify-between text-xs text-muted-foreground mb-1">
                       <span>
@@ -313,9 +322,13 @@ export function Crypto() {
                           ? `$${card.objective.toLocaleString()}`
                           : card.objective}
                       </span>
-                      <span>{Math.round(card.progress)}%</span>
+                      <span>{card.progress !== null ? Math.round(card.progress) : 0}%</span>
                     </div>
-                    <Progress value={card.progress} className="h-2" />
+                    <Progress 
+                      value={card.progress || 0} 
+                      className="h-2" 
+                      isLoading={card.progress === null}
+                    />
                   </div>
                 )}
 
