@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ReferenceLine,
+} from "recharts";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -53,7 +60,7 @@ export function ChartTradingViewETHBTC() {
 
     // Créer un map des données existantes avec TradingView ETH/BTC
     const dataMap = new Map<string, number>();
-    
+
     signalData.forEach((entry) => {
       const ethbtcItem = entry.data?.find(
         (item) => item.source === "TradingView ETH/BTC"
@@ -65,7 +72,7 @@ export function ChartTradingViewETHBTC() {
 
     // Créer une liste complète de toutes les dates disponibles
     const allDates = signalData
-      .map(entry => entry.date)
+      .map((entry) => entry.date)
       .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
     const processedData: Array<{ date: string; ethbtc: number }> = [];
@@ -102,7 +109,7 @@ export function ChartTradingViewETHBTC() {
 
     const now = new Date();
     let daysToSubtract = 90;
-    
+
     if (timeRange === "365d") {
       daysToSubtract = 365;
     } else if (timeRange === "90d") {
@@ -112,7 +119,7 @@ export function ChartTradingViewETHBTC() {
     } else if (timeRange === "7d") {
       daysToSubtract = 7;
     }
-    
+
     const startDate = new Date(now);
     startDate.setDate(startDate.getDate() - daysToSubtract);
 
@@ -123,11 +130,9 @@ export function ChartTradingViewETHBTC() {
   }, [chartData, timeRange]);
 
   // Récupérer l'objectif depuis les constantes
-  const objective = signalObjectives.find(
-    (obj) => obj.name === "TradingView ETH/BTC"
-  )?.value || 0.0548;
-  
-  console.log("ETH/BTC Objective:", objective, "Data range:", filteredData.length > 0 ? [Math.min(...filteredData.map(d => d.ethbtc)), Math.max(...filteredData.map(d => d.ethbtc))] : "no data");
+  const objective =
+    signalObjectives.find((obj) => obj.name === "TradingView ETH/BTC")?.value ||
+    0.0548;
 
   return (
     <Card className="@container/card">
@@ -221,10 +226,7 @@ export function ChartTradingViewETHBTC() {
                   });
                 }}
               />
-              <YAxis 
-                domain={['dataMin', 'dataMax']}
-                hide
-              />
+              <YAxis domain={["dataMin", "dataMax"]} hide />
               <ChartTooltip
                 cursor={false}
                 content={
@@ -236,21 +238,24 @@ export function ChartTradingViewETHBTC() {
                         year: "numeric",
                       });
                     }}
-                    formatter={(value) => [(value as number).toFixed(6), "ETH/BTC"]}
+                    formatter={(value) => [
+                      (value as number).toFixed(6),
+                      "ETH/BTC",
+                    ]}
                     indicator="dot"
                   />
                 }
               />
               {/* Ligne horizontale pour l'objectif */}
-              <ReferenceLine 
-                y={objective} 
-                stroke="#ef4444" 
+              <ReferenceLine
+                y={objective}
+                stroke="#ef4444"
                 strokeDasharray="5 5"
                 strokeWidth={3}
-                label={{ 
-                  value: `Objective: ${objective}`, 
+                label={{
+                  value: `Objective: ${objective}`,
                   position: "insideTopRight",
-                  style: { fill: '#ef4444', fontWeight: 'bold' }
+                  style: { fill: "#ef4444", fontWeight: "bold" },
                 }}
               />
               <Area

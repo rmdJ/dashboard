@@ -1,7 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ReferenceLine,
+} from "recharts";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -53,7 +60,7 @@ export function ChartNewHedgeMVRV() {
 
     // Créer un map des données existantes avec NewHedge MVRV Z-Score
     const dataMap = new Map<string, number>();
-    
+
     signalData.forEach((entry) => {
       const mvrvItem = entry.data?.find(
         (item) => item.source === "NewHedge MVRV Z-Score"
@@ -65,7 +72,7 @@ export function ChartNewHedgeMVRV() {
 
     // Créer une liste complète de toutes les dates disponibles
     const allDates = signalData
-      .map(entry => entry.date)
+      .map((entry) => entry.date)
       .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
     const processedData: Array<{ date: string; mvrv: number }> = [];
@@ -102,7 +109,7 @@ export function ChartNewHedgeMVRV() {
 
     const now = new Date();
     let daysToSubtract = 90;
-    
+
     if (timeRange === "365d") {
       daysToSubtract = 365;
     } else if (timeRange === "90d") {
@@ -112,7 +119,7 @@ export function ChartNewHedgeMVRV() {
     } else if (timeRange === "7d") {
       daysToSubtract = 7;
     }
-    
+
     const startDate = new Date(now);
     startDate.setDate(startDate.getDate() - daysToSubtract);
 
@@ -123,11 +130,9 @@ export function ChartNewHedgeMVRV() {
   }, [chartData, timeRange]);
 
   // Récupérer l'objectif depuis les constantes
-  const objective = signalObjectives.find(
-    (obj) => obj.name === "NewHedge MVRV Z-Score"
-  )?.value || 5.8;
-  
-  console.log("MVRV Objective:", objective, "Data range:", filteredData.length > 0 ? [Math.min(...filteredData.map(d => d.mvrv)), Math.max(...filteredData.map(d => d.mvrv))] : "no data");
+  const objective =
+    signalObjectives.find((obj) => obj.name === "NewHedge MVRV Z-Score")
+      ?.value || 5.8;
 
   return (
     <Card className="@container/card">
@@ -221,10 +226,7 @@ export function ChartNewHedgeMVRV() {
                   });
                 }}
               />
-              <YAxis 
-                domain={['dataMin', 'dataMax']}
-                hide
-              />
+              <YAxis domain={["dataMin", "dataMax"]} hide />
               <ChartTooltip
                 cursor={false}
                 content={
@@ -236,21 +238,24 @@ export function ChartNewHedgeMVRV() {
                         year: "numeric",
                       });
                     }}
-                    formatter={(value) => [(value as number).toFixed(2), "MVRV Z-Score"]}
+                    formatter={(value) => [
+                      (value as number).toFixed(2),
+                      "MVRV Z-Score",
+                    ]}
                     indicator="dot"
                   />
                 }
               />
               {/* Ligne horizontale pour l'objectif */}
-              <ReferenceLine 
-                y={objective} 
-                stroke="#ef4444" 
+              <ReferenceLine
+                y={objective}
+                stroke="#ef4444"
                 strokeDasharray="5 5"
                 strokeWidth={3}
-                label={{ 
-                  value: `Objective: ${objective}`, 
+                label={{
+                  value: `Objective: ${objective}`,
                   position: "insideTopRight",
-                  style: { fill: '#ef4444', fontWeight: 'bold' }
+                  style: { fill: "#ef4444", fontWeight: "bold" },
                 }}
               />
               <Area
