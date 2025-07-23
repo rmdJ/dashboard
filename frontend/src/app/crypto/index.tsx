@@ -22,6 +22,10 @@ import {
   type SignalData,
   type SignalDataItem,
 } from "@/hooks/useSignal";
+import { ChartAppFiguresRank } from "@/components/chart-appfigures-rank";
+import { ChartTradingViewBTCD } from "@/components/chart-tradingview-btcd";
+import { ChartNewHedgeMVRV } from "@/components/chart-newhedge-mvrv";
+import { ChartTradingViewETHBTC } from "@/components/chart-tradingview-ethbtc";
 
 const getCardData = (
   prices: Record<string, number>,
@@ -458,6 +462,18 @@ export function Crypto() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* AppFigures Finance Rank Chart */}
+      <ChartAppFiguresRank />
+
+      {/* TradingView BTC.D Chart */}
+      <ChartTradingViewBTCD />
+
+      {/* NewHedge MVRV Z-Score Chart */}
+      <ChartNewHedgeMVRV />
+
+      {/* TradingView ETH/BTC Chart */}
+      <ChartTradingViewETHBTC />
     </div>
   );
 }

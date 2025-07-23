@@ -12,7 +12,9 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use("/api", async (req, res) => {
           try {
-            const { handleApiRequest } = await import("./server/mongo.js") as any;
+            // @ts-expect-error - Module JS sans déclarations TypeScript
+            const mongoModule = await import("./server/mongo.js");
+            const { handleApiRequest } = mongoModule;
             await handleApiRequest(req, res);
           } catch (error) {
             console.error("API Server Error:", error);

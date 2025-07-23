@@ -13,7 +13,7 @@ interface CryptoData {
 // Hook pour combiner les données MongoDB avec les prix Binance
 export function useCryptoWithBinancePrices() {
   // Désactivé temporairement car useCryptoData n'existe pas
-  const mongoData: CryptoData[] | undefined = undefined;
+  const mongoData: CryptoData[] = [];
   const mongoLoading = false;
   const mongoError = null;
   
@@ -24,11 +24,11 @@ export function useCryptoWithBinancePrices() {
   } = useBinancePrices();
 
   const combinedData = useMemo(() => {
-    if (!mongoData || !binancePrices) return [];
+    if (!mongoData || !binancePrices || mongoData.length === 0) return [];
 
     return mongoData.map((crypto: CryptoData) => {
       // Essayer de trouver le prix Binance avec différentes variantes du symbole
-      const binanceSymbol = crypto.symbol?.toUpperCase();
+      const binanceSymbol = crypto.symbol?.toUpperCase() || '';
       const usdtSymbol = `${binanceSymbol}USDT`;
       const btcSymbol = `${binanceSymbol}BTC`;
       const ethSymbol = `${binanceSymbol}ETH`;
@@ -37,7 +37,7 @@ export function useCryptoWithBinancePrices() {
         binancePrices[usdtSymbol] ||
         binancePrices[btcSymbol] ||
         binancePrices[ethSymbol] ||
-        binancePrices[binanceSymbol];
+        (binanceSymbol ? binancePrices[binanceSymbol] : undefined);
 
       return {
         ...crypto,
