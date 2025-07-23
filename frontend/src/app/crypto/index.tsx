@@ -66,7 +66,8 @@ const getCardData = (
     "TradingView BTC.D": getLatestSignalValue("TradingView BTC.D"),
     "AppFigures Finance Rank": getLatestSignalValue("AppFigures Finance Rank"),
     "NewHedge MVRV Z-Score": getLatestSignalValue("NewHedge MVRV Z-Score"),
-    "TradingView ETH/BTC": getLatestSignalValue("TradingView ETH/BTC") || prices["ETHBTC"] || 0,
+    "TradingView ETH/BTC":
+      getLatestSignalValue("TradingView ETH/BTC") || prices["ETHBTC"] || 0,
   };
 
   // Valeurs d'hier - utiliser Signal uniquement pour les vraies données
@@ -167,7 +168,7 @@ const getCardData = (
     },
     {
       title: "TradingView BTC.D",
-      value: currentValues["TradingView BTC.D"] 
+      value: currentValues["TradingView BTC.D"]
         ? `${currentValues["TradingView BTC.D"].toFixed(1)}%`
         : "Loading...",
       yesterday: yesterdayValues["TradingView BTC.D"]
@@ -286,7 +287,7 @@ export function Crypto() {
   );
 
   return (
-    <div className="flex-1 space-y-6 p-8 pt-6">
+    <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
           Crypto Market
@@ -326,11 +327,14 @@ export function Crypto() {
                           ? `$${card.objective.toLocaleString()}`
                           : card.objective}
                       </span>
-                      <span>{card.progress !== null ? Math.round(card.progress) : 0}%</span>
+                      <span>
+                        {card.progress !== null ? Math.round(card.progress) : 0}
+                        %
+                      </span>
                     </div>
-                    <Progress 
-                      value={card.progress || 0} 
-                      className="h-2" 
+                    <Progress
+                      value={card.progress || 0}
+                      className="h-2"
                       isLoading={card.progress === null}
                     />
                   </div>

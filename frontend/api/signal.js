@@ -1,9 +1,6 @@
-// Import depuis les Vercel runtimes
 import { MongoClient } from "mongodb";
 
-const MONGODB_URI =
-  process.env.MONGODB_URI ||
-  "mongodb+srv://vercel-admin-user:njpU1JTwQk62vYG6@cluster0.bzgwoko.mongodb.net/?retryWrites=true&w=majority";
+const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB_NAME = "scrapper";
 
 let client;
@@ -19,9 +16,7 @@ async function connectDB() {
   return db;
 }
 
-// ✅ Export par défaut pour Vercel
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",

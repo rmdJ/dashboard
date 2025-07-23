@@ -53,7 +53,7 @@ export function ChartTradingViewBTCD() {
 
     // Créer un map des données existantes avec TradingView BTC.D
     const dataMap = new Map<string, number>();
-    
+
     signalData.forEach((entry) => {
       const btcdItem = entry.data?.find(
         (item) => item.source === "TradingView BTC.D"
@@ -65,7 +65,7 @@ export function ChartTradingViewBTCD() {
 
     // Créer une liste complète de toutes les dates disponibles
     const allDates = signalData
-      .map(entry => entry.date)
+      .map((entry) => entry.date)
       .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
     const processedData: Array<{ date: string; btcd: number }> = [];
@@ -102,7 +102,7 @@ export function ChartTradingViewBTCD() {
 
     const now = new Date();
     let daysToSubtract = 90;
-    
+
     if (timeRange === "365d") {
       daysToSubtract = 365;
     } else if (timeRange === "90d") {
@@ -112,7 +112,7 @@ export function ChartTradingViewBTCD() {
     } else if (timeRange === "7d") {
       daysToSubtract = 7;
     }
-    
+
     const startDate = new Date(now);
     startDate.setDate(startDate.getDate() - daysToSubtract);
 
@@ -123,9 +123,9 @@ export function ChartTradingViewBTCD() {
   }, [chartData, timeRange]);
 
   // Récupérer l'objectif depuis les constantes
-  const objective = signalObjectives.find(
-    (obj) => obj.name === "TradingView BTC.D"
-  )?.value || 41;
+  const objective =
+    signalObjectives.find((obj) => obj.name === "TradingView BTC.D")?.value ||
+    41;
 
   return (
     <Card className="@container/card">
@@ -230,15 +230,18 @@ export function ChartTradingViewBTCD() {
                         year: "numeric",
                       });
                     }}
-                    formatter={(value) => [`${(value as number).toFixed(1)}%`, "BTC.D"]}
+                    formatter={(value) => [
+                      `${(value as number).toFixed(1)}% `,
+                      "BTC.D",
+                    ]}
                     indicator="dot"
                   />
                 }
               />
               {/* Ligne horizontale pour l'objectif */}
-              <ReferenceLine 
-                y={objective} 
-                stroke="var(--color-btcd)" 
+              <ReferenceLine
+                y={objective}
+                stroke="var(--color-btcd)"
                 strokeDasharray="5 5"
                 strokeWidth={2}
                 label={{ value: `Objective: ${objective}%`, position: "top" }}
