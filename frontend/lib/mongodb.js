@@ -6,16 +6,20 @@ const MONGODB_URI =
 const MONGODB_DB_NAME = "scrapper";
 
 let client;
-let db;
+let dbCache = new Map();
 
-export async function connectDB() {
+export async function connectDB(dbName = MONGODB_DB_NAME) {
   if (!client) {
     client = new MongoClient(MONGODB_URI);
     await client.connect();
-    db = client.db(MONGODB_DB_NAME);
     console.log("Connected to MongoDB");
   }
-  return db;
+  
+  if (!dbCache.has(dbName)) {
+    dbCache.set(dbName, client.db(dbName));
+  }
+  
+  return dbCache.get(dbName);
 }
 
 export function setCorsHeaders(res) {
@@ -40,4 +44,27 @@ export async function getCryptoData() {
   const database = await connectDB();
   const collection = database.collection("crypto");
   return await collection.find({}).toArray();
+}
+
+export async function getEvolutionData() {
+  const database = await connectDB("finance-front");
+  
+  // Récupérer les données road-to-10k
+  const roadTo10kCollection = database.collection("road-to-10k");
+  const roadTo10kData = await roadTo10kCollection
+    .find({})
+    .sort({ date: 1 })
+    .toArray();
+
+  // Récupérer les données road-to-1btc
+  const roadTo1btcCollection = database.collection("road-to-1btc");
+  const roadTo1btcData = await roadTo1btcCollection
+    .find({})
+    .sort({ date: 1 })
+    .toArray();
+
+  return {
+    roadTo10k: roadTo10kData,
+    roadTo1btc: roadTo1btcData
+  };
 }

@@ -28,6 +28,8 @@ import { ChartAppFiguresRank } from "@/components/chart-appfigures-rank";
 import { ChartTradingViewBTCD } from "@/components/chart-tradingview-btcd";
 import { ChartNewHedgeMVRV } from "@/components/chart-newhedge-mvrv";
 import { ChartTradingViewETHBTC } from "@/components/chart-tradingview-ethbtc";
+import { ChartEvolution } from "@/components/chart-evolution";
+import { ChartEthEvolution } from "@/components/chart-eth-evolution";
 
 const getCardData = (
   prices: Record<string, number>,
@@ -606,6 +608,12 @@ export function Crypto() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Evolution Chart */}
+      <ChartEvolution />
+
+      {/* ETH Evolution Chart */}
+      <ChartEthEvolution />
 
       {/* AppFigures Finance Rank Chart */}
       <ChartAppFiguresRank />

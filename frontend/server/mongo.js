@@ -2,6 +2,7 @@ import {
   setCorsHeaders,
   getSignalData,
   getCryptoData,
+  getEvolutionData,
 } from "../lib/mongodb.js";
 
 export async function handleApiRequest(req, res) {
@@ -30,6 +31,17 @@ export async function handleApiRequest(req, res) {
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
       res.end(JSON.stringify(data));
+      return;
+    }
+
+    if (pathname === "/evolution" && req.method === "GET") {
+      const data = await getEvolutionData();
+      res.setHeader("Content-Type", "application/json");
+      res.statusCode = 200;
+      res.end(JSON.stringify({
+        success: true,
+        data: data
+      }));
       return;
     }
 
