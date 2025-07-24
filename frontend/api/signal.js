@@ -1,28 +1,7 @@
-import { MongoClient } from "mongodb";
-
-const MONGODB_URI = process.env.MONGODB_URI;
-const MONGODB_DB_NAME = "scrapper";
-
-let client;
-let db;
-
-async function connectDB() {
-  if (!client) {
-    client = new MongoClient(MONGODB_URI);
-    await client.connect();
-    db = client.db(MONGODB_DB_NAME);
-    console.log("Connected to MongoDB");
-  }
-  return db;
-}
+import { setCorsHeaders, getSignalData } from "../lib/mongodb.js";
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  setCorsHeaders(res);
 
   if (req.method === "OPTIONS") {
     res.status(200).end();
@@ -35,16 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const database = await connectDB();
-    const collection = database.collection("crypto");
-
-    const data = await collection
-      .find({
-        data: { $exists: true, $type: "array" },
-      })
-      .sort({ date: -1 })
-      .toArray();
-
+    const data = await getSignalData();
     res.status(200).json(data);
   } catch (error) {
     console.error("API Error:", error);
