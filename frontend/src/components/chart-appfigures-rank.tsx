@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, ReferenceLine } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -219,6 +219,11 @@ export function ChartAppFiguresRank() {
                     day: "numeric",
                   });
                 }}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `#${Math.round(value)}`}
               />
               <ChartTooltip
                 cursor={false}

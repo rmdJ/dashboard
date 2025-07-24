@@ -226,7 +226,11 @@ export function ChartTradingViewETHBTC() {
                   });
                 }}
               />
-              <YAxis domain={["dataMin", "dataMax"]} hide />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => value.toFixed(4)}
+              />
               <ChartTooltip
                 cursor={false}
                 content={

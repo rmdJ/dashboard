@@ -226,7 +226,11 @@ export function ChartNewHedgeMVRV() {
                   });
                 }}
               />
-              <YAxis domain={["dataMin", "dataMax"]} hide />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => value.toFixed(1)}
+              />
               <ChartTooltip
                 cursor={false}
                 content={

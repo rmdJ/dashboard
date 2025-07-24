@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, ReferenceLine } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -218,6 +218,11 @@ export function ChartTradingViewBTCD() {
                     day: "numeric",
                   });
                 }}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `${value.toFixed(1)}%`}
               />
               <ChartTooltip
                 cursor={false}
