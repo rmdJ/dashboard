@@ -1,4 +1,4 @@
-import { setCorsHeaders, getSignalData } from "../lib/mongodb.js";
+import { setCorsHeaders, getEvolutionData } from "../lib/mongodb.js";
 
 export default async function handler(req, res) {
   setCorsHeaders(res);
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const data = await getSignalData();
+    const data = await getEvolutionData();
     res.status(200).json(data);
   } catch (error) {
     console.error("API Error:", error);
