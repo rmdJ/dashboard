@@ -15,7 +15,10 @@ export default async function handler(req, res) {
 
   try {
     const data = await getEvolutionData();
-    res.status(200).json(data);
+    res.status(200).json({
+      success: true,
+      data: data
+    });
   } catch (error) {
     console.error("API Error:", error);
     res.status(500).json({ error: "Internal server error" });
