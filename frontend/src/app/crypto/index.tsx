@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { useEffect } from "react";
 import { useBinancePrices } from "@/provider/binance";
 import {
   portfolio,
@@ -22,6 +23,7 @@ import {
   type SignalData,
   type SignalDataItem,
 } from "@/hooks/useSignal";
+import { usePortfolioHistory } from "@/hooks/usePortfolioHistory";
 import { ChartAppFiguresRank } from "@/components/chart-appfigures-rank";
 import { ChartTradingViewBTCD } from "@/components/chart-tradingview-btcd";
 import { ChartNewHedgeMVRV } from "@/components/chart-newhedge-mvrv";
@@ -31,7 +33,8 @@ const getCardData = (
   prices: Record<string, number>,
   pnlPercentage: number,
   signalData: SignalData[],
-  portfolioValue: number
+  portfolioValue: number,
+  yesterdayValues: any
 ) => {
   // Fonction pour récupérer la valeur Signal la plus récente
   const getLatestSignalValue = (source: string) => {
@@ -70,10 +73,10 @@ const getCardData = (
       getLatestSignalValue("TradingView ETH/BTC") || prices["ETHBTC"] || 0,
   };
 
-  // Valeurs d'hier - utiliser Signal uniquement pour les vraies données
-  const yesterdayValues = {
-    "BTC Value": null, // Pas de données historiques disponibles
-    "Portfolio vs Investment": null, // Pas de données historiques disponibles
+  // Valeurs d'hier - utiliser localStorage pour BTC et Portfolio, Signal pour les autres
+  const yesterdayValuesData = {
+    "BTC Value": yesterdayValues?.btcValue || null,
+    "Portfolio vs Investment": yesterdayValues?.portfolioUSD || null,
     "TradingView BTC.D": getYesterdaySignalValue("TradingView BTC.D"),
     "AppFigures Finance Rank": getYesterdaySignalValue(
       "AppFigures Finance Rank"
@@ -88,6 +91,9 @@ const getCardData = (
       value: prices["BTCUSDT"]
         ? `$${prices["BTCUSDT"].toLocaleString()}`
         : "Loading...",
+      yesterday: yesterdayValuesData["BTC Value"]
+        ? `$${yesterdayValuesData["BTC Value"].toLocaleString()}`
+        : "N/A",
       current: currentValues["BTC Value"],
       objective: btcObjective,
       progress:
@@ -115,6 +121,11 @@ const getCardData = (
           </span>
         </div>
       ),
+      yesterday: yesterdayValuesData["Portfolio vs Investment"]
+        ? `$${yesterdayValuesData["Portfolio vs Investment"].toLocaleString(undefined, {
+            maximumFractionDigits: 2,
+          })}`
+        : "N/A",
       current: pnlPercentage,
       objective: initialInvestment,
       progress: Math.min(
@@ -128,8 +139,8 @@ const getCardData = (
       value: currentValues["AppFigures Finance Rank"]
         ? `#${Math.round(currentValues["AppFigures Finance Rank"])}`
         : "Loading...",
-      yesterday: yesterdayValues["AppFigures Finance Rank"]
-        ? `#${Math.round(yesterdayValues["AppFigures Finance Rank"])}`
+      yesterday: yesterdayValuesData["AppFigures Finance Rank"]
+        ? `#${Math.round(yesterdayValuesData["AppFigures Finance Rank"])}`
         : "N/A",
       current: currentValues["AppFigures Finance Rank"],
       objective:
@@ -151,8 +162,8 @@ const getCardData = (
       value: currentValues["NewHedge MVRV Z-Score"]
         ? currentValues["NewHedge MVRV Z-Score"].toFixed(2)
         : "Loading...",
-      yesterday: yesterdayValues["NewHedge MVRV Z-Score"]
-        ? yesterdayValues["NewHedge MVRV Z-Score"].toFixed(2)
+      yesterday: yesterdayValuesData["NewHedge MVRV Z-Score"]
+        ? yesterdayValuesData["NewHedge MVRV Z-Score"].toFixed(2)
         : "N/A",
       current: currentValues["NewHedge MVRV Z-Score"],
       objective:
@@ -171,8 +182,8 @@ const getCardData = (
       value: currentValues["TradingView BTC.D"]
         ? `${currentValues["TradingView BTC.D"].toFixed(1)}%`
         : "Loading...",
-      yesterday: yesterdayValues["TradingView BTC.D"]
-        ? `${yesterdayValues["TradingView BTC.D"].toFixed(1)}%`
+      yesterday: yesterdayValuesData["TradingView BTC.D"]
+        ? `${yesterdayValuesData["TradingView BTC.D"].toFixed(1)}%`
         : "N/A",
       current: currentValues["TradingView BTC.D"],
       objective:
@@ -195,8 +206,8 @@ const getCardData = (
         currentValues["TradingView ETH/BTC"] > 0
           ? currentValues["TradingView ETH/BTC"].toFixed(6)
           : "Loading...",
-      yesterday: yesterdayValues["TradingView ETH/BTC"]
-        ? yesterdayValues["TradingView ETH/BTC"].toFixed(6)
+      yesterday: yesterdayValuesData["TradingView ETH/BTC"]
+        ? yesterdayValuesData["TradingView ETH/BTC"].toFixed(6)
         : "N/A",
       current: currentValues["TradingView ETH/BTC"],
       objective:
@@ -217,6 +228,7 @@ const getCardData = (
 export function Crypto() {
   const { prices } = useBinancePrices();
   const { data: signalData } = useSignalData();
+  const { savePortfolioData, getYesterdayValues } = usePortfolioHistory();
 
   // Calculer les données du portfolio avec les prix Binance
   const portfolioData = portfolio.map((asset, index) => {
@@ -278,13 +290,92 @@ export function Crypto() {
       ? ((totalCurrentValue - initialInvestment) / initialInvestment) * 100
       : 0;
 
+  // Récupérer les valeurs d'hier depuis le localStorage
+  const yesterdayValues = getYesterdayValues();
+
   // Générer les données des cartes avec les valeurs calculées
   const cardData = getCardData(
     prices,
     totalPnLPercentage,
     signalData || [],
-    totalCurrentValue
+    totalCurrentValue,
+    yesterdayValues
   );
+
+  // Calculer les équivalents du portfolio en BTC, ETH, SOL
+  const getPortfolioEquivalents = () => {
+    const btcPrice = prices["BTCUSDT"] || 0;
+    const ethPrice = prices["ETHUSDT"] || 0;
+    const solPrice = prices["SOLUSDT"] || 0;
+
+    const btcEquivalent = totalCurrentValue / btcPrice;
+    const ethEquivalent = totalCurrentValue / ethPrice;
+    const solEquivalent = totalCurrentValue / solPrice;
+
+    return [
+      {
+        title: "Portfolio en BTC",
+        value: btcPrice > 0 
+          ? `₿${btcEquivalent.toFixed(4)}`
+          : "Loading...",
+        yesterday: yesterdayValues?.portfolioBTC
+          ? `₿${yesterdayValues.portfolioBTC.toFixed(4)}`
+          : "N/A",
+        icon: DollarSign,
+        objective: 0.10,
+        progress: btcPrice > 0 
+          ? Math.min(100, Math.max(0, (btcEquivalent / 0.10) * 100))
+          : null,
+      },
+      {
+        title: "Portfolio en ETH",
+        value: ethPrice > 0 
+          ? `Ξ${ethEquivalent.toFixed(2)}`
+          : "Loading...",
+        yesterday: yesterdayValues?.portfolioETH
+          ? `Ξ${yesterdayValues.portfolioETH.toFixed(2)}`
+          : "N/A",
+        icon: DollarSign,
+        objective: 2.10,
+        progress: ethPrice > 0 
+          ? Math.min(100, Math.max(0, (ethEquivalent / 2.10) * 100))
+          : null,
+      },
+      {
+        title: "Portfolio en SOL",
+        value: solPrice > 0 
+          ? `◎${solEquivalent.toFixed(2)}`
+          : "Loading...",
+        yesterday: yesterdayValues?.portfolioSOL
+          ? `◎${yesterdayValues.portfolioSOL.toFixed(2)}`
+          : "N/A",
+        icon: DollarSign,
+        objective: 45,
+        progress: solPrice > 0 
+          ? Math.min(100, Math.max(0, (solEquivalent / 45) * 100))
+          : null,
+      },
+    ];
+  };
+
+  const portfolioEquivalents = getPortfolioEquivalents();
+
+  // Sauvegarder les données actuelles dans le localStorage
+  useEffect(() => {
+    const btcPrice = prices["BTCUSDT"] || 0;
+    const ethPrice = prices["ETHUSDT"] || 0;
+    const solPrice = prices["SOLUSDT"] || 0;
+    
+    if (btcPrice > 0 && ethPrice > 0 && solPrice > 0 && totalCurrentValue > 0) {
+      savePortfolioData({
+        btcValue: btcPrice,
+        portfolioUSD: totalCurrentValue,
+        portfolioBTC: totalCurrentValue / btcPrice,
+        portfolioETH: totalCurrentValue / ethPrice,
+        portfolioSOL: totalCurrentValue / solPrice
+      });
+    }
+  }, [prices, totalCurrentValue, savePortfolioData]);
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6">
@@ -381,6 +472,55 @@ export function Crypto() {
           );
         })}
       </div>
+
+      {/* Portfolio Equivalents Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {portfolioEquivalents.map((equivalent, index) => {
+          const Icon = equivalent.icon;
+          return (
+            <Card key={index}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {equivalent.title}
+                </CardTitle>
+                <Icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{equivalent.value}</div>
+                
+                {/* Progress bar pour les objectifs */}
+                {equivalent.objective !== null && (
+                  <div className="mt-2">
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                      <span>
+                        Objectif: {equivalent.objective}
+                      </span>
+                      <span>
+                        {equivalent.progress !== null ? Math.round(equivalent.progress) : 0}%
+                      </span>
+                    </div>
+                    <Progress
+                      value={equivalent.progress || 0}
+                      className="h-2"
+                      isLoading={equivalent.progress === null}
+                    />
+                  </div>
+                )}
+
+                {/* Valeur d'hier */}
+                {equivalent.yesterday && (
+                  <div className="mt-2">
+                    <p className="text-xs text-muted-foreground">
+                      Hier: <span className="font-mono">{equivalent.yesterday}</span>
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
       <Card>
         <CardContent>
           <Table>
