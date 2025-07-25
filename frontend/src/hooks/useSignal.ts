@@ -1,5 +1,4 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { fetchSignalData } from "@/api/signal";
 
 export type SignalSource =
   | "TradingView BTC.D"
@@ -17,6 +16,14 @@ export interface SignalData {
   date: string;
   data: SignalDataItem[];
 }
+
+const fetchSignalData = async (): Promise<SignalData[]> => {
+  const response = await fetch("/api/signal");
+  if (!response.ok) {
+    throw new Error("Erreur lors de la récupération des données signal");
+  }
+  return response.json();
+};
 
 export function useSignalData(): UseQueryResult<SignalData[], Error> {
   return useQuery({

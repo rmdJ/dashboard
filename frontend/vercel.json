@@ -7,10 +7,7 @@
     "api/signal.js": {
       "maxDuration": 30
     },
-    "api/cinema/next-release.js": {
-      "maxDuration": 30
-    },
-    "api/cinema/movie/[id].js": {
+    "api/cinema-releases.js": {
       "maxDuration": 30
     },
     "api/movie-details.js": {

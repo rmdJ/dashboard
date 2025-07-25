@@ -30,7 +30,7 @@ interface ApiResponse {
 }
 
 const fetchCinemaNextReleases = async (): Promise<CinemaData> => {
-  const response = await fetch("/api/cinema/next-release");
+  const response = await fetch("/api/cinema-releases");
   if (!response.ok) {
     throw new Error("Erreur lors de la récupération des données");
   }

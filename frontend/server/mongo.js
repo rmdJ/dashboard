@@ -47,7 +47,7 @@ export async function handleApiRequest(req, res) {
       return;
     }
 
-    if (pathname === "/cinema/next-release" && req.method === "GET") {
+    if (pathname === "/cinema-releases" && req.method === "GET") {
       const data = await getCinemaNextReleases();
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
@@ -60,6 +60,18 @@ export async function handleApiRequest(req, res) {
 
     if (pathname.startsWith("/cinema/movie/") && req.method === "GET") {
       const movieId = pathname.split("/").pop();
+      const data = await getMovieDetails(movieId);
+      res.setHeader("Content-Type", "application/json");
+      res.statusCode = 200;
+      res.end(JSON.stringify({
+        success: true,
+        data: data
+      }));
+      return;
+    }
+
+    if (pathname === "/movie-details" && req.method === "GET") {
+      const movieId = url.searchParams.get('id');
       const data = await getMovieDetails(movieId);
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
