@@ -12,6 +12,12 @@
     },
     "api/movie-details.js": {
       "maxDuration": 30
+    },
+    "api/cinema-showtimes.js": {
+      "maxDuration": 30
+    },
+    "api/cinema-movie-details.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [

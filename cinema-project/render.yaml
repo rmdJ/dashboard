@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: cinema-backend
+    runtime: node
+    buildCommand: "cd backend && npm install" # Commande pour installer les dépendances dans le dossier backend
+    startCommand: "cd backend && node server.js" # Commande pour démarrer le serveur à partir du dossier backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+    plan: free # Utilisation du plan gratuit sur Render
+    region: frankfurt # Choix de la région (modifie selon tes besoins)

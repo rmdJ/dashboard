@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Dashboard } from "./app/dashboard";
 import { Crypto } from "./app/crypto";
+import Cinema from "./app/cinema";
 import { ThemeProvider } from "@/provider/theme";
 import { QueryProvider } from "@/provider/query";
 import { BinanceProvider } from "@/provider/binance";
@@ -24,6 +25,7 @@ function App() {
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/crypto" element={<Crypto />} />
+                    <Route path="/cinema" element={<Cinema />} />
                   </Routes>
                 </SidebarInset>
               </SidebarProvider>
@@ -35,6 +37,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/crypto" element={<Crypto />} />
+                  <Route path="/cinema" element={<Cinema />} />
                 </Routes>
               </div>
               <MobileBottomNav />
