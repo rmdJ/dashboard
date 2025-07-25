@@ -12,6 +12,9 @@
     },
     "api/cinema/movie/[id].js": {
       "maxDuration": 30
+    },
+    "api/movie-details.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [

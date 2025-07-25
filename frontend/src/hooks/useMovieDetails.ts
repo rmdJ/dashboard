@@ -55,7 +55,7 @@ interface ApiResponse {
 }
 
 const fetchMovieDetails = async (movieId: number): Promise<MovieDetails> => {
-  const response = await fetch(`/api/cinema/movie/${movieId}`);
+  const response = await fetch(`/api/movie-details?id=${movieId}`);
   if (!response.ok) {
     throw new Error("Erreur lors de la récupération des détails du film");
   }
