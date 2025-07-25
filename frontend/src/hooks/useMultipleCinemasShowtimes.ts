@@ -25,6 +25,16 @@ const fetchCinemaShowtimes = async (
     `/api/cinema-showtimes?cinemaId=${cinemaId}&dayShift=${dayShift}`
   );
   if (!response.ok) {
+    // Pour les erreurs 4xx (cinéma non trouvé, etc.), retourner des résultats vides
+    // plutôt qu'une erreur, ce qui permet à l'interface de s'afficher correctement
+    if (response.status >= 400 && response.status < 500) {
+      return {
+        results: [],
+        pagination: { currentPage: 1, totalPages: 1, totalResults: 0 },
+        cinemaId,
+        dayShift,
+      };
+    }
     throw new Error("Erreur lors de la récupération des séances");
   }
   const result: ApiResponse = await response.json();

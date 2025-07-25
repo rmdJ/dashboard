@@ -43,8 +43,19 @@ export default async function handler(req, res) {
     );
 
     // Retourner les données dans le même format que le projet original
+    // Même si allMovies est vide, c'est un succès (pas d'erreur)
     res.status(200).json({
-      results: allMovies,
+      success: true,
+      data: {
+        results: allMovies || [],
+        pagination: {
+          currentPage: parseInt(page),
+          totalPages: 1,
+          totalResults: (allMovies || []).length,
+        },
+        cinemaId,
+        dayShift: formattedDayShift,
+      },
     });
   } catch (error) {
     console.error("Erreur lors de la récupération des séances:", error);
