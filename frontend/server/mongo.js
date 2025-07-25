@@ -3,6 +3,8 @@ import {
   getSignalData,
   getCryptoData,
   getEvolutionData,
+  getCinemaNextReleases,
+  getMovieDetails,
 } from "../lib/mongodb.js";
 
 export async function handleApiRequest(req, res) {
@@ -36,6 +38,29 @@ export async function handleApiRequest(req, res) {
 
     if (pathname === "/evolution" && req.method === "GET") {
       const data = await getEvolutionData();
+      res.setHeader("Content-Type", "application/json");
+      res.statusCode = 200;
+      res.end(JSON.stringify({
+        success: true,
+        data: data
+      }));
+      return;
+    }
+
+    if (pathname === "/cinema/next-release" && req.method === "GET") {
+      const data = await getCinemaNextReleases();
+      res.setHeader("Content-Type", "application/json");
+      res.statusCode = 200;
+      res.end(JSON.stringify({
+        success: true,
+        data: data
+      }));
+      return;
+    }
+
+    if (pathname.startsWith("/cinema/movie/") && req.method === "GET") {
+      const movieId = pathname.split("/").pop();
+      const data = await getMovieDetails(movieId);
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
       res.end(JSON.stringify({
