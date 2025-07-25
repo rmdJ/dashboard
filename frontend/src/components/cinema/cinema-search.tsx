@@ -196,9 +196,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
 
           {/* Filtre films enfants */}
           <div className="space-y-2 w-full md:w-auto">
-            <label className="text-sm font-medium">
-              Filtrer les films pour enfants
-            </label>
+            <label className="text-sm font-medium">Films enfants</label>
             <ToggleYesNo
               value={shouldFilterChildrenMovies}
               onChange={setShouldFilterChildrenMovies}

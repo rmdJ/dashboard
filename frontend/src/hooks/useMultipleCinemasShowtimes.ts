@@ -81,7 +81,7 @@ export const useMultipleCinemasShowtimes = (
     data: allMovies, // Pour compatibilité avec le code existant
     cinemaResults, // Nouvelles données groupées par cinéma
     isLoading: queries.some((query) => query.isLoading),
-    error: queries.find((query) => query.error)?.error || null,
+    error: queries.every((query) => query.error) ? queries.find((query) => query.error)?.error || null : null,
     queries, // Pour debug si nécessaire
   };
 };
