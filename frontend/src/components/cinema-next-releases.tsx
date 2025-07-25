@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { useCinemaNextReleases } from "@/hooks/useCinemaNextReleases";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { MovieDetailsDrawer } from "@/components/movie-details-drawer";
-import { Calendar, Star, Film, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, Film, ChevronDown, ChevronUp } from "lucide-react";
 
 export const CinemaNextReleases = () => {
   const { data, isLoading, error } = useCinemaNextReleases();
@@ -97,10 +102,10 @@ export const CinemaNextReleases = () => {
   }
 
   const sortedMovies = data.results.sort((a, b) => b.popularity - a.popularity);
-  
+
   // Calculer le nombre de films par ligne selon la breakpoint
   const getItemsPerRow = () => {
-    if (typeof window === 'undefined') return 6; // SSR fallback
+    if (typeof window === "undefined") return 6; // SSR fallback
     const width = window.innerWidth;
     if (width >= 1536) return 6; // 2xl
     if (width >= 1280) return 5; // xl
@@ -109,7 +114,9 @@ export const CinemaNextReleases = () => {
   };
 
   const itemsPerRow = getItemsPerRow();
-  const moviesToShow = showAll ? sortedMovies : sortedMovies.slice(0, itemsPerRow);
+  const moviesToShow = showAll
+    ? sortedMovies
+    : sortedMovies.slice(0, itemsPerRow);
   const hasMoreMovies = sortedMovies.length > itemsPerRow;
 
   return (
@@ -125,11 +132,21 @@ export const CinemaNextReleases = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-          {moviesToShow.map((movie) => (
-            <div 
-              key={movie.id} 
+        <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 transition-all duration-500 ease-in-out">
+          {moviesToShow.map((movie, index) => (
+            <div
+              key={movie.id}
               className="cursor-pointer group transition-all duration-200 hover:bg-muted/50 rounded-lg p-3 -m-3"
+              style={{
+                animation:
+                  showAll && index >= itemsPerRow
+                    ? `slideUp 300ms ease-out ${
+                        (index - itemsPerRow) * 50
+                      }ms both`
+                    : index < itemsPerRow
+                    ? `slideUp 300ms ease-out ${index * 50}ms both`
+                    : "none",
+              }}
               onClick={() => handleMovieClick(movie.id)}
             >
               <div className="flex flex-col items-center">
@@ -158,19 +175,19 @@ export const CinemaNextReleases = () => {
 
         {hasMoreMovies && (
           <div className="flex justify-center mt-6">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={toggleShowAll}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 transition-all duration-200 hover:scale-105"
             >
               {showAll ? (
                 <>
-                  <ChevronUp className="h-4 w-4" />
+                  <ChevronUp className="h-4 w-4 transition-transform duration-200" />
                   Voir moins
                 </>
               ) : (
                 <>
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                   Voir tous les films ({sortedMovies.length})
                 </>
               )}

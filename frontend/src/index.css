@@ -50,6 +50,17 @@
   }
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 :root {
   --background: oklch(0.93 0 17.97);
   --foreground: oklch(0.14 0 285.86);
