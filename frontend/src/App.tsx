@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/provider/theme";
 import { QueryProvider } from "@/provider/query";
 import { BinanceProvider } from "@/provider/binance";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 // import { SiteHeader } from "@/components/header/site-header";
 
@@ -14,16 +15,30 @@ function App() {
       <BinanceProvider>
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
           <BrowserRouter>
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
-                {/* <SiteHeader /> */}
+            {/* Desktop Layout avec sidebar */}
+            <div className="hidden md:block">
+              <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset>
+                  {/* <SiteHeader /> */}
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/crypto" element={<Crypto />} />
+                  </Routes>
+                </SidebarInset>
+              </SidebarProvider>
+            </div>
+
+            {/* Mobile Layout avec navigation bottom */}
+            <div className="md:hidden">
+              <div className="pb-16"> {/* Padding pour éviter que le contenu soit masqué par la nav */}
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/crypto" element={<Crypto />} />
                 </Routes>
-              </SidebarInset>
-            </SidebarProvider>
+              </div>
+              <MobileBottomNav />
+            </div>
           </BrowserRouter>
         </ThemeProvider>
       </BinanceProvider>

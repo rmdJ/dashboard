@@ -61,6 +61,11 @@
   }
 }
 
+/* Safe area support pour iOS */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+}
+
 :root {
   --background: oklch(0.93 0 17.97);
   --foreground: oklch(0.14 0 285.86);
