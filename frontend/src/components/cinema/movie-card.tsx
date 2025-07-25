@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, Eye, Plus, Check, Film } from "lucide-react";
+import { Star, Plus, Check, Film } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,6 @@ interface MovieCardProps {
   movie: Movie;
   isSelected: boolean;
   onSelect: () => void;
-  onViewDetails: () => void;
   canSelect: boolean;
 }
 
@@ -18,7 +17,6 @@ export function MovieCard({
   movie,
   isSelected,
   onSelect,
-  onViewDetails,
   canSelect,
 }: MovieCardProps) {
   const [imageError, setImageError] = useState(false);
@@ -120,20 +118,8 @@ export function MovieCard({
           )}
 
           {/* Overlay avec actions */}
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={(e) => {
-                e.stopPropagation();
-                onViewDetails();
-              }}
-            >
-              <Eye className="h-4 w-4 mr-1" />
-              Détails
-            </Button>
-
-            {canSelect && (
+          {canSelect && (
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
               <Button
                 size="sm"
                 variant={isSelected ? "destructive" : "default"}
@@ -154,8 +140,8 @@ export function MovieCard({
                   </>
                 )}
               </Button>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Badge de sélection */}
           {isSelected && (

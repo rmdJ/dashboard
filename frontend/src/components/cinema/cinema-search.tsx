@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/toggle-group-sort";
 import { ToggleYesNo } from "@/components/ui/toggle-yes-no";
 import { MovieCard } from "./movie-card";
-import { MovieDetailModal } from "./movie-detail-modal";
 import { CombineMoviesPanel } from "./combine-movies-panel";
 import { useMultipleCinemasShowtimes } from "../../hooks/useMultipleCinemasShowtimes";
 import type { Movie, SortOption } from "../../types/cinema";
@@ -38,7 +37,6 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedCinemas, setSelectedCinemas] = useState<string[]>([]);
   const [selectedMovies, setSelectedMovies] = useState<Movie[]>([]);
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [sortOption, setSortOption] = useState<SortOption>("pressRating");
   const [shouldFilterChildrenMovies, setShouldFilterChildrenMovies] =
     useState(false);
@@ -381,7 +379,6 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                           (m) => m.internalId === movie.internalId
                         )}
                         onSelect={() => handleMovieSelect(movie)}
-                        onViewDetails={() => setSelectedMovie(movie)}
                         canSelect={
                           selectedMovies.length < 2 ||
                           selectedMovies.some(
@@ -410,8 +407,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                               (m) => m.internalId === movie.internalId
                             )}
                             onSelect={() => handleMovieSelect(movie)}
-                            onViewDetails={() => setSelectedMovie(movie)}
-                            canSelect={
+                                canSelect={
                               selectedMovies.length < 2 ||
                               selectedMovies.some(
                                 (m) => m.internalId === movie.internalId
@@ -450,7 +446,6 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                     (m) => m.internalId === movie.internalId
                   )}
                   onSelect={() => handleMovieSelect(movie)}
-                  onViewDetails={() => setSelectedMovie(movie)}
                   canSelect={
                     selectedMovies.length < 2 ||
                     selectedMovies.some(
@@ -479,8 +474,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                         (m) => m.internalId === movie.internalId
                       )}
                       onSelect={() => handleMovieSelect(movie)}
-                      onViewDetails={() => setSelectedMovie(movie)}
-                      canSelect={
+                          canSelect={
                         selectedMovies.length < 2 ||
                         selectedMovies.some(
                           (m) => m.internalId === movie.internalId
@@ -494,14 +488,6 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
           </div>
         )}
 
-      {/* Modal détail du film */}
-      {selectedMovie && (
-        <MovieDetailModal
-          movie={selectedMovie}
-          zipCode={selectedCity}
-          onClose={() => setSelectedMovie(null)}
-        />
-      )}
 
       {/* Panel de combinaison */}
       {showCombinePanel && selectedMovies.length === 2 && (
