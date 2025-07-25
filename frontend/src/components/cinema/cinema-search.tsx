@@ -252,12 +252,12 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
         </div>
       )}
 
-      {hasError && (
+      {/* {hasError && (
         <div className="text-center py-8 text-destructive">
           <FilmIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
           <p>Erreur lors du chargement des séances</p>
         </div>
-      )}
+      )} */}
 
       {!isLoading &&
         !hasError &&
@@ -407,7 +407,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                               (m) => m.internalId === movie.internalId
                             )}
                             onSelect={() => handleMovieSelect(movie)}
-                                canSelect={
+                            canSelect={
                               selectedMovies.length < 2 ||
                               selectedMovies.some(
                                 (m) => m.internalId === movie.internalId
@@ -474,7 +474,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                         (m) => m.internalId === movie.internalId
                       )}
                       onSelect={() => handleMovieSelect(movie)}
-                          canSelect={
+                      canSelect={
                         selectedMovies.length < 2 ||
                         selectedMovies.some(
                           (m) => m.internalId === movie.internalId
@@ -487,7 +487,6 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
             </div>
           </div>
         )}
-
 
       {/* Panel de combinaison */}
       {showCombinePanel && selectedMovies.length === 2 && (
