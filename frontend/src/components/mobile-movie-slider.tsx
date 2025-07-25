@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Film } from "lucide-react";
 
 interface Movie {
@@ -13,7 +13,10 @@ interface MobileMovieSliderProps {
   onMovieClick: (movieId: number) => void;
 }
 
-export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderProps) => {
+export const MobileMovieSlider = ({
+  movies,
+  onMovieClick,
+}: MobileMovieSliderProps) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -22,7 +25,7 @@ export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderPro
   const [lastMoveTime, setLastMoveTime] = useState(0);
   const [lastMoveX, setLastMoveX] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(null);
 
   const sortedMovies = movies.sort((a, b) => b.popularity - a.popularity);
 
@@ -36,7 +39,7 @@ export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderPro
   // Fonction pour animer l'inertie avec plus de fluidité
   const animateInertia = useCallback(() => {
     if (Math.abs(velocity) < 0.1) return;
-    
+
     if (containerRef.current) {
       const newScrollLeft = containerRef.current.scrollLeft + velocity;
       containerRef.current.scrollLeft = newScrollLeft;
@@ -52,41 +55,41 @@ export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderPro
     setVelocity(0);
     setLastMoveTime(Date.now());
     setLastMoveX(e.touches[0].clientX);
-    
+
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = useCallback((e: TouchEvent) => {
     if (!isDragging || !containerRef.current) return;
-    
+
     e.preventDefault();
     const currentX = e.touches[0].clientX;
     const diff = startX - currentX;
     const now = Date.now();
     const timeDiff = now - lastMoveTime;
-    
+
     // Calculer la vélocité
     if (timeDiff > 0) {
-      const currentVelocity = (lastMoveX - currentX) / timeDiff * 16; // Normaliser à 60fps
+      const currentVelocity = ((lastMoveX - currentX) / timeDiff) * 16; // Normaliser à 60fps
       setVelocity(currentVelocity);
     }
-    
+
     containerRef.current.scrollLeft = startScrollLeft + diff;
     setLastMoveTime(now);
     setLastMoveX(currentX);
-  };
+  }, [isDragging, startX, lastMoveTime, lastMoveX, startScrollLeft]);
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = useCallback(() => {
     if (!isDragging) return;
     setIsDragging(false);
-    
+
     // Démarrer l'animation d'inertie si la vélocité est suffisante
     if (Math.abs(velocity) > 1) {
       animateInertia();
     }
-  };
+  }, [isDragging, velocity, animateInertia]);
 
   const handleMouseStart = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -95,7 +98,7 @@ export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderPro
     setVelocity(0);
     setLastMoveTime(Date.now());
     setLastMoveX(e.clientX);
-    
+
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
@@ -103,17 +106,17 @@ export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderPro
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !containerRef.current) return;
-    
+
     const currentX = e.clientX;
     const diff = startX - currentX;
     const now = Date.now();
     const timeDiff = now - lastMoveTime;
-    
+
     if (timeDiff > 0) {
-      const currentVelocity = (lastMoveX - currentX) / timeDiff * 16;
+      const currentVelocity = ((lastMoveX - currentX) / timeDiff) * 16;
       setVelocity(currentVelocity);
     }
-    
+
     containerRef.current.scrollLeft = startScrollLeft + diff;
     setLastMoveTime(now);
     setLastMoveX(currentX);
@@ -122,7 +125,7 @@ export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderPro
   const handleMouseEnd = () => {
     if (!isDragging) return;
     setIsDragging(false);
-    
+
     if (Math.abs(velocity) > 1) {
       animateInertia();
     }
@@ -141,33 +144,45 @@ export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderPro
     return Math.round(scrollPosition / itemWidth);
   };
 
+  // Ajouter les event listeners avec { passive: false }
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [handleTouchMove, handleTouchEnd]);
+
   if (sortedMovies.length === 0) return null;
 
   return (
     <div className="md:hidden">
       {/* Slider container */}
-      <div 
+      <div
         ref={containerRef}
         className="flex gap-4 overflow-x-auto scrollbar-hide pb-4"
-        style={{ 
-          scrollBehavior: 'auto', // Toujours auto pour éviter les conflits
-          scrollSnapType: 'none' // Désactiver le snap natif
+        style={{
+          scrollBehavior: "auto", // Toujours auto pour éviter les conflits
+          scrollSnapType: "none", // Désactiver le snap natif
         }}
         onScroll={handleScroll}
         onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
         onMouseDown={handleMouseStart}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseEnd}
         onMouseLeave={handleMouseEnd}
       >
-        {sortedMovies.map((movie, index) => (
+        {sortedMovies.map((movie) => (
           <div
             key={movie.id}
             className="flex-shrink-0"
-            style={{ 
-              width: '80%'
+            style={{
+              width: "80%",
             }}
           >
             <div
@@ -212,9 +227,9 @@ export const MobileMovieSlider = ({ movies, onMovieClick }: MobileMovieSliderPro
           <div
             key={index}
             className={`w-2 h-2 rounded-full transition-all duration-200 ${
-              index === getCurrentIndex() 
-                ? 'bg-primary w-6' 
-                : 'bg-gray-300 dark:bg-gray-600'
+              index === getCurrentIndex()
+                ? "bg-primary w-6"
+                : "bg-gray-300 dark:bg-gray-600"
             }`}
           />
         ))}
