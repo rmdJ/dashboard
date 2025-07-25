@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MovieDetailsDrawer } from "@/components/movie-details-drawer";
+import { MobileMovieSlider } from "@/components/mobile-movie-slider";
 import { Calendar, Film, ChevronDown, ChevronUp } from "lucide-react";
 
 export const CinemaNextReleases = () => {
@@ -132,68 +133,77 @@ export const CinemaNextReleases = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 transition-all duration-500 ease-in-out">
-          {moviesToShow.map((movie, index) => (
-            <div
-              key={movie.id}
-              className="cursor-pointer group transition-all duration-200 hover:bg-muted/50 rounded-lg p-3 -m-3"
-              style={{
-                animation:
-                  showAll && index >= itemsPerRow
-                    ? `slideUp 300ms ease-out ${
-                        (index - itemsPerRow) * 50
-                      }ms both`
-                    : index < itemsPerRow
-                    ? `slideUp 300ms ease-out ${index * 50}ms both`
-                    : "none",
-              }}
-              onClick={() => handleMovieClick(movie.id)}
-            >
-              <div className="flex flex-col items-center">
-                <div className="h-12 flex items-center mb-3">
-                  <h3 className="font-semibold text-center text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                    {movie.title}
-                  </h3>
-                </div>
-                {movie.poster_path ? (
-                  <div className="w-48 h-72 rounded-lg shadow-lg overflow-hidden">
-                    <img
-                      src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                      alt={movie.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-48 h-72 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-lg flex items-center justify-center">
-                    <Film className="h-16 w-16 text-gray-400 dark:text-gray-500" />
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Mobile Slider */}
+        <MobileMovieSlider 
+          movies={sortedMovies}
+          onMovieClick={handleMovieClick}
+        />
 
-        {hasMoreMovies && (
-          <div className="flex justify-center mt-6">
-            <Button
-              variant="outline"
-              onClick={toggleShowAll}
-              className="flex items-center gap-2 transition-all duration-200 hover:scale-105"
-            >
-              {showAll ? (
-                <>
-                  <ChevronUp className="h-4 w-4 transition-transform duration-200" />
-                  Voir moins
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="h-4 w-4 transition-transform duration-200" />
-                  Voir tous les films ({sortedMovies.length})
-                </>
-              )}
-            </Button>
+        {/* Desktop Grid */}
+        <div className="hidden md:block">
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 transition-all duration-500 ease-in-out">
+            {moviesToShow.map((movie, index) => (
+              <div
+                key={movie.id}
+                className="cursor-pointer group transition-all duration-200 hover:bg-muted/50 rounded-lg p-3 -m-3"
+                style={{
+                  animation:
+                    showAll && index >= itemsPerRow
+                      ? `slideUp 300ms ease-out ${
+                          (index - itemsPerRow) * 50
+                        }ms both`
+                      : index < itemsPerRow
+                      ? `slideUp 300ms ease-out ${index * 50}ms both`
+                      : "none",
+                }}
+                onClick={() => handleMovieClick(movie.id)}
+              >
+                <div className="flex flex-col items-center">
+                  <div className="h-12 flex items-center mb-3">
+                    <h3 className="font-semibold text-center text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                      {movie.title}
+                    </h3>
+                  </div>
+                  {movie.poster_path ? (
+                    <div className="w-48 h-72 rounded-lg shadow-lg overflow-hidden">
+                      <img
+                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                        alt={movie.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-48 h-72 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-lg flex items-center justify-center">
+                      <Film className="h-16 w-16 text-gray-400 dark:text-gray-500" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        )}
+
+          {hasMoreMovies && (
+            <div className="flex justify-center mt-6">
+              <Button
+                variant="outline"
+                onClick={toggleShowAll}
+                className="flex items-center gap-2 transition-all duration-200 hover:scale-105"
+              >
+                {showAll ? (
+                  <>
+                    <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+                    Voir moins
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                    Voir tous les films ({sortedMovies.length})
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
 
         <MovieDetailsDrawer
           movieId={selectedMovieId}
