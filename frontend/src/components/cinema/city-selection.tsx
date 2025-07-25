@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { MapPin, ChevronDown } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import frenchCities from "../../data/french-cities.json";
@@ -20,9 +20,11 @@ export function CitySelection({ onCitySelect }: CitySelectionProps) {
   const [selectedCity, setSelectedCity] = useState<string>("");
 
   // Filtrer les villes selon la recherche
-  const filteredCities = frenchCities.filter(city =>
-    city.name.toLowerCase().includes(searchTerm.toLowerCase())
-  ).slice(0, 50); // Limiter à 50 résultats pour les performances
+  const filteredCities = frenchCities
+    .filter((city) =>
+      city.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, 50); // Limiter à 50 résultats pour les performances
 
   const handleCitySelect = (cityId: string) => {
     setSelectedCity(cityId);
@@ -34,7 +36,9 @@ export function CitySelection({ onCitySelect }: CitySelectionProps) {
     }
   };
 
-  const selectedCityName = frenchCities.find(city => city.id === selectedCity)?.name;
+  const selectedCityName = frenchCities.find(
+    (city) => city.id === selectedCity
+  )?.name;
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6">
@@ -104,8 +108,8 @@ export function CitySelection({ onCitySelect }: CitySelectionProps) {
         )}
 
         {/* Bouton de confirmation */}
-        <Button 
-          onClick={handleConfirm} 
+        <Button
+          onClick={handleConfirm}
           disabled={!selectedCity}
           className="w-full"
           size="lg"
@@ -120,7 +124,16 @@ export function CitySelection({ onCitySelect }: CitySelectionProps) {
           </div>
           <div className="grid grid-cols-2 gap-2">
             {frenchCities
-              .filter(city => ["115755", "113315", "87914", "96373", "97612", "85327"].includes(city.id))
+              .filter((city) =>
+                [
+                  "115755",
+                  "113315",
+                  "87914",
+                  "96373",
+                  "97612",
+                  "85327",
+                ].includes(city.id)
+              )
               .map((city) => (
                 <Button
                   key={city.id}
@@ -132,8 +145,7 @@ export function CitySelection({ onCitySelect }: CitySelectionProps) {
                   <MapPin className="h-3 w-3 mr-1" />
                   {city.name}
                 </Button>
-              ))
-            }
+              ))}
           </div>
         </div>
       </div>

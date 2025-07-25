@@ -1,9 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { IconDashboard, IconCurrencyBitcoin, IconDeviceTv } from "@tabler/icons-react";
+import {
+  IconDashboard,
+  IconCurrencyBitcoin,
+  IconDeviceTv,
+} from "@tabler/icons-react";
 
 const navigationItems = [
   {
-    name: "Comptes",
+    name: "Dashboard",
     href: "/",
     icon: IconDashboard,
   },

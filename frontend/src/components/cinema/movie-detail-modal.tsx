@@ -1,11 +1,18 @@
 import { useState } from "react";
-import { X, Star, Clock, Calendar, MapPin, ExternalLink, Film } from "lucide-react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  X,
+  Star,
+  Clock,
+  Calendar,
+  MapPin,
+  ExternalLink,
+  Film,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +20,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMovieShowtimes } from "../../hooks/useMovieShowtimes";
 import type { Movie, Showtime } from "../../types/cinema";
+
+interface Version {
+  label: string;
+  key: string;
+  showtimes: Showtime[];
+}
 
 interface MovieDetailModalProps {
   movie: Movie | null;
@@ -33,11 +46,19 @@ interface CinemaShowtimes {
   };
 }
 
-export function MovieDetailModal({ movie, zipCode, onClose }: MovieDetailModalProps) {
+export function MovieDetailModal({
+  movie,
+  zipCode,
+  onClose,
+}: MovieDetailModalProps) {
   const [selectedDate, setSelectedDate] = useState(0); // dayShift
   const [imageError, setImageError] = useState(false);
 
-  const { data: movieShowtimes, isLoading, error } = useMovieShowtimes(
+  const {
+    data: movieShowtimes,
+    isLoading,
+    error,
+  } = useMovieShowtimes(
     movie?.internalId?.toString() || null,
     zipCode,
     selectedDate.toString()
@@ -52,57 +73,59 @@ export function MovieDetailModal({ movie, zipCode, onClose }: MovieDetailModalPr
     return {
       dayShift: i,
       date: date,
-      label: date.toLocaleDateString('fr-FR', { 
-        weekday: 'short', 
-        day: 'numeric', 
-        month: 'short' 
-      })
+      label: date.toLocaleDateString("fr-FR", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+      }),
     };
   });
 
   // Formater les horaires par version
-  const formatShowtimesByVersion = (showtimes: { [key: string]: Showtime[] }) => {
-    const versions = [];
-    
+  const formatShowtimesByVersion = (showtimes: {
+    [key: string]: Showtime[];
+  }) => {
+    const versions: Version[] = [];
+
     if (showtimes.dubbed?.length > 0) {
       versions.push({
         label: "Version française (VF)",
         key: "dubbed",
-        showtimes: showtimes.dubbed
+        showtimes: showtimes.dubbed,
       });
     }
-    
+
     if (showtimes.original?.length > 0) {
       versions.push({
         label: "Version originale (VO)",
-        key: "original", 
-        showtimes: showtimes.original
+        key: "original",
+        showtimes: showtimes.original,
       });
     }
-    
+
     if (showtimes.local?.length > 0) {
       versions.push({
         label: "Version locale",
         key: "local",
-        showtimes: showtimes.local
+        showtimes: showtimes.local,
       });
     }
-    
+
     if (showtimes.multiple?.length > 0) {
       versions.push({
         label: "Versions multiples",
         key: "multiple",
-        showtimes: showtimes.multiple
+        showtimes: showtimes.multiple,
       });
     }
-    
+
     return versions;
   };
 
   // Redirection vers Allociné
   const handleAllocineRedirect = (cinemaId: string) => {
     const allocineUrl = `https://www.allocine.fr/seance/salle_gen_csalle=${cinemaId}.html`;
-    window.open(allocineUrl, '_blank');
+    window.open(allocineUrl, "_blank");
   };
 
   return (
@@ -147,7 +170,8 @@ export function MovieDetailModal({ movie, zipCode, onClose }: MovieDetailModalPr
                 </div>
               )}
 
-              {(movie.stats?.pressReview?.score > 0 || movie.stats?.userRating?.score > 0) && (
+              {(movie.stats?.pressReview?.score > 0 ||
+                movie.stats?.userRating?.score > 0) && (
                 <div className="space-y-2">
                   {movie.stats.pressReview?.score > 0 && (
                     <div className="flex items-center gap-2 text-sm">
@@ -158,7 +182,7 @@ export function MovieDetailModal({ movie, zipCode, onClose }: MovieDetailModalPr
                       <span className="text-muted-foreground">Presse</span>
                     </div>
                   )}
-                  
+
                   {movie.stats.userRating?.score > 0 && (
                     <div className="flex items-center gap-2 text-sm">
                       <Star className="h-4 w-4 fill-blue-400 text-blue-400" />
@@ -206,7 +230,9 @@ export function MovieDetailModal({ movie, zipCode, onClose }: MovieDetailModalPr
                 {dateOptions.map((option) => (
                   <Button
                     key={option.dayShift}
-                    variant={selectedDate === option.dayShift ? "default" : "outline"}
+                    variant={
+                      selectedDate === option.dayShift ? "default" : "outline"
+                    }
                     size="sm"
                     onClick={() => setSelectedDate(option.dayShift)}
                     className="whitespace-nowrap"
@@ -241,7 +267,9 @@ export function MovieDetailModal({ movie, zipCode, onClose }: MovieDetailModalPr
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
                           <div className="space-y-1">
-                            <CardTitle className="text-base">{cinema.name}</CardTitle>
+                            <CardTitle className="text-base">
+                              {cinema.name}
+                            </CardTitle>
                             <div className="flex items-center gap-1 text-sm text-muted-foreground">
                               <MapPin className="h-3 w-3" />
                               <span>{cinema.address}</span>
@@ -273,29 +301,39 @@ export function MovieDetailModal({ movie, zipCode, onClose }: MovieDetailModalPr
                             )}
                           </TabsList>
 
-                          {formatShowtimesByVersion(cinema.showtimes).map((version) => (
-                            <TabsContent key={version.key} value={version.key} className="mt-3">
-                              <div className="space-y-2">
-                                <div className="text-sm font-medium text-muted-foreground">
-                                  {version.label}
+                          {formatShowtimesByVersion(cinema.showtimes).map(
+                            (version) => (
+                              <TabsContent
+                                key={version.key}
+                                value={version.key}
+                                className="mt-3"
+                              >
+                                <div className="space-y-2">
+                                  <div className="text-sm font-medium text-muted-foreground">
+                                    {version.label}
+                                  </div>
+                                  <div className="flex flex-wrap gap-2">
+                                    {version.showtimes.map(
+                                      (showtime, index) => (
+                                        <Badge
+                                          key={index}
+                                          variant="secondary"
+                                          className="px-3 py-1"
+                                        >
+                                          {new Date(
+                                            showtime.startsAt
+                                          ).toLocaleTimeString("fr-FR", {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                          })}
+                                        </Badge>
+                                      )
+                                    )}
+                                  </div>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                  {version.showtimes.map((showtime, index) => (
-                                    <Badge
-                                      key={index}
-                                      variant="secondary"
-                                      className="px-3 py-1"
-                                    >
-                                      {new Date(showtime.startsAt).toLocaleTimeString('fr-FR', {
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                      })}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            </TabsContent>
-                          ))}
+                              </TabsContent>
+                            )
+                          )}
                         </Tabs>
                       </CardContent>
                     </Card>
@@ -303,12 +341,13 @@ export function MovieDetailModal({ movie, zipCode, onClose }: MovieDetailModalPr
                 </div>
               )}
 
-              {movieShowtimes?.results && movieShowtimes.results.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>Aucune séance trouvée pour cette date</p>
-                </div>
-              )}
+              {movieShowtimes?.results &&
+                movieShowtimes.results.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                    <p>Aucune séance trouvée pour cette date</p>
+                  </div>
+                )}
             </div>
           </div>
         </div>

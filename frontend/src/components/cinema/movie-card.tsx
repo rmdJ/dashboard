@@ -164,6 +164,23 @@ export function MovieCard({
             </div>
           )}
 
+          {/* Badge âge en bas à gauche */}
+          {(() => {
+            const movieData = (movie as any).movie || movie;
+            const ageTag = movieData.relatedTags?.find((tag: any) => 
+              tag.name.startsWith("À partir de")
+            );
+            
+            if (ageTag) {
+              return (
+                <div className="absolute bottom-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-md font-medium">
+                  {ageTag.name}
+                </div>
+              );
+            }
+            return null;
+          })()}
+
           {/* Badge durée en bas à droite */}
           {runtime && (
             <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-md flex items-center gap-1">

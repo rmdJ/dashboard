@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
 
 interface MultiSelectOption {
   value: string;
@@ -39,10 +38,6 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
-  const handleUnselect = (value: string) => {
-    onChange(selected.filter((s) => s !== value));
-  };
-
   const handleSelect = (value: string) => {
     if (selected.includes(value)) {
       onChange(selected.filter((s) => s !== value));
@@ -65,7 +60,8 @@ export function MultiSelect({
               <span className="text-muted-foreground">{placeholder}</span>
             ) : (
               <span className="text-sm">
-                {selected.length} cinéma{selected.length > 1 ? 's' : ''} sélectionné{selected.length > 1 ? 's' : ''}
+                {selected.length} cinéma{selected.length > 1 ? "s" : ""}{" "}
+                sélectionné{selected.length > 1 ? "s" : ""}
               </span>
             )}
           </div>

@@ -17,8 +17,13 @@ interface ApiResponse {
   data: CinemaShowtimesResponse;
 }
 
-const fetchCinemaShowtimes = async (cinemaId: string, dayShift: string = "0"): Promise<CinemaShowtimesResponse> => {
-  const response = await fetch(`/api/cinema-showtimes?cinemaId=${cinemaId}&dayShift=${dayShift}`);
+const fetchCinemaShowtimes = async (
+  cinemaId: string,
+  dayShift: string = "0"
+): Promise<CinemaShowtimesResponse> => {
+  const response = await fetch(
+    `/api/cinema-showtimes?cinemaId=${cinemaId}&dayShift=${dayShift}`
+  );
   if (!response.ok) {
     throw new Error("Erreur lors de la récupération des séances");
   }
@@ -26,15 +31,18 @@ const fetchCinemaShowtimes = async (cinemaId: string, dayShift: string = "0"): P
   return result.data;
 };
 
-export const useMultipleCinemasShowtimes = (cinemaIds: string[], dayShift: string = "0") => {
+export const useMultipleCinemasShowtimes = (
+  cinemaIds: string[],
+  dayShift: string = "0"
+) => {
   const queries = useQueries({
-    queries: cinemaIds.map(cinemaId => ({
+    queries: cinemaIds.map((cinemaId) => ({
       queryKey: ["cinema", "showtimes", cinemaId, dayShift],
       queryFn: () => fetchCinemaShowtimes(cinemaId, dayShift),
       enabled: !!cinemaId,
       staleTime: 1000 * 60 * 5, // 5 minutes
       gcTime: 1000 * 60 * 30, // 30 minutes
-    }))
+    })),
   });
 
   // Retourner les données groupées par cinéma
@@ -42,22 +50,21 @@ export const useMultipleCinemasShowtimes = (cinemaIds: string[], dayShift: strin
     cinemaId,
     data: queries[index].data,
     isLoading: queries[index].isLoading,
-    error: queries[index].error
+    error: queries[index].error,
   }));
 
   // Consolider tous les films de tous les cinémas (pour compatibilité)
-  const consolidatedMovies: Movie[] = [];
   const movieMap = new Map<number, Movie>();
 
-  queries.forEach(query => {
+  queries.forEach((query) => {
     if (query.data?.results) {
-      query.data.results.forEach(movie => {
+      query.data.results.forEach((movie) => {
         if (!movieMap.has(movie.internalId)) {
           movieMap.set(movie.internalId, movie);
         } else {
           // Fusionner les séances si le film existe déjà
           const existingMovie = movieMap.get(movie.internalId)!;
-          Object.keys(movie.showtimes).forEach(version => {
+          Object.keys(movie.showtimes).forEach((version) => {
             const versionKey = version as keyof typeof existingMovie.showtimes;
             existingMovie.showtimes[versionKey].push(
               ...movie.showtimes[versionKey]
@@ -73,8 +80,8 @@ export const useMultipleCinemasShowtimes = (cinemaIds: string[], dayShift: strin
   return {
     data: allMovies, // Pour compatibilité avec le code existant
     cinemaResults, // Nouvelles données groupées par cinéma
-    isLoading: queries.some(query => query.isLoading),
-    error: queries.find(query => query.error)?.error || null,
-    queries // Pour debug si nécessaire
+    isLoading: queries.some((query) => query.isLoading),
+    error: queries.find((query) => query.error)?.error || null,
+    queries, // Pour debug si nécessaire
   };
 };

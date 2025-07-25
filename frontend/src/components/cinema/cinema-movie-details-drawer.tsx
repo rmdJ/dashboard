@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Star, Clock, Film, X } from "lucide-react";
 import type { Movie } from "../../types/cinema";
+import type { JSX } from "react";
 
 interface CinemaMovieDetailsDrawerProps {
   movie: Movie | null;
@@ -124,7 +125,7 @@ export const CinemaMovieDetailsDrawer = ({
                   )}
 
                   {/* Notes */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="grid grid-cols-2 gap-6 mb-6">
                     {pressRating > 0 && (
                       <div className="text-center">
                         <h4 className="font-medium mb-2">Note Presse</h4>

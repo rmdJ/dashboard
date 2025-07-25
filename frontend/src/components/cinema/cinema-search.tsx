@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Calendar,
-  Filter,
-  Users,
-  Star,
-  Clock,
-  Film as FilmIcon,
-} from "lucide-react";
+import { Users, Film as FilmIcon } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -24,13 +17,16 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { ToggleGroupSort, sortOptions } from "@/components/ui/toggle-group-sort";
+import {
+  ToggleGroupSort,
+  sortOptions,
+} from "@/components/ui/toggle-group-sort";
 import { ToggleYesNo } from "@/components/ui/toggle-yes-no";
 import { MovieCard } from "./movie-card";
 import { MovieDetailModal } from "./movie-detail-modal";
 import { CombineMoviesPanel } from "./combine-movies-panel";
 import { useMultipleCinemasShowtimes } from "../../hooks/useMultipleCinemasShowtimes";
-import type { Movie, Cinema, SortOption } from "../../types/cinema";
+import type { Movie, SortOption } from "../../types/cinema";
 import cinemasData from "@/data/cinemas.json";
 import frenchCities from "@/data/french-cities.json";
 
@@ -83,10 +79,11 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
 
   // Filtrer les films pour enfants si nécessaire
   const filteredMovies = shouldFilterChildrenMovies
-    ? (consolidatedMovies || []).filter((movie) =>
-        (movie as any).movie.relatedTags?.some((tag: any) =>
-          tag.name.startsWith("À partir de")
-        ) || false
+    ? (consolidatedMovies || []).filter(
+        (movie) =>
+          (movie as any).movie.relatedTags?.some((tag: any) =>
+            tag.name.startsWith("À partir de")
+          ) || false
       )
     : consolidatedMovies || [];
 
@@ -100,14 +97,22 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
         );
       case "userRating":
         return (
-          ((b as any).movie?.stats?.userRating?.score || 0) - 
+          ((b as any).movie?.stats?.userRating?.score || 0) -
           ((a as any).movie?.stats?.userRating?.score || 0)
         );
       case "title":
-        return ((a as any).movie?.title || a.title || "").localeCompare((b as any).movie?.title || b.title || "");
+        return ((a as any).movie?.title || a.title || "").localeCompare(
+          (b as any).movie?.title || b.title || ""
+        );
       case "runtime": {
-        const aRuntime = parseInt(((a as any).movie?.runtime || a.runtime || "").replace(/\D/g, "") || "0");
-        const bRuntime = parseInt(((b as any).movie?.runtime || b.runtime || "").replace(/\D/g, "") || "0");
+        const aRuntime = parseInt(
+          ((a as any).movie?.runtime || a.runtime || "").replace(/\D/g, "") ||
+            "0"
+        );
+        const bRuntime = parseInt(
+          ((b as any).movie?.runtime || b.runtime || "").replace(/\D/g, "") ||
+            "0"
+        );
         return bRuntime - aRuntime;
       }
       default:
@@ -139,9 +144,9 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
     <div className="space-y-6">
       {/* Filtres */}
       <Card>
-        <CardContent className="flex gap-6">
+        <CardContent className="flex flex-col md:flex-row gap-6">
           {/* Sélection de date */}
-          <div className="space-y-2">
+          <div className="space-y-2 w-full md:w-auto">
             <label className="text-sm font-medium">Date</label>
             <Select
               value={selectedDate.toISOString().split("T")[0]}
@@ -168,12 +173,12 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
           </div>
 
           {/* Sélection des cinémas */}
-          <div className="space-y-2">
+          <div className="space-y-2 w-full md:w-auto">
             <label className="text-sm font-medium">Cinémas</label>
             <MultiSelect
-              options={availableCinemas.map(cinema => ({
+              options={availableCinemas.map((cinema) => ({
                 value: cinema.id,
-                label: cinema.nom
+                label: cinema.nom,
               }))}
               selected={selectedCinemas}
               onChange={setSelectedCinemas}
@@ -182,7 +187,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
           </div>
 
           {/* Options de tri */}
-          <div className="space-y-2">
+          <div className="space-y-2 w-full md:w-auto">
             <label className="text-sm font-medium">Trier par</label>
             <ToggleGroupSort
               value={sortOption}
@@ -192,8 +197,10 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
           </div>
 
           {/* Filtre films enfants */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Filtrer les films pour enfants</label>
+          <div className="space-y-2 w-full md:w-auto">
+            <label className="text-sm font-medium">
+              Filtrer les films pour enfants
+            </label>
             <ToggleYesNo
               value={shouldFilterChildrenMovies}
               onChange={setShouldFilterChildrenMovies}
@@ -254,12 +261,16 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
         </div>
       )}
 
-      {!isLoading && !hasError && selectedCinemas.length > 0 && (!cinemaResults || cinemaResults.every(c => !c.data?.results?.length)) && (
-        <div className="text-center py-8 text-muted-foreground">
-          <FilmIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p>Aucun film trouvé pour les cinémas sélectionnés</p>
-        </div>
-      )}
+      {!isLoading &&
+        !hasError &&
+        selectedCinemas.length > 0 &&
+        (!cinemaResults ||
+          cinemaResults.every((c) => !c.data?.results?.length)) && (
+          <div className="text-center py-8 text-muted-foreground">
+            <FilmIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
+            <p>Aucun film trouvé pour les cinémas sélectionnés</p>
+          </div>
+        )}
 
       {!isLoading && !hasError && cinemaResults && (
         <div className="space-y-8">
@@ -281,7 +292,10 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                   <CardContent>
                     <div className="text-center py-8 text-muted-foreground">
                       <FilmIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                      <p>Aucun film trouvé pour le cinéma {cinema?.nom || cinemaResult.cinemaId}</p>
+                      <p>
+                        Aucun film trouvé pour le cinéma{" "}
+                        {cinema?.nom || cinemaResult.cinemaId}
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -291,9 +305,11 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
             // Appliquer les filtres et tri pour ce cinéma
             const filteredCinemaMovies = shouldFilterChildrenMovies
               ? cinemaMovies.filter((movie) => {
-                  return (movie as any).movie.relatedTags?.some((tag: any) =>
-                    tag.name.startsWith("À partir de")
-                  ) || false;
+                  return (
+                    (movie as any).movie.relatedTags?.some((tag: any) =>
+                      tag.name.startsWith("À partir de")
+                    ) || false
+                  );
                 })
               : cinemaMovies;
 
@@ -311,13 +327,23 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                       ((a as any).movie?.stats?.userRating?.score || 0)
                     );
                   case "title":
-                    return ((a as any).movie?.title || a.title || "").localeCompare((b as any).movie?.title || b.title || "");
+                    return (
+                      (a as any).movie?.title ||
+                      a.title ||
+                      ""
+                    ).localeCompare((b as any).movie?.title || b.title || "");
                   case "runtime": {
                     const aRuntime = parseInt(
-                      ((a as any).movie?.runtime || a.runtime || "").replace(/\D/g, "") || "0"
+                      ((a as any).movie?.runtime || a.runtime || "").replace(
+                        /\D/g,
+                        ""
+                      ) || "0"
                     );
                     const bRuntime = parseInt(
-                      ((b as any).movie?.runtime || b.runtime || "").replace(/\D/g, "") || "0"
+                      ((b as any).movie?.runtime || b.runtime || "").replace(
+                        /\D/g,
+                        ""
+                      ) || "0"
                     );
                     return bRuntime - aRuntime;
                   }
@@ -341,10 +367,15 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                  {/* Version desktop : grille */}
+                  <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                     {sortedCinemaMovies.map((movie, index) => (
                       <MovieCard
-                        key={`${cinemaResult.cinemaId}-${movie.internalId || (movie as any).movie?.internalId || index}`}
+                        key={`${cinemaResult.cinemaId}-${
+                          movie.internalId ||
+                          (movie as any).movie?.internalId ||
+                          index
+                        }`}
                         movie={movie}
                         isSelected={selectedMovies.some(
                           (m) => m.internalId === movie.internalId
@@ -360,6 +391,37 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                       />
                     ))}
                   </div>
+
+                  {/* Version mobile : slider horizontal */}
+                  <div className="md:hidden">
+                    <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
+                      {sortedCinemaMovies.map((movie, index) => (
+                        <div
+                          key={`${cinemaResult.cinemaId}-${
+                            movie.internalId ||
+                            (movie as any).movie?.internalId ||
+                            index
+                          }`}
+                          className="flex-shrink-0 w-48"
+                        >
+                          <MovieCard
+                            movie={movie}
+                            isSelected={selectedMovies.some(
+                              (m) => m.internalId === movie.internalId
+                            )}
+                            onSelect={() => handleMovieSelect(movie)}
+                            onViewDetails={() => setSelectedMovie(movie)}
+                            canSelect={
+                              selectedMovies.length < 2 ||
+                              selectedMovies.some(
+                                (m) => m.internalId === movie.internalId
+                              )
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -373,22 +435,62 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
         (!cinemaResults ||
           cinemaResults.every((c) => !c.data?.results?.length)) &&
         sortedMovies.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-            {sortedMovies.map((movie, index) => (
-              <MovieCard
-                key={movie.internalId || (movie as any).movie?.internalId || index}
-                movie={movie}
-                isSelected={selectedMovies.some(
-                  (m) => m.internalId === movie.internalId
-                )}
-                onSelect={() => handleMovieSelect(movie)}
-                onViewDetails={() => setSelectedMovie(movie)}
-                canSelect={
-                  selectedMovies.length < 2 ||
-                  selectedMovies.some((m) => m.internalId === movie.internalId)
-                }
-              />
-            ))}
+          <div>
+            {/* Version desktop : grille */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+              {sortedMovies.map((movie, index) => (
+                <MovieCard
+                  key={
+                    movie.internalId ||
+                    (movie as any).movie?.internalId ||
+                    index
+                  }
+                  movie={movie}
+                  isSelected={selectedMovies.some(
+                    (m) => m.internalId === movie.internalId
+                  )}
+                  onSelect={() => handleMovieSelect(movie)}
+                  onViewDetails={() => setSelectedMovie(movie)}
+                  canSelect={
+                    selectedMovies.length < 2 ||
+                    selectedMovies.some(
+                      (m) => m.internalId === movie.internalId
+                    )
+                  }
+                />
+              ))}
+            </div>
+
+            {/* Version mobile : slider horizontal */}
+            <div className="md:hidden">
+              <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
+                {sortedMovies.map((movie, index) => (
+                  <div
+                    key={
+                      movie.internalId ||
+                      (movie as any).movie?.internalId ||
+                      index
+                    }
+                    className="flex-shrink-0 w-48"
+                  >
+                    <MovieCard
+                      movie={movie}
+                      isSelected={selectedMovies.some(
+                        (m) => m.internalId === movie.internalId
+                      )}
+                      onSelect={() => handleMovieSelect(movie)}
+                      onViewDetails={() => setSelectedMovie(movie)}
+                      canSelect={
+                        selectedMovies.length < 2 ||
+                        selectedMovies.some(
+                          (m) => m.internalId === movie.internalId
+                        )
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 

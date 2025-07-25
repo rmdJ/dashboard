@@ -22,10 +22,6 @@ export default function Cinema() {
     }
   }, [selectedCity]);
 
-  const selectedCityName = frenchCities.find(
-    (city) => city.id === selectedCity
-  )?.name;
-
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6">
       <div className="flex items-center justify-between space-y-2">
@@ -41,7 +37,6 @@ export default function Cinema() {
           <Select value={selectedCity} onValueChange={setSelectedCity}>
             <SelectTrigger>
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
                 <SelectValue placeholder="Sélectionnez une ville" />
               </div>
             </SelectTrigger>

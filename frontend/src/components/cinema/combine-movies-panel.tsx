@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMovieShowtimes } from "../../hooks/useMovieShowtimes";
 import type { Movie, Showtime, CombinedShowtime } from "../../types/cinema";
 
@@ -118,8 +118,7 @@ export function CombineMoviesPanel({
       // Fonction pour traiter les séances d'une version
       const processVersion = (
         firstShowtimes: Showtime[],
-        secondShowtimes: Showtime[],
-        versionType: string
+        secondShowtimes: Showtime[]
       ) => {
         firstShowtimes.forEach((firstShowtime) => {
           const firstStartTime = new Date(firstShowtime.startsAt);
@@ -177,16 +176,14 @@ export function CombineMoviesPanel({
       if (selectedVersion === "all" || selectedVersion === "dubbed") {
         processVersion(
           firstCinema.showtimes.dubbed || [],
-          secondCinema.showtimes.dubbed || [],
-          "VF"
+          secondCinema.showtimes.dubbed || []
         );
       }
 
       if (selectedVersion === "all" || selectedVersion === "original") {
         processVersion(
           firstCinema.showtimes.original || [],
-          secondCinema.showtimes.original || [],
-          "VO"
+          secondCinema.showtimes.original || []
         );
       }
     });

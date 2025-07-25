@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Star, Clock, Type, TrendingUp } from "lucide-react";
+import { Star, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -48,7 +48,7 @@ export const sortOptions: SortOption[] = [
     icon: <Star className="h-4 w-4" />,
   },
   {
-    value: "userRating", 
+    value: "userRating",
     label: "Note public",
     icon: <TrendingUp className="h-4 w-4" />,
   },
