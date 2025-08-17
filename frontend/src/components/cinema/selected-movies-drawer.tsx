@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { Film, X, ArrowRight, Clock, MapPin, Calendar, AlertCircle } from "lucide-react";
+import {
+  Film,
+  X,
+  ArrowRight,
+  Clock,
+  MapPin,
+  Calendar,
+  AlertCircle,
+} from "lucide-react";
 import {
   Drawer,
   DrawerContent,
@@ -22,19 +30,6 @@ interface SelectedMoviesDrawerProps {
   onRemoveMovie: (movie: Movie, cinemaId?: string) => void;
   zipCode: string;
   date: Date;
-}
-
-interface CinemaShowtimes {
-  id: string;
-  name: string;
-  address: string;
-  distance: string;
-  showtimes: {
-    dubbed: Showtime[];
-    original: Showtime[];
-    local: Showtime[];
-    multiple: Showtime[];
-  };
 }
 
 interface MovieWithTiming {
@@ -60,13 +55,15 @@ export const SelectedMoviesDrawer = ({
   date,
 }: SelectedMoviesDrawerProps) => {
   const [combinations, setCombinations] = useState<CombinedShowtime[]>([]);
-  const [selectedVersion, setSelectedVersion] = useState<"all" | "vf" | "original">("all");
+  const [selectedVersion, setSelectedVersion] = useState<
+    "all" | "vf" | "original"
+  >("all");
 
   // Fonctions utilitaires
   const getMovieId = (movie: Movie) => {
     const movieData = (movie as any).movie || movie;
     const internalId = movie.internalId || movieData.internalId;
-    return internalId?.toString() || '0';
+    return internalId?.toString() || "0";
   };
 
   const getMovieRuntime = (movie: Movie) => {
@@ -118,54 +115,69 @@ export const SelectedMoviesDrawer = ({
     }
 
     // Vérifier si les films ont des séances disponibles
-    const firstMovieHasShowtimes = firstMovie.showtimes && (
-      (firstMovie.showtimes.dubbed && firstMovie.showtimes.dubbed.length > 0) ||
-      (firstMovie.showtimes.original && firstMovie.showtimes.original.length > 0) ||
-      (firstMovie.showtimes.local && firstMovie.showtimes.local.length > 0) ||
-      (firstMovie.showtimes.multiple && firstMovie.showtimes.multiple.length > 0)
-    );
+    const firstMovieHasShowtimes =
+      firstMovie.showtimes &&
+      ((firstMovie.showtimes.dubbed &&
+        firstMovie.showtimes.dubbed.length > 0) ||
+        (firstMovie.showtimes.original &&
+          firstMovie.showtimes.original.length > 0) ||
+        (firstMovie.showtimes.local && firstMovie.showtimes.local.length > 0) ||
+        (firstMovie.showtimes.multiple &&
+          firstMovie.showtimes.multiple.length > 0));
 
-    const secondMovieHasShowtimes = secondMovie.showtimes && (
-      (secondMovie.showtimes.dubbed && secondMovie.showtimes.dubbed.length > 0) ||
-      (secondMovie.showtimes.original && secondMovie.showtimes.original.length > 0) ||
-      (secondMovie.showtimes.local && secondMovie.showtimes.local.length > 0) ||
-      (secondMovie.showtimes.multiple && secondMovie.showtimes.multiple.length > 0)
-    );
+    const secondMovieHasShowtimes =
+      secondMovie.showtimes &&
+      ((secondMovie.showtimes.dubbed &&
+        secondMovie.showtimes.dubbed.length > 0) ||
+        (secondMovie.showtimes.original &&
+          secondMovie.showtimes.original.length > 0) ||
+        (secondMovie.showtimes.local &&
+          secondMovie.showtimes.local.length > 0) ||
+        (secondMovie.showtimes.multiple &&
+          secondMovie.showtimes.multiple.length > 0));
 
     if (!firstMovieHasShowtimes || !secondMovieHasShowtimes) {
-      console.log('Movies do not have showtimes available');
+      console.log("Movies do not have showtimes available");
       setCombinations([]);
       return;
     }
 
-
     // Aplatir toutes les séances de tous les films de tous les cinémas (comme l'original)
     const allMoviesWithTimes: MovieWithTiming[] = [];
 
-    console.log('=== DEBUG COMBINATION LOGIC ===');
-    console.log('First movie:', firstMovie);
-    console.log('Second movie:', secondMovie);
-    console.log('First movie runtime:', getMovieRuntime(firstMovie));
-    console.log('Second movie runtime:', getMovieRuntime(secondMovie));
-    console.log('=== API DATA ===');
-    console.log('firstMovieShowtimes.data:', firstMovieShowtimes.data);
-    console.log('secondMovieShowtimes.data:', secondMovieShowtimes.data);
+    console.log("=== DEBUG COMBINATION LOGIC ===");
+    console.log("First movie:", firstMovie);
+    console.log("Second movie:", secondMovie);
+    console.log("First movie runtime:", getMovieRuntime(firstMovie));
+    console.log("Second movie runtime:", getMovieRuntime(secondMovie));
+    console.log("=== API DATA ===");
+    console.log("firstMovieShowtimes.data:", firstMovieShowtimes.data);
+    console.log("secondMovieShowtimes.data:", secondMovieShowtimes.data);
 
     // Traiter le premier film (utiliser directement les séances du film)
     const firstMovieRuntime = getRuntimeInMinutes(getMovieRuntime(firstMovie));
     console.log(`First movie runtime in minutes: ${firstMovieRuntime}`);
-    
+
     if (firstMovieRuntime > 0) {
-      const processFirstMovieShowtimes = (showtimes: Showtime[], versionType: string) => {
-        console.log(`Processing ${showtimes.length} ${versionType} showtimes for first movie`);
+      const processFirstMovieShowtimes = (
+        showtimes: Showtime[],
+        versionType: string
+      ) => {
+        console.log(
+          `Processing ${showtimes.length} ${versionType} showtimes for first movie`
+        );
         showtimes.forEach((showtime) => {
           if (showtime && showtime.startsAt) {
             const startTime = new Date(showtime.startsAt);
             // Ajouter 15 minutes de battement comme dans l'original (TRAILER_DELAY_MINUTES)
-            const endTime = new Date(startTime.getTime() + (firstMovieRuntime + 15) * 60000);
-            
-            console.log(`First movie ${versionType} showtime: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`);
-            
+            const endTime = new Date(
+              startTime.getTime() + (firstMovieRuntime + 15) * 60000
+            );
+
+            console.log(
+              `First movie ${versionType} showtime: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`
+            );
+
             allMoviesWithTimes.push({
               movie: firstMovie,
               cinema: {
@@ -193,25 +205,39 @@ export const SelectedMoviesDrawer = ({
       }
       // Traiter les séances "multiple" uniquement pour "all"
       if (selectedVersion === "all") {
-        processFirstMovieShowtimes(firstMovie.showtimes.multiple || [], "Multiple");
+        processFirstMovieShowtimes(
+          firstMovie.showtimes.multiple || [],
+          "Multiple"
+        );
       }
     }
 
     // Traiter le deuxième film (utiliser directement les séances du film)
-    const secondMovieRuntime = getRuntimeInMinutes(getMovieRuntime(secondMovie));
+    const secondMovieRuntime = getRuntimeInMinutes(
+      getMovieRuntime(secondMovie)
+    );
     console.log(`Second movie runtime in minutes: ${secondMovieRuntime}`);
-    
+
     if (secondMovieRuntime > 0) {
-      const processSecondMovieShowtimes = (showtimes: Showtime[], versionType: string) => {
-        console.log(`Processing ${showtimes.length} ${versionType} showtimes for second movie`);
+      const processSecondMovieShowtimes = (
+        showtimes: Showtime[],
+        versionType: string
+      ) => {
+        console.log(
+          `Processing ${showtimes.length} ${versionType} showtimes for second movie`
+        );
         showtimes.forEach((showtime) => {
           if (showtime && showtime.startsAt) {
             const startTime = new Date(showtime.startsAt);
             // Ajouter 15 minutes de battement comme dans l'original (TRAILER_DELAY_MINUTES)
-            const endTime = new Date(startTime.getTime() + (secondMovieRuntime + 15) * 60000);
-            
-            console.log(`Second movie ${versionType} showtime: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`);
-            
+            const endTime = new Date(
+              startTime.getTime() + (secondMovieRuntime + 15) * 60000
+            );
+
+            console.log(
+              `Second movie ${versionType} showtime: ${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`
+            );
+
             allMoviesWithTimes.push({
               movie: secondMovie,
               cinema: {
@@ -239,16 +265,25 @@ export const SelectedMoviesDrawer = ({
       }
       // Traiter les séances "multiple" uniquement pour "all"
       if (selectedVersion === "all") {
-        processSecondMovieShowtimes(secondMovie.showtimes.multiple || [], "Multiple");
+        processSecondMovieShowtimes(
+          secondMovie.showtimes.multiple || [],
+          "Multiple"
+        );
       }
     }
 
     // Trier tous les films par heure de début (comme l'original)
-    allMoviesWithTimes.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+    allMoviesWithTimes.sort(
+      (a, b) => a.startTime.getTime() - b.startTime.getTime()
+    );
 
     console.log(`Total movies with times found: ${allMoviesWithTimes.length}`);
     allMoviesWithTimes.forEach((movie, index) => {
-      console.log(`${index}: ${movie.cinema.nom} - ${getMovieId(movie.movie)} - ${movie.startTime.toLocaleTimeString()} to ${movie.endTime.toLocaleTimeString()}`);
+      console.log(
+        `${index}: ${movie.cinema.nom} - ${getMovieId(
+          movie.movie
+        )} - ${movie.startTime.toLocaleTimeString()} to ${movie.endTime.toLocaleTimeString()}`
+      );
     });
 
     // Générer les combinaisons (logique identique à l'original)
@@ -262,23 +297,53 @@ export const SelectedMoviesDrawer = ({
         const secondMovieWithTime = allMoviesWithTimes[j];
 
         // Skip si même film (comme l'original)
-        if (getMovieId(firstMovieWithTime.movie) === getMovieId(secondMovieWithTime.movie)) {
-          console.log(`Skipping same movie: ${getMovieId(firstMovieWithTime.movie)} === ${getMovieId(secondMovieWithTime.movie)}`);
+        if (
+          getMovieId(firstMovieWithTime.movie) ===
+          getMovieId(secondMovieWithTime.movie)
+        ) {
+          console.log(
+            `Skipping same movie: ${getMovieId(
+              firstMovieWithTime.movie
+            )} === ${getMovieId(secondMovieWithTime.movie)}`
+          );
           continue;
         }
 
         // Calculer l'écart entre les films (comme l'original)
-        const gapMinutes = (secondMovieWithTime.startTime.getTime() - firstMovieWithTime.endTime.getTime()) / (1000 * 60);
+        const gapMinutes =
+          (secondMovieWithTime.startTime.getTime() -
+            firstMovieWithTime.endTime.getTime()) /
+          (1000 * 60);
 
-        console.log(`Checking combination: Movie ${getMovieId(firstMovieWithTime.movie)} (${firstMovieWithTime.startTime.toLocaleTimeString()}-${firstMovieWithTime.endTime.toLocaleTimeString()}) + Movie ${getMovieId(secondMovieWithTime.movie)} (${secondMovieWithTime.startTime.toLocaleTimeString()}) = Gap: ${gapMinutes.toFixed(1)} minutes`);
+        console.log(
+          `Checking combination: Movie ${getMovieId(
+            firstMovieWithTime.movie
+          )} (${firstMovieWithTime.startTime.toLocaleTimeString()}-${firstMovieWithTime.endTime.toLocaleTimeString()}) + Movie ${getMovieId(
+            secondMovieWithTime.movie
+          )} (${secondMovieWithTime.startTime.toLocaleTimeString()}) = Gap: ${gapMinutes.toFixed(
+            1
+          )} minutes`
+        );
 
         // Vérifier s'il y a au moins -20 minutes entre les films (comme l'original)
         // L'original utilise gap >= -20 car il ajoute déjà 15min au temps de fin
         if (gapMinutes >= -20) {
-          console.log(`✅ Valid combination found! Gap: ${gapMinutes.toFixed(1)} minutes`);
-          
+          console.log(
+            `✅ Valid combination found! Gap: ${gapMinutes.toFixed(1)} minutes`
+          );
+
           // Générer une clé unique (comme l'original)
-          const combinationKey = `${getMovieId(firstMovieWithTime.movie)}_${firstMovieWithTime.startTime.getHours()}:${firstMovieWithTime.startTime.getMinutes().toString().padStart(2, '0')}_${getMovieId(secondMovieWithTime.movie)}_${secondMovieWithTime.startTime.getHours()}:${secondMovieWithTime.startTime.getMinutes().toString().padStart(2, '0')}`;
+          const combinationKey = `${getMovieId(
+            firstMovieWithTime.movie
+          )}_${firstMovieWithTime.startTime.getHours()}:${firstMovieWithTime.startTime
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}_${getMovieId(
+            secondMovieWithTime.movie
+          )}_${secondMovieWithTime.startTime.getHours()}:${secondMovieWithTime.startTime
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}`;
 
           if (!uniqueCombinations.has(combinationKey)) {
             uniqueCombinations.add(combinationKey);
@@ -300,19 +365,16 @@ export const SelectedMoviesDrawer = ({
             console.log(`❌ Duplicate combination skipped: ${combinationKey}`);
           }
         } else {
-          console.log(`❌ Gap too small: ${gapMinutes.toFixed(1)} < -20 minutes`);
+          console.log(
+            `❌ Gap too small: ${gapMinutes.toFixed(1)} < -20 minutes`
+          );
         }
       }
     }
 
     console.log(`Final combinations found: ${newCombinations.length}`);
     setCombinations(newCombinations);
-  }, [
-    selectedVersion,
-    firstMovie,
-    secondMovie,
-    movies.length,
-  ]);
+  }, [selectedVersion, firstMovie, secondMovie, movies.length]);
 
   // Fonctions de formatage
   const formatTime = (dateString: string) => {
@@ -340,7 +402,8 @@ export const SelectedMoviesDrawer = ({
     }
   };
 
-  const isLoading = firstMovieShowtimes.isLoading || secondMovieShowtimes.isLoading;
+  const isLoading =
+    firstMovieShowtimes.isLoading || secondMovieShowtimes.isLoading;
   const hasError = firstMovieShowtimes.error || secondMovieShowtimes.error;
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
@@ -367,11 +430,14 @@ export const SelectedMoviesDrawer = ({
                 const cinemaId = (movie as any).cinemaId;
 
                 return (
-                  <div key={`${cinemaId}-${getMovieId(movie)}-${title}`} className="flex items-center gap-3">
+                  <div
+                    key={`${cinemaId}-${getMovieId(movie)}-${title}`}
+                    className="flex items-center gap-3"
+                  >
                     {index > 0 && (
                       <ArrowRight className="h-4 w-4 text-muted-foreground" />
                     )}
-                    
+
                     <div className="flex items-center gap-3">
                       {/* Poster */}
                       <div className="flex-shrink-0">
@@ -415,10 +481,11 @@ export const SelectedMoviesDrawer = ({
             {movies.length === 2 && (
               <>
                 <Separator />
-                
+
                 <div>
                   <h3 className="text-lg font-semibold mb-4">
-                    Combinaisons possibles pour le {date.toLocaleDateString("fr-FR", {
+                    Combinaisons possibles pour le{" "}
+                    {date.toLocaleDateString("fr-FR", {
                       weekday: "long",
                       day: "numeric",
                       month: "long",
@@ -474,7 +541,10 @@ export const SelectedMoviesDrawer = ({
                       </div>
 
                       {combinations.map((combination, index) => (
-                        <Card key={index} className="hover:shadow-md transition-shadow">
+                        <Card
+                          key={index}
+                          className="hover:shadow-md transition-shadow"
+                        >
                           <CardHeader className="pb-3">
                             <div className="flex items-start justify-between">
                               <CardTitle className="text-base">
@@ -494,7 +564,8 @@ export const SelectedMoviesDrawer = ({
                               <div className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg">
                                 <div className="flex-1">
                                   <div className="font-medium text-sm">
-                                    {((firstMovie as any).movie?.title || firstMovie.title)}
+                                    {(firstMovie as any).movie?.title ||
+                                      firstMovie.title}
                                   </div>
                                   <div className="text-xs text-muted-foreground mt-1">
                                     {getMovieRuntime(firstMovie)}
@@ -502,19 +573,37 @@ export const SelectedMoviesDrawer = ({
                                 </div>
                                 <div className="text-right">
                                   <div className="font-semibold">
-                                    {formatTime(combination.firstMovie.showtime.startsAt)}
+                                    {formatTime(
+                                      combination.firstMovie.showtime.startsAt
+                                    )}
                                   </div>
                                   <div className="text-xs text-muted-foreground">
-                                    Fin: {(() => {
-                                      const startTime = new Date(combination.firstMovie.showtime.startsAt);
-                                      const runtime = getRuntimeInMinutes(getMovieRuntime(firstMovie));
-                                      const endTime = new Date(startTime.getTime() + (runtime + 20) * 60000);
-                                      return endTime.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+                                    Fin:{" "}
+                                    {(() => {
+                                      const startTime = new Date(
+                                        combination.firstMovie.showtime.startsAt
+                                      );
+                                      const runtime = getRuntimeInMinutes(
+                                        getMovieRuntime(firstMovie)
+                                      );
+                                      const endTime = new Date(
+                                        startTime.getTime() +
+                                          (runtime + 20) * 60000
+                                      );
+                                      return endTime.toLocaleTimeString(
+                                        "fr-FR",
+                                        { hour: "2-digit", minute: "2-digit" }
+                                      );
                                     })()}
                                   </div>
-                                  <Badge variant="outline" className="text-xs mt-1">
+                                  <Badge
+                                    variant="outline"
+                                    className="text-xs mt-1"
+                                  >
                                     {(() => {
-                                      const version = combination.firstMovie.showtime.diffusionVersion;
+                                      const version =
+                                        combination.firstMovie.showtime
+                                          .diffusionVersion;
                                       if (version === "ORIGINAL") return "VO";
                                       if (version === "DUBBED") return "VF";
                                       if (version === "LOCAL") return "VF";
@@ -536,7 +625,8 @@ export const SelectedMoviesDrawer = ({
                               <div className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg">
                                 <div className="flex-1">
                                   <div className="font-medium text-sm">
-                                    {((secondMovie as any).movie?.title || secondMovie.title)}
+                                    {(secondMovie as any).movie?.title ||
+                                      secondMovie.title}
                                   </div>
                                   <div className="text-xs text-muted-foreground mt-1">
                                     {getMovieRuntime(secondMovie)}
@@ -544,19 +634,37 @@ export const SelectedMoviesDrawer = ({
                                 </div>
                                 <div className="text-right">
                                   <div className="font-semibold">
-                                    {formatTime(combination.secondMovie.showtime.startsAt)}
+                                    {formatTime(
+                                      combination.secondMovie.showtime.startsAt
+                                    )}
                                   </div>
                                   <div className="text-xs text-muted-foreground">
-                                    Fin: {(() => {
-                                      const startTime = new Date(combination.secondMovie.showtime.startsAt);
-                                      const runtime = getRuntimeInMinutes(getMovieRuntime(secondMovie));
-                                      const endTime = new Date(startTime.getTime() + (runtime + 20) * 60000);
-                                      return endTime.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+                                    Fin:{" "}
+                                    {(() => {
+                                      const startTime = new Date(
+                                        combination.secondMovie.showtime.startsAt
+                                      );
+                                      const runtime = getRuntimeInMinutes(
+                                        getMovieRuntime(secondMovie)
+                                      );
+                                      const endTime = new Date(
+                                        startTime.getTime() +
+                                          (runtime + 20) * 60000
+                                      );
+                                      return endTime.toLocaleTimeString(
+                                        "fr-FR",
+                                        { hour: "2-digit", minute: "2-digit" }
+                                      );
                                     })()}
                                   </div>
-                                  <Badge variant="outline" className="text-xs mt-1">
+                                  <Badge
+                                    variant="outline"
+                                    className="text-xs mt-1"
+                                  >
                                     {(() => {
-                                      const version = combination.secondMovie.showtime.diffusionVersion;
+                                      const version =
+                                        combination.secondMovie.showtime
+                                          .diffusionVersion;
                                       if (version === "ORIGINAL") return "VO";
                                       if (version === "DUBBED") return "VF";
                                       if (version === "LOCAL") return "VF";
@@ -570,7 +678,9 @@ export const SelectedMoviesDrawer = ({
                               {combination.gap < 0 && (
                                 <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400">
                                   <AlertCircle className="h-3 w-3" />
-                                  <span>Attention : les films se chevauchent</span>
+                                  <span>
+                                    Attention : les films se chevauchent
+                                  </span>
                                 </div>
                               )}
 
