@@ -66,14 +66,25 @@ export function CombineMoviesPanel({
   );
 
   // Récupérer les séances des deux films
+  const getMovieId = (movie: Movie) => {
+    const movieData = (movie as any).movie || movie;
+    const internalId = movie.internalId || movieData.internalId;
+    return internalId?.toString() || '0';
+  };
+
+  const getMovieRuntime = (movie: Movie) => {
+    const movieData = (movie as any).movie || movie;
+    return movieData.runtime || movie.runtime || "";
+  };
+
   const firstMovieShowtimes = useMovieShowtimes(
-    firstMovie.internalId.toString(),
+    getMovieId(firstMovie),
     zipCode,
     dayShift.toString()
   );
 
   const secondMovieShowtimes = useMovieShowtimes(
-    secondMovie.internalId.toString(),
+    getMovieId(secondMovie),
     zipCode,
     dayShift.toString()
   );
@@ -103,7 +114,7 @@ export function CombineMoviesPanel({
     };
 
     const firstMovieDuration = getMovieDurationInMinutes(
-      firstMovie.runtime || ""
+      getMovieRuntime(firstMovie)
     );
 
     // Parcourir tous les cinémas du premier film
@@ -260,9 +271,13 @@ export function CombineMoviesPanel({
         {/* Films sélectionnés */}
         <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg mb-6">
           <div className="flex items-center gap-2">
-            <Badge variant="secondary">{firstMovie.title}</Badge>
+            <Badge variant="secondary">
+              {((firstMovie as any).movie?.title || firstMovie.title)}
+            </Badge>
             <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            <Badge variant="secondary">{secondMovie.title}</Badge>
+            <Badge variant="secondary">
+              {((secondMovie as any).movie?.title || secondMovie.title)}
+            </Badge>
           </div>
         </div>
 
@@ -336,10 +351,10 @@ export function CombineMoviesPanel({
                       <div className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg">
                         <div className="flex-1">
                           <div className="font-medium text-sm">
-                            {firstMovie.title}
+                            {((firstMovie as any).movie?.title || firstMovie.title)}
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            {firstMovie.runtime}
+                            {getMovieRuntime(firstMovie)}
                           </div>
                         </div>
                         <div className="text-right">
@@ -367,10 +382,10 @@ export function CombineMoviesPanel({
                       <div className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg">
                         <div className="flex-1">
                           <div className="font-medium text-sm">
-                            {secondMovie.title}
+                            {((secondMovie as any).movie?.title || secondMovie.title)}
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            {secondMovie.runtime}
+                            {getMovieRuntime(secondMovie)}
                           </div>
                         </div>
                         <div className="text-right">

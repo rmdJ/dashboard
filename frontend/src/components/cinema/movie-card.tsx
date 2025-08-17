@@ -99,7 +99,7 @@ export function MovieCard({
     <Card className="group cursor-pointer transition-all duration-200 hover:shadow-lg !p-0">
       <CardContent className="p-0">
         {/* Affiche du film */}
-        <div 
+        <div
           className="relative aspect-[2/3] overflow-hidden rounded-t-lg cursor-pointer"
           onClick={() => setShowDetailsDrawer(true)}
         >
@@ -153,13 +153,13 @@ export function MovieCard({
           {/* Badge âge en bas à gauche */}
           {(() => {
             const movieData = (movie as any).movie || movie;
-            const ageTag = movieData.relatedTags?.find((tag: any) => 
+            const ageTag = movieData.relatedTags?.find((tag: any) =>
               tag.name.startsWith("À partir de")
             );
-            
+
             if (ageTag) {
               return (
-                <div className="absolute bottom-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-md font-medium">
+                <div className="absolute bottom-10 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-md font-medium">
                   {ageTag.name}
                 </div>
               );
@@ -178,11 +178,6 @@ export function MovieCard({
 
         {/* Informations du film */}
         <div className="p-4 space-y-3">
-          {/* Titre */}
-          <h3 className="font-semibold text-lg leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-            {(movie as any).movie?.title || movie.title}
-          </h3>
-
           {/* Notes */}
           <div className="flex justify-between text-sm">
             {pressRating > 0 && (
@@ -295,7 +290,7 @@ export function MovieCard({
           )}
         </div>
       </CardContent>
-      
+
       {/* Drawer des détails du film */}
       <CinemaMovieDetailsDrawer
         movie={movie}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Users, Film as FilmIcon } from "lucide-react";
+import { Film as FilmIcon, ChevronUp } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { MultiSelect } from "@/components/ui/multi-select";
 import {
   ToggleGroupSort,
@@ -23,7 +22,7 @@ import {
 } from "@/components/ui/toggle-group-sort";
 import { ToggleYesNo } from "@/components/ui/toggle-yes-no";
 import { MovieCard } from "./movie-card";
-import { CombineMoviesPanel } from "./combine-movies-panel";
+import { SelectedMoviesDrawer } from "./selected-movies-drawer";
 import { useMultipleCinemasShowtimes } from "../../hooks/useMultipleCinemasShowtimes";
 import type { Movie, SortOption } from "../../types/cinema";
 import cinemasData from "@/data/cinemas.json";
@@ -40,7 +39,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
   const [sortOption, setSortOption] = useState<SortOption>("pressRating");
   const [shouldFilterChildrenMovies, setShouldFilterChildrenMovies] =
     useState(false);
-  const [showCombinePanel, setShowCombinePanel] = useState(false);
+  const [showSelectedMoviesDrawer, setShowSelectedMoviesDrawer] = useState(false);
 
   // Filtrer les cinémas par ville
   const availableCinemas = cinemasData.filter((cinema) => {
@@ -57,6 +56,21 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
       setSelectedCinemas(availableCinemas.slice(0, 3).map((c) => c.id)); // Prendre les 3 premiers
     }
   }, [availableCinemas]);
+
+  // Gérer la touche Escape pour désélectionner les films
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && selectedMovies.length > 0) {
+        setSelectedMovies([]);
+        setShowSelectedMoviesDrawer(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedMovies.length]);
 
   // Calculer le dayShift (nombre de jours depuis aujourd'hui)
   const today = new Date();
@@ -118,14 +132,25 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
     }
   });
 
+  // Générer une clé unique pour chaque film incluant le cinéma
+  const getMovieKey = (movie: Movie, cinemaId?: string) => {
+    const movieData = (movie as any).movie || movie;
+    const title = movieData.title || movie.title;
+    return `${cinemaId || 'unknown'}-${movie.internalId || movieData.internalId}-${title}`;
+  };
+
   // Gérer la sélection de films pour la combinaison
-  const handleMovieSelect = (movie: Movie) => {
-    if (selectedMovies.find((m) => m.internalId === movie.internalId)) {
+  const handleMovieSelect = (movie: Movie, cinemaId?: string) => {
+    const movieKey = getMovieKey(movie, cinemaId);
+    
+    if (selectedMovies.find((m) => getMovieKey(m, (m as any).cinemaId) === movieKey)) {
       setSelectedMovies(
-        selectedMovies.filter((m) => m.internalId !== movie.internalId)
+        selectedMovies.filter((m) => getMovieKey(m, (m as any).cinemaId) !== movieKey)
       );
     } else if (selectedMovies.length < 2) {
-      setSelectedMovies([...selectedMovies, movie]);
+      // Ajouter l'ID du cinéma au film sélectionné pour référence future
+      const movieWithCinema = { ...movie, cinemaId } as Movie & { cinemaId?: string };
+      setSelectedMovies([...selectedMovies, movieWithCinema]);
     }
   };
 
@@ -139,7 +164,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
   const hasError = !!error;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       {/* Filtres */}
       <Card>
         <CardContent className="flex flex-col md:flex-row gap-6">
@@ -205,40 +230,6 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
         </CardContent>
       </Card>
 
-      {/* Films sélectionnés pour combinaison */}
-      {selectedMovies.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Films sélectionnés ({selectedMovies.length}/2)
-              </span>
-              {selectedMovies.length === 2 && (
-                <Button onClick={() => setShowCombinePanel(true)}>
-                  Combiner les séances
-                </Button>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4">
-              {selectedMovies.map((movie) => (
-                <div key={movie.internalId} className="flex items-center gap-2">
-                  <Badge variant="secondary">{movie.title}</Badge>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleMovieSelect(movie)}
-                  >
-                    ×
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Liste des films */}
       {isLoading && (
@@ -374,13 +365,13 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                         }`}
                         movie={movie}
                         isSelected={selectedMovies.some(
-                          (m) => m.internalId === movie.internalId
+                          (m) => getMovieKey(m, (m as any).cinemaId) === getMovieKey(movie, cinemaResult.cinemaId)
                         )}
-                        onSelect={() => handleMovieSelect(movie)}
+                        onSelect={() => handleMovieSelect(movie, cinemaResult.cinemaId)}
                         canSelect={
                           selectedMovies.length < 2 ||
                           selectedMovies.some(
-                            (m) => m.internalId === movie.internalId
+                            (m) => getMovieKey(m, (m as any).cinemaId) === getMovieKey(movie, cinemaResult.cinemaId)
                           )
                         }
                       />
@@ -402,9 +393,9 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                           <MovieCard
                             movie={movie}
                             isSelected={selectedMovies.some(
-                              (m) => m.internalId === movie.internalId
+                              (m) => getMovieKey(m, (m as any).cinemaId) === getMovieKey(movie, cinemaResult.cinemaId)
                             )}
-                            onSelect={() => handleMovieSelect(movie)}
+                            onSelect={() => handleMovieSelect(movie, cinemaResult.cinemaId)}
                             canSelect={
                               selectedMovies.length < 2 ||
                               selectedMovies.some(
@@ -486,15 +477,30 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
           </div>
         )}
 
-      {/* Panel de combinaison */}
-      {showCombinePanel && selectedMovies.length === 2 && (
-        <CombineMoviesPanel
-          movies={selectedMovies}
-          zipCode={selectedCity}
-          date={selectedDate}
-          onClose={() => setShowCombinePanel(false)}
-        />
+
+      {/* Pill flottant pour films sélectionnés */}
+      {selectedMovies.length === 2 && (
+        <div className="fixed bottom-4 left-0 right-0 flex justify-center z-50 px-4">
+          <Button
+            onClick={() => setShowSelectedMoviesDrawer(true)}
+            className="shadow-lg hover:shadow-xl transition-shadow duration-200"
+            size="lg"
+          >
+            <ChevronUp className="h-4 w-4 mr-2" />
+            Voir les combinaisons
+          </Button>
+        </div>
       )}
+
+      {/* Drawer des films sélectionnés */}
+      <SelectedMoviesDrawer
+        movies={selectedMovies}
+        isOpen={showSelectedMoviesDrawer}
+        onClose={() => setShowSelectedMoviesDrawer(false)}
+        onRemoveMovie={(movie, cinemaId) => handleMovieSelect(movie, cinemaId)}
+        zipCode={selectedCity}
+        date={selectedDate}
+      />
     </div>
   );
 }
