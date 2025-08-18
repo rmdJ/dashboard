@@ -15,7 +15,11 @@ export const portfolio: {
   { name: "KUJI", quantity: 28, ath: 5.08 },
 ];
 
-export const initialInvestment = 9169;
+// Montant initial en EUR
+export const initialInvestmentEUR = 8880;
+
+// Valeur par défaut en USD (sera remplacée par la conversion dynamique)
+export const initialInvestmentUSD = 9169;
 
 export const btcObjective = 150000;
 

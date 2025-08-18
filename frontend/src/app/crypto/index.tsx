@@ -13,10 +13,12 @@ import { useEffect } from "react";
 import { useBinancePrices } from "@/provider/binance";
 import {
   portfolio,
-  initialInvestment,
+  initialInvestmentEUR,
+  initialInvestmentUSD,
   signalObjectives,
   btcObjective,
 } from "@/assets/constants/crypto";
+import { useEurUsdConversion } from "@/hooks/useEurUsdConversion";
 import { Progress } from "@/components/ui/progress";
 import {
   useSignalData,
@@ -36,7 +38,8 @@ const getCardData = (
   pnlPercentage: number,
   signalData: SignalData[],
   portfolioValue: number,
-  yesterdayValues: any
+  yesterdayValues: any,
+  initialInvestment: number
 ) => {
   // Fonction pour récupérer la valeur Signal la plus récente
   const getLatestSignalValue = (source: string) => {
@@ -105,6 +108,9 @@ const getCardData = (
               Math.max(0, (currentValues["BTC Value"] / btcObjective) * 100)
             )
           : 0,
+      missingPercentage: currentValues["BTC Value"] > 0 && currentValues["BTC Value"] < btcObjective
+        ? ((btcObjective - currentValues["BTC Value"]) / currentValues["BTC Value"]) * 100
+        : 0,
       icon: DollarSign,
     },
     {
@@ -137,7 +143,34 @@ const getCardData = (
         200,
         Math.max(0, (portfolioValue / initialInvestment) * 100)
       ),
+      missingPercentage: portfolioValue > 0 && portfolioValue < initialInvestment
+        ? ((initialInvestment - portfolioValue) / portfolioValue) * 100
+        : 0,
       icon: DollarSign,
+    },
+
+    {
+      title: "NewHedge MVRV Z-Score",
+      value: currentValues["NewHedge MVRV Z-Score"]
+        ? currentValues["NewHedge MVRV Z-Score"].toFixed(2)
+        : "Loading...",
+      yesterday: yesterdayValuesData["NewHedge MVRV Z-Score"]
+        ? yesterdayValuesData["NewHedge MVRV Z-Score"].toFixed(2)
+        : "N/A",
+      current: currentValues["NewHedge MVRV Z-Score"],
+      objective:
+        signalObjectives.find((o) => o.name === "NewHedge MVRV Z-Score")
+          ?.value || 5.8,
+      progress: currentValues["NewHedge MVRV Z-Score"]
+        ? Math.min(
+            100,
+            Math.max(0, (currentValues["NewHedge MVRV Z-Score"] / 5.8) * 100)
+          )
+        : null,
+      objectiveReached: currentValues["NewHedge MVRV Z-Score"]
+        ? currentValues["NewHedge MVRV Z-Score"] >= 5.8
+        : false,
+      icon: TrendingUp,
     },
     {
       title: "AppFigures Finance Rank",
@@ -160,27 +193,10 @@ const getCardData = (
             )
           )
         : null,
+      objectiveReached: currentValues["AppFigures Finance Rank"]
+        ? currentValues["AppFigures Finance Rank"] <= 4
+        : false,
       icon: TrendingDown,
-    },
-    {
-      title: "NewHedge MVRV Z-Score",
-      value: currentValues["NewHedge MVRV Z-Score"]
-        ? currentValues["NewHedge MVRV Z-Score"].toFixed(2)
-        : "Loading...",
-      yesterday: yesterdayValuesData["NewHedge MVRV Z-Score"]
-        ? yesterdayValuesData["NewHedge MVRV Z-Score"].toFixed(2)
-        : "N/A",
-      current: currentValues["NewHedge MVRV Z-Score"],
-      objective:
-        signalObjectives.find((o) => o.name === "NewHedge MVRV Z-Score")
-          ?.value || 5.8,
-      progress: currentValues["NewHedge MVRV Z-Score"]
-        ? Math.min(
-            100,
-            Math.max(0, (currentValues["NewHedge MVRV Z-Score"] / 5.8) * 100)
-          )
-        : null,
-      icon: TrendingUp,
     },
     {
       title: "TradingView BTC.D",
@@ -203,6 +219,9 @@ const getCardData = (
             )
           )
         : null,
+      objectiveReached: currentValues["TradingView BTC.D"]
+        ? currentValues["TradingView BTC.D"] <= 41
+        : false,
       icon: TrendingDown,
     },
     {
@@ -225,6 +244,9 @@ const getCardData = (
               Math.max(0, (currentValues["TradingView ETH/BTC"] / 0.0548) * 100)
             )
           : 0,
+      objectiveReached: currentValues["TradingView ETH/BTC"]
+        ? currentValues["TradingView ETH/BTC"] >= 0.0548
+        : false,
       icon: TrendingUp,
     },
   ];
@@ -234,6 +256,16 @@ export function Crypto() {
   const { prices } = useBinancePrices();
   const { data: signalData } = useSignalData();
   const { savePortfolioData, getYesterdayValues } = usePortfolioHistory();
+  const {
+    usdAmount: initialInvestmentConverted,
+    loading: conversionLoading,
+    error: conversionError,
+  } = useEurUsdConversion(initialInvestmentEUR);
+
+  // Utiliser la valeur convertie ou la valeur par défaut en cas d'erreur
+  const initialInvestment = conversionError
+    ? initialInvestmentUSD
+    : initialInvestmentConverted;
 
   // Calculer les données du portfolio avec les prix Binance
   const portfolioData = portfolio.map((asset, index) => {
@@ -304,7 +336,8 @@ export function Crypto() {
     totalPnLPercentage,
     signalData || [],
     totalCurrentValue,
-    yesterdayValues
+    yesterdayValues,
+    initialInvestment
   );
 
   // Calculer les équivalents du portfolio en BTC, ETH
@@ -324,6 +357,8 @@ export function Crypto() {
           : "N/A",
         icon: DollarSign,
         objective: 0.1,
+        current: btcEquivalent,
+        objectiveReached: btcEquivalent >= 0.1,
       },
       {
         title: "Portfolio en ETH",
@@ -332,6 +367,9 @@ export function Crypto() {
           ? `Ξ${yesterdayValues.portfolioETH.toFixed(2)}`
           : "N/A",
         icon: DollarSign,
+        objective: 2.1,
+        current: ethEquivalent,
+        objectiveReached: ethEquivalent >= 2.1,
       },
     ];
   };
@@ -356,105 +394,263 @@ export function Crypto() {
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-          Crypto Market
-        </h2>
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Crypto Market
+          </h2>
+          <div className="text-xs text-muted-foreground mt-1">
+            Initial Investment: €{initialInvestmentEUR.toLocaleString()} → $
+            {initialInvestment.toLocaleString()}
+            {conversionLoading && " (Converting...)"}
+            {conversionError && " (Using default rate)"}
+            {!conversionLoading && !conversionError && " (Live EUR/USD)"}
+          </div>
+        </div>
       </div>
 
-      {/* Cards Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {cardData.map((card, index) => {
-          const Icon = card.icon;
-          const isClickable =
-            card.title === "AppFigures Finance Rank" ||
-            card.title === "NewHedge MVRV Z-Score" ||
-            card.title === "TradingView BTC.D" ||
-            card.title === "TradingView ETH/BTC";
+      {/* Main Cards Grid - BTC Value et Portfolio vs Investment */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {cardData
+          .filter(
+            (card) =>
+              card.title === "BTC Value" ||
+              card.title === "Portfolio vs Investment"
+          )
+          .map((card, index) => {
+            const Icon = card.icon;
 
-          const cardContent = (
-            <>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {card.title}
-                </CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{card.value}</div>
+            const cardContent = (
+              <>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {card.title}
+                  </CardTitle>
+                  <Icon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{card.value}</div>
 
-                {/* Progress bar pour les objectifs */}
-                {card.objective !== null && (
-                  <div className="mt-2">
-                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                      <span>
-                        Objectif:{" "}
-                        {card.title.includes("Rank")
-                          ? `#${card.objective}`
-                          : card.title.includes("Portfolio")
-                          ? `$${card.objective.toLocaleString()}`
-                          : card.objective}
-                      </span>
-                      <span>
-                        {card.progress !== null ? Math.round(card.progress) : 0}
-                        %
-                      </span>
+                  {/* Progress bar pour les objectifs - seulement pour Portfolio vs Investment */}
+                  {card.objective !== null &&
+                    card.title === "Portfolio vs Investment" && (
+                      <div className="mt-2">
+                        <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                          <span>
+                            Objectif: ${card.objective.toLocaleString()}
+                          </span>
+                          <span>
+                            {card.progress !== null
+                              ? Math.round(card.progress)
+                              : 0}
+                            %
+                          </span>
+                        </div>
+                        <Progress
+                          value={card.progress || 0}
+                          className="h-2"
+                          isLoading={card.progress === null}
+                        />
+                        {card.missingPercentage !== undefined && card.missingPercentage > 0 && (
+                          <div className="text-xs text-red-600 mt-1">
+                            Il faut +{card.missingPercentage.toFixed(1)}% pour atteindre l'objectif
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                  {/* Indicateur objectif avec rond coloré - pour les autres cartes avec objectifs */}
+                  {card.objective !== null &&
+                    card.title !== "Portfolio vs Investment" &&
+                    card.title !== "BTC Value" &&
+                    card.objectiveReached !== undefined && (
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                          <span>
+                            Objectif:{" "}
+                            {card.title.includes("Rank")
+                              ? `#${card.objective}`
+                              : card.title.includes("BTC.D")
+                              ? `${card.objective}%`
+                              : card.objective}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`w-3 h-3 rounded-full ${
+                                card.objectiveReached
+                                  ? "bg-green-500"
+                                  : "bg-red-500"
+                              }`}
+                            />
+                            <span
+                              className={
+                                card.objectiveReached
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }
+                            >
+                              {card.objectiveReached
+                                ? "Atteint"
+                                : "Non atteint"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Progress bar pour BTC Value (garder l'affichage existant) */}
+                  {card.objective !== null && card.title === "BTC Value" && (
+                    <div className="mt-2">
+                      <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                        <span>
+                          Objectif: ${card.objective.toLocaleString()}
+                        </span>
+                        <span>
+                          {card.progress !== null
+                            ? Math.round(card.progress)
+                            : 0}
+                          %
+                        </span>
+                      </div>
+                      <Progress
+                        value={card.progress || 0}
+                        className="h-2"
+                        isLoading={card.progress === null}
+                      />
+                      {card.missingPercentage !== undefined && card.missingPercentage > 0 && (
+                        <div className="text-xs text-red-600 mt-1">
+                          Il faut +{card.missingPercentage.toFixed(1)}% pour atteindre l'objectif
+                        </div>
+                      )}
                     </div>
-                    <Progress
-                      value={card.progress || 0}
-                      className="h-2"
-                      isLoading={card.progress === null}
-                    />
-                  </div>
-                )}
+                  )}
 
-                {/* Valeur d'hier */}
-                {card.yesterday && (
-                  <div className="mt-2">
-                    <p className="text-xs text-muted-foreground">
-                      Hier: <span className="font-mono">{card.yesterday}</span>
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </>
-          );
+                  {/* Valeur d'hier */}
+                  {card.yesterday && (
+                    <div className="mt-2">
+                      <p className="text-xs text-muted-foreground">
+                        Hier:{" "}
+                        <span className="font-mono">{card.yesterday}</span>
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </>
+            );
 
-          const getClickUrl = (title: string) => {
-            if (title === "AppFigures Finance Rank") {
-              return "https://appfigures.com/top-apps/ios-app-store/united-states/iphone/finance";
-            }
-            if (title === "NewHedge MVRV Z-Score") {
-              return "https://newhedge.io/terminal/bitcoin/mvrv-z-score";
-            }
-            if (title === "TradingView BTC.D") {
-              return "https://fr.tradingview.com/symbols/BTC.D/";
-            }
-            if (title === "TradingView ETH/BTC") {
-              return "https://fr.tradingview.com/symbols/ETHBTC/";
-            }
-            return "";
-          };
-
-          return isClickable ? (
-            <Card
-              key={index}
-              className="cursor-pointer hover:bg-gray-100 transition-colors"
-              onClick={() => window.open(getClickUrl(card.title), "_blank")}
-            >
-              {cardContent}
-            </Card>
-          ) : (
-            <Card key={index}>{cardContent}</Card>
-          );
-        })}
+            return <Card key={index}>{cardContent}</Card>;
+          })}
       </div>
 
-      {/* Portfolio Equivalents Grid */}
+      {/* Secondary Cards Grid - Signal Cards + Portfolio Equivalents (6 cartes au total) */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Signal Cards - AppFigures, NewHedge, TradingView */}
+        {cardData
+          .filter(
+            (card) =>
+              card.title === "NewHedge MVRV Z-Score" ||
+              card.title === "AppFigures Finance Rank" ||
+              card.title === "TradingView BTC.D" ||
+              card.title === "TradingView ETH/BTC"
+          )
+          .map((card, index) => {
+            const Icon = card.icon;
+            const isClickable = true;
+
+            const cardContent = (
+              <>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {card.title}
+                  </CardTitle>
+                  <Icon className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{card.value}</div>
+
+                  {/* Indicateur objectif avec rond coloré */}
+                  {card.objective !== null &&
+                    card.objectiveReached !== undefined && (
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                          <span>
+                            Objectif:{" "}
+                            {card.title.includes("Rank")
+                              ? `#${card.objective}`
+                              : card.title.includes("BTC.D")
+                              ? `${card.objective}%`
+                              : card.objective}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`w-3 h-3 rounded-full ${
+                                card.objectiveReached
+                                  ? "bg-green-500"
+                                  : "bg-red-500"
+                              }`}
+                            />
+                            <span
+                              className={
+                                card.objectiveReached
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }
+                            >
+                              {card.objectiveReached
+                                ? "Atteint"
+                                : "Non atteint"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Valeur d'hier */}
+                  {card.yesterday && (
+                    <div className="mt-2">
+                      <p className="text-xs text-muted-foreground">
+                        Hier:{" "}
+                        <span className="font-mono">{card.yesterday}</span>
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </>
+            );
+
+            const getClickUrl = (title: string) => {
+              if (title === "AppFigures Finance Rank") {
+                return "https://appfigures.com/top-apps/ios-app-store/united-states/iphone/finance";
+              }
+              if (title === "NewHedge MVRV Z-Score") {
+                return "https://newhedge.io/terminal/bitcoin/mvrv-z-score";
+              }
+              if (title === "TradingView BTC.D") {
+                return "https://fr.tradingview.com/symbols/BTC.D/";
+              }
+              if (title === "TradingView ETH/BTC") {
+                return "https://fr.tradingview.com/symbols/ETHBTC/";
+              }
+              return "";
+            };
+
+            return isClickable ? (
+              <Card
+                key={`signal-${index}`}
+                className="cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => window.open(getClickUrl(card.title), "_blank")}
+              >
+                {cardContent}
+              </Card>
+            ) : (
+              <Card key={`signal-${index}`}>{cardContent}</Card>
+            );
+          })}
+
+        {/* Portfolio Equivalents Cards */}
         {portfolioEquivalents.map((equivalent, index) => {
           const Icon = equivalent.icon;
           return (
-            <Card key={index}>
+            <Card key={`portfolio-${index}`}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   {equivalent.title}
@@ -464,23 +660,37 @@ export function Crypto() {
               <CardContent>
                 <div className="text-2xl font-bold">{equivalent.value}</div>
 
-                {/* Progress bar pour les objectifs */}
-                {equivalent?.progress && equivalent?.objective !== null && (
+                {/* Indicateur objectif avec rond coloré */}
+                {equivalent.objective !== undefined && (
                   <div className="mt-2">
-                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                      <span>Objectif: {equivalent.objective}</span>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                       <span>
-                        {equivalent.progress !== null
-                          ? Math.round(equivalent.progress)
-                          : 0}
-                        %
+                        Objectif:{" "}
+                        {equivalent.title.includes("BTC")
+                          ? `₿${equivalent.objective}`
+                          : `Ξ${equivalent.objective}`}
                       </span>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-3 h-3 rounded-full ${
+                            equivalent.objectiveReached
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        />
+                        <span
+                          className={
+                            equivalent.objectiveReached
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }
+                        >
+                          {equivalent.objectiveReached
+                            ? "Atteint"
+                            : "Non atteint"}
+                        </span>
+                      </div>
                     </div>
-                    <Progress
-                      value={equivalent.progress || 0}
-                      className="h-2"
-                      isLoading={equivalent.progress === null}
-                    />
                   </div>
                 )}
 
