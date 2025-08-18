@@ -9,7 +9,6 @@ export const portfolio: {
   { name: "NEAR", quantity: 401.79, ath: 20.44 },
   { name: "BNB", quantity: 0.1261, ath: 717.48 },
   { name: "DOT", quantity: 16.56, ath: 54.98 },
-  { name: "MATIC", quantity: 186.68, ath: 2.92 },
   { name: "ADA", quantity: 50, ath: 3.09 },
   { name: "1INCH", quantity: 13.16, ath: 7.8 },
   { name: "ALGO", quantity: 11.11, ath: 3.56 },
