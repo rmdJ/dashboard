@@ -307,7 +307,7 @@ export function Crypto() {
     yesterdayValues
   );
 
-  // Calculer les équivalents du portfolio en BTC, ETH, SOL
+  // Calculer les équivalents du portfolio en BTC, ETH
   const getPortfolioEquivalents = () => {
     const btcPrice = prices["BTCUSDT"] || 0;
     const ethPrice = prices["ETHUSDT"] || 0;
@@ -342,15 +342,13 @@ export function Crypto() {
   useEffect(() => {
     const btcPrice = prices["BTCUSDT"] || 0;
     const ethPrice = prices["ETHUSDT"] || 0;
-    const solPrice = prices["SOLUSDT"] || 0;
 
-    if (btcPrice > 0 && ethPrice > 0 && solPrice > 0 && totalCurrentValue > 0) {
+    if (btcPrice > 0 && ethPrice > 0 && totalCurrentValue > 0) {
       savePortfolioData({
         btcValue: btcPrice,
         portfolioUSD: totalCurrentValue,
         portfolioBTC: totalCurrentValue / btcPrice,
         portfolioETH: totalCurrentValue / ethPrice,
-        portfolioSOL: totalCurrentValue / solPrice,
       });
     }
   }, [prices, totalCurrentValue, savePortfolioData]);

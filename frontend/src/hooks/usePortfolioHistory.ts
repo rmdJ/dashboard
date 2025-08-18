@@ -3,7 +3,6 @@ interface PortfolioData {
   portfolioUSD: number;
   portfolioBTC: number;
   portfolioETH: number;
-  portfolioSOL: number;
   date: string;
 }
 
@@ -65,7 +64,6 @@ export const usePortfolioHistory = () => {
           portfolioUSD: yesterday.portfolioUSD,
           portfolioBTC: yesterday.portfolioBTC,
           portfolioETH: yesterday.portfolioETH,
-          portfolioSOL: yesterday.portfolioSOL,
         }
       : null;
   };
