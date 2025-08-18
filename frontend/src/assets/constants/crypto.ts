@@ -23,7 +23,7 @@ export const signalObjectives: {
   name: string;
   value: number;
 }[] = [
-  { name: "TradingView BTC.D", value: 41 },
+  { name: "TradingView BTC.D", value: 45 },
   { name: "AppFigures Finance Rank", value: 4 },
   { name: "NewHedge MVRV Z-Score", value: 5.8 },
   { name: "TradingView ETH/BTC", value: 0.0548 },

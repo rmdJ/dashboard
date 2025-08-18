@@ -124,9 +124,12 @@ const getCardData = (
         </div>
       ),
       yesterday: yesterdayValuesData["Portfolio vs Investment"]
-        ? `$${yesterdayValuesData["Portfolio vs Investment"].toLocaleString(undefined, {
-            maximumFractionDigits: 2,
-          })}`
+        ? `$${yesterdayValuesData["Portfolio vs Investment"].toLocaleString(
+            undefined,
+            {
+              maximumFractionDigits: 2,
+            }
+          )}`
         : "N/A",
       current: pnlPercentage,
       objective: initialInvestment,
@@ -308,54 +311,27 @@ export function Crypto() {
   const getPortfolioEquivalents = () => {
     const btcPrice = prices["BTCUSDT"] || 0;
     const ethPrice = prices["ETHUSDT"] || 0;
-    const solPrice = prices["SOLUSDT"] || 0;
 
     const btcEquivalent = totalCurrentValue / btcPrice;
     const ethEquivalent = totalCurrentValue / ethPrice;
-    const solEquivalent = totalCurrentValue / solPrice;
 
     return [
       {
         title: "Portfolio en BTC",
-        value: btcPrice > 0 
-          ? `₿${btcEquivalent.toFixed(4)}`
-          : "Loading...",
+        value: btcPrice > 0 ? `₿${btcEquivalent.toFixed(4)}` : "Loading...",
         yesterday: yesterdayValues?.portfolioBTC
           ? `₿${yesterdayValues.portfolioBTC.toFixed(4)}`
           : "N/A",
         icon: DollarSign,
-        objective: 0.10,
-        progress: btcPrice > 0 
-          ? Math.min(100, Math.max(0, (btcEquivalent / 0.10) * 100))
-          : null,
+        objective: 0.1,
       },
       {
         title: "Portfolio en ETH",
-        value: ethPrice > 0 
-          ? `Ξ${ethEquivalent.toFixed(2)}`
-          : "Loading...",
+        value: ethPrice > 0 ? `Ξ${ethEquivalent.toFixed(2)}` : "Loading...",
         yesterday: yesterdayValues?.portfolioETH
           ? `Ξ${yesterdayValues.portfolioETH.toFixed(2)}`
           : "N/A",
         icon: DollarSign,
-        objective: 2.10,
-        progress: ethPrice > 0 
-          ? Math.min(100, Math.max(0, (ethEquivalent / 2.10) * 100))
-          : null,
-      },
-      {
-        title: "Portfolio en SOL",
-        value: solPrice > 0 
-          ? `◎${solEquivalent.toFixed(2)}`
-          : "Loading...",
-        yesterday: yesterdayValues?.portfolioSOL
-          ? `◎${yesterdayValues.portfolioSOL.toFixed(2)}`
-          : "N/A",
-        icon: DollarSign,
-        objective: 45,
-        progress: solPrice > 0 
-          ? Math.min(100, Math.max(0, (solEquivalent / 45) * 100))
-          : null,
       },
     ];
   };
@@ -367,14 +343,14 @@ export function Crypto() {
     const btcPrice = prices["BTCUSDT"] || 0;
     const ethPrice = prices["ETHUSDT"] || 0;
     const solPrice = prices["SOLUSDT"] || 0;
-    
+
     if (btcPrice > 0 && ethPrice > 0 && solPrice > 0 && totalCurrentValue > 0) {
       savePortfolioData({
         btcValue: btcPrice,
         portfolioUSD: totalCurrentValue,
         portfolioBTC: totalCurrentValue / btcPrice,
         portfolioETH: totalCurrentValue / ethPrice,
-        portfolioSOL: totalCurrentValue / solPrice
+        portfolioSOL: totalCurrentValue / solPrice,
       });
     }
   }, [prices, totalCurrentValue, savePortfolioData]);
@@ -489,16 +465,17 @@ export function Crypto() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{equivalent.value}</div>
-                
+
                 {/* Progress bar pour les objectifs */}
-                {equivalent.objective !== null && (
+                {equivalent?.progress && equivalent?.objective !== null && (
                   <div className="mt-2">
                     <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                      <span>Objectif: {equivalent.objective}</span>
                       <span>
-                        Objectif: {equivalent.objective}
-                      </span>
-                      <span>
-                        {equivalent.progress !== null ? Math.round(equivalent.progress) : 0}%
+                        {equivalent.progress !== null
+                          ? Math.round(equivalent.progress)
+                          : 0}
+                        %
                       </span>
                     </div>
                     <Progress
@@ -513,7 +490,8 @@ export function Crypto() {
                 {equivalent.yesterday && (
                   <div className="mt-2">
                     <p className="text-xs text-muted-foreground">
-                      Hier: <span className="font-mono">{equivalent.yesterday}</span>
+                      Hier:{" "}
+                      <span className="font-mono">{equivalent.yesterday}</span>
                     </p>
                   </div>
                 )}
