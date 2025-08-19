@@ -279,6 +279,7 @@ export function Crypto() {
       prices[usdtPair] || prices[btcPair] || prices[ethPair] || 0;
     const currentValue = currentPrice * asset.quantity;
     const athValue = asset.ath * asset.quantity;
+    const potentialAthValue = currentPrice > asset.ath ? currentValue : asset.quantity * asset.ath;
     const unrealizedPnL = currentValue - athValue * 0.5; // Estimation basée sur 50% de l'ATH comme prix d'achat moyen
     const pnlPercentage =
       athValue > 0
@@ -295,6 +296,7 @@ export function Crypto() {
       currentValue,
       ath: asset.ath,
       athValue,
+      potentialAthValue,
       unrealizedPnL,
       pnlPercentage,
       athDistance,
@@ -314,14 +316,26 @@ export function Crypto() {
     0
   );
 
-  // Ajouter le pourcentage du portfolio à chaque asset
-  const portfolioDataWithPercentage = portfolioData.map((asset) => ({
-    ...asset,
-    portfolioPercentage:
-      totalCurrentValue > 0
-        ? (asset.currentValue / totalCurrentValue) * 100
-        : 0,
-  }));
+  // Calculer le total du potentiel ATH
+  const totalPotentialAthValue = portfolioData.reduce(
+    (sum, asset) => sum + asset.potentialAthValue,
+    0
+  );
+
+  // Ajouter le pourcentage du portfolio à chaque asset et ordonner par current value
+  const portfolioDataWithPercentage = portfolioData
+    .map((asset) => ({
+      ...asset,
+      portfolioPercentage:
+        totalCurrentValue > 0
+          ? (asset.currentValue / totalCurrentValue) * 100
+          : 0,
+    }))
+    .sort((a, b) => b.currentValue - a.currentValue)
+    .map((asset, index) => ({
+      ...asset,
+      rank: index + 1,
+    }));
   const totalPnLPercentage =
     initialInvestment > 0
       ? ((totalCurrentValue - initialInvestment) / initialInvestment) * 100
@@ -721,6 +735,7 @@ export function Crypto() {
                 <TableHead>Current Price</TableHead>
                 <TableHead>Current Value</TableHead>
                 <TableHead>ATH</TableHead>
+                <TableHead>Potentiel ATH</TableHead>
                 <TableHead>Distance from ATH</TableHead>
               </TableRow>
             </TableHeader>
@@ -765,6 +780,12 @@ export function Crypto() {
                       maximumFractionDigits: 2,
                     })}
                   </TableCell>
+                  <TableCell className="font-mono font-medium text-green-600">
+                    $
+                    {asset.potentialAthValue.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -790,6 +811,29 @@ export function Crypto() {
                   </TableCell>
                 </TableRow>
               ))}
+              <TableRow className="border-t-2 border-gray-400 bg-muted/50">
+                <TableCell className="font-bold">-</TableCell>
+                <TableCell className="font-bold">Total</TableCell>
+                <TableCell></TableCell>
+                <TableCell className="font-bold">100%</TableCell>
+                <TableCell></TableCell>
+                <TableCell className="font-mono font-bold text-lg">
+                  $
+                  {totalCurrentValue.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                  })}
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell className="font-mono font-bold text-lg text-green-600">
+                  $
+                  {totalPotentialAthValue.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                  })}
+                </TableCell>
+                <TableCell className="font-bold text-green-600">
+                  +{((totalPotentialAthValue - totalCurrentValue) / totalCurrentValue * 100).toFixed(0)}%
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </CardContent>
