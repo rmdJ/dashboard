@@ -39,7 +39,8 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
   const [sortOption, setSortOption] = useState<SortOption>("pressRating");
   const [shouldFilterChildrenMovies, setShouldFilterChildrenMovies] =
     useState(false);
-  const [showSelectedMoviesDrawer, setShowSelectedMoviesDrawer] = useState(false);
+  const [showSelectedMoviesDrawer, setShowSelectedMoviesDrawer] =
+    useState(false);
 
   // Filtrer les cinémas par ville
   const availableCinemas = cinemasData.filter((cinema) => {
@@ -55,20 +56,20 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
     if (availableCinemas.length > 0 && selectedCinemas.length === 0) {
       setSelectedCinemas(availableCinemas.slice(0, 3).map((c) => c.id)); // Prendre les 3 premiers
     }
-  }, [availableCinemas]);
+  }, [availableCinemas, selectedCinemas]);
 
   // Gérer la touche Escape pour désélectionner les films
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && selectedMovies.length > 0) {
+      if (event.key === "Escape" && selectedMovies.length > 0) {
         setSelectedMovies([]);
         setShowSelectedMoviesDrawer(false);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedMovies.length]);
 
@@ -136,20 +137,30 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
   const getMovieKey = (movie: Movie, cinemaId?: string) => {
     const movieData = (movie as any).movie || movie;
     const title = movieData.title || movie.title;
-    return `${cinemaId || 'unknown'}-${movie.internalId || movieData.internalId}-${title}`;
+    return `${cinemaId || "unknown"}-${
+      movie.internalId || movieData.internalId
+    }-${title}`;
   };
 
   // Gérer la sélection de films pour la combinaison
   const handleMovieSelect = (movie: Movie, cinemaId?: string) => {
     const movieKey = getMovieKey(movie, cinemaId);
-    
-    if (selectedMovies.find((m) => getMovieKey(m, (m as any).cinemaId) === movieKey)) {
+
+    if (
+      selectedMovies.find(
+        (m) => getMovieKey(m, (m as any).cinemaId) === movieKey
+      )
+    ) {
       setSelectedMovies(
-        selectedMovies.filter((m) => getMovieKey(m, (m as any).cinemaId) !== movieKey)
+        selectedMovies.filter(
+          (m) => getMovieKey(m, (m as any).cinemaId) !== movieKey
+        )
       );
     } else if (selectedMovies.length < 2) {
       // Ajouter l'ID du cinéma au film sélectionné pour référence future
-      const movieWithCinema = { ...movie, cinemaId } as Movie & { cinemaId?: string };
+      const movieWithCinema = { ...movie, cinemaId } as Movie & {
+        cinemaId?: string;
+      };
       setSelectedMovies([...selectedMovies, movieWithCinema]);
     }
   };
@@ -229,7 +240,6 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
           </div>
         </CardContent>
       </Card>
-
 
       {/* Liste des films */}
       {isLoading && (
@@ -365,13 +375,19 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                         }`}
                         movie={movie}
                         isSelected={selectedMovies.some(
-                          (m) => getMovieKey(m, (m as any).cinemaId) === getMovieKey(movie, cinemaResult.cinemaId)
+                          (m) =>
+                            getMovieKey(m, (m as any).cinemaId) ===
+                            getMovieKey(movie, cinemaResult.cinemaId)
                         )}
-                        onSelect={() => handleMovieSelect(movie, cinemaResult.cinemaId)}
+                        onSelect={() =>
+                          handleMovieSelect(movie, cinemaResult.cinemaId)
+                        }
                         canSelect={
                           selectedMovies.length < 2 ||
                           selectedMovies.some(
-                            (m) => getMovieKey(m, (m as any).cinemaId) === getMovieKey(movie, cinemaResult.cinemaId)
+                            (m) =>
+                              getMovieKey(m, (m as any).cinemaId) ===
+                              getMovieKey(movie, cinemaResult.cinemaId)
                           )
                         }
                       />
@@ -393,9 +409,13 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
                           <MovieCard
                             movie={movie}
                             isSelected={selectedMovies.some(
-                              (m) => getMovieKey(m, (m as any).cinemaId) === getMovieKey(movie, cinemaResult.cinemaId)
+                              (m) =>
+                                getMovieKey(m, (m as any).cinemaId) ===
+                                getMovieKey(movie, cinemaResult.cinemaId)
                             )}
-                            onSelect={() => handleMovieSelect(movie, cinemaResult.cinemaId)}
+                            onSelect={() =>
+                              handleMovieSelect(movie, cinemaResult.cinemaId)
+                            }
                             canSelect={
                               selectedMovies.length < 2 ||
                               selectedMovies.some(
@@ -476,7 +496,6 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
             </div>
           </div>
         )}
-
 
       {/* Pill flottant pour films sélectionnés */}
       {selectedMovies.length === 2 && (
