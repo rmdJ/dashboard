@@ -5,8 +5,8 @@ export const portfolio: {
 }[] = [
   { name: "ETH", quantity: 0.7104, ath: 4878.26 },
   { name: "SOL", quantity: 9.1427, ath: 263.21 },
-  { name: "LINK", quantity: 35.16, ath: 52.7 },
-  { name: "USDC", quantity: 1844.39, ath: 1 },
+  { name: "LINK", quantity: 17.58, ath: 52.7 },
+  { name: "USDC", quantity: 2285.6, ath: 1 },
   { name: "BNB", quantity: 0.4174, ath: 717.48 },
   { name: "NEAR", quantity: 69.99, ath: 20.44 },
   { name: "DOT", quantity: 16.56, ath: 54.98 },
