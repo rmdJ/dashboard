@@ -1,7 +1,12 @@
-"use client";
-
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ReferenceLine,
+} from "recharts";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -53,7 +58,7 @@ export function ChartAppFiguresRank() {
 
     // Créer un map des données existantes avec AppFigures Finance Rank
     const dataMap = new Map<string, number>();
-    
+
     signalData.forEach((entry) => {
       const appFiguresItem = entry.data?.find(
         (item) => item.source === "AppFigures Finance Rank"
@@ -65,7 +70,7 @@ export function ChartAppFiguresRank() {
 
     // Créer une liste complète de toutes les dates disponibles
     const allDates = signalData
-      .map(entry => entry.date)
+      .map((entry) => entry.date)
       .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
     const processedData: Array<{ date: string; rank: number }> = [];

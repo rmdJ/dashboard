@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { MovieDetailsDrawer } from "@/components/movie-details-drawer";
 import { Calendar, Film, ChevronDown, ChevronUp } from "lucide-react";
-import { MobileMovieSlider } from "./mobile-movie-slider";
 
 export const CinemaNextReleases = () => {
   const { data, isLoading, error } = useCinemaNextReleases();
@@ -133,11 +132,43 @@ export const CinemaNextReleases = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Mobile Movie Slider */}
-        <MobileMovieSlider
-          movies={sortedMovies}
-          onMovieClick={handleMovieClick}
-        />
+        {/* Version mobile : slider horizontal */}
+        <div className="md:hidden">
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
+            {sortedMovies.map((movie) => (
+              <div
+                key={movie.id}
+                className="flex-shrink-0 w-48"
+              >
+                <div
+                  className="cursor-pointer group transition-all duration-200 hover:bg-muted/50 rounded-lg p-3 -m-3"
+                  onClick={() => handleMovieClick(movie.id)}
+                >
+                  <div className="flex flex-col items-center">
+                    <div className="h-12 flex items-center mb-3">
+                      <h3 className="font-semibold text-center text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                        {movie.title}
+                      </h3>
+                    </div>
+                    {movie.poster_path ? (
+                      <div className="w-48 h-72 rounded-lg shadow-lg overflow-hidden">
+                        <img
+                          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                          alt={movie.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-48 h-72 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-lg flex items-center justify-center">
+                        <Film className="h-16 w-16 text-gray-400 dark:text-gray-500" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Desktop Grid */}
         <div className="hidden md:block">
