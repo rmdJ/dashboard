@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { MapPin } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { SingleSelect } from "@/components/ui/single-select";
@@ -12,12 +12,12 @@ export default function Cinema() {
     return localStorage.getItem("VITE_ZIP_CODE") || "";
   });
 
-  // Fonction pour changer de ville et invalider le cache
-  const handleCityChange = (newCity: string) => {
+  // Fonction pour changer de ville et invalider le cache (memoized)
+  const handleCityChange = useCallback((newCity: string) => {
     setSelectedCity(newCity);
     // Invalider toutes les queries de cinéma pour forcer le rechargement
     queryClient.invalidateQueries({ queryKey: ["cinema"] });
-  };
+  }, [queryClient]);
 
   // Sauvegarder la ville dans localStorage
   useEffect(() => {
@@ -27,15 +27,17 @@ export default function Cinema() {
   }, [selectedCity]);
 
   const frenchCities = useMemo(() => {
-    const additionalCities = Array.from(
+    const uniqueCinemasCities = Array.from(
       new Set(cinemas.map((cinema) => cinema.ville))
-    )
+    );
+    
+    const additionalCities = uniqueCinemasCities
       .filter((ville) => !formerCities.some((v) => v.name === ville))
       .map((ville, index) => ({
         id: (100000 + index).toString(),
         name: ville,
       }));
-
+    
     return [...formerCities, ...additionalCities].sort((a, b) =>
       a.name.localeCompare(b.name)
     );
@@ -67,7 +69,7 @@ export default function Cinema() {
 
       {/* Résultats des séances */}
       {selectedCity ? (
-        <CinemaSearch selectedCity={selectedCity} />
+        <CinemaSearch selectedCity={selectedCity} frenchCities={frenchCities} />
       ) : (
         <div className="text-center py-12 text-muted-foreground">
           <MapPin className="h-16 w-16 mx-auto mb-4 opacity-50" />

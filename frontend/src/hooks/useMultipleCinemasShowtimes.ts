@@ -49,7 +49,7 @@ export const useMultipleCinemasShowtimes = (
     queries: cinemaIds.map((cinemaId) => ({
       queryKey: ["cinema", "showtimes", cinemaId, dayShift],
       queryFn: () => fetchCinemaShowtimes(cinemaId, dayShift),
-      enabled: !!cinemaId,
+      enabled: !!cinemaId && cinemaIds.length > 0, // S'assurer qu'il y a des cinémas à interroger
       staleTime: 1000 * 60 * 5, // 5 minutes
       gcTime: 1000 * 60 * 30, // 30 minutes
     })),

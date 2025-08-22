@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Film as FilmIcon, ChevronUp } from "lucide-react";
 import {
   Card,
@@ -26,13 +26,13 @@ import { SelectedMoviesDrawer } from "./selectedMoviesDrawer";
 import { useMultipleCinemasShowtimes } from "../../hooks/useMultipleCinemasShowtimes";
 import type { Movie, SortOption } from "../../types/cinema";
 import cinemasData from "@/data/cinemas.json";
-import frenchCities from "@/data/french-cities.json";
 
 interface CinemaSearchProps {
   selectedCity: string;
+  frenchCities: Array<{ id: string; name: string }>;
 }
 
-export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
+export function CinemaSearch({ selectedCity, frenchCities }: CinemaSearchProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedCinemas, setSelectedCinemas] = useState<string[]>([]);
   const [selectedMovies, setSelectedMovies] = useState<Movie[]>([]);
@@ -43,30 +43,35 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
     useState(false);
   const [isClosingDrawer, setIsClosingDrawer] = useState(false);
 
-  // Filtrer les cinémas par ville
-  const availableCinemas = cinemasData.filter((cinema) => {
+  // Filtrer les cinémas par ville (memoized pour éviter les recalculs)
+  const availableCinemas = useMemo(() => {
+    if (!selectedCity) return [];
+    
     // Trouver le nom de la ville correspondant à l'ID sélectionné
     const cityName = frenchCities.find(
       (city) => city.id === selectedCity
     )?.name;
-    return cityName ? cinema.ville === cityName : false;
-  });
+    
+    if (!cityName) return [];
+    
+    // Filtrer avec normalisation Unicode pour gérer les accents
+    return cinemasData.filter((cinema) => {
+      const normalizedCinemaVille = cinema.ville.normalize('NFD');
+      const normalizedCityName = cityName.normalize('NFD');
+      return cinema.ville === cityName || normalizedCinemaVille === normalizedCityName;
+    });
+  }, [selectedCity, frenchCities]); // Ajouter frenchCities aux dépendances
 
   // Sélectionner automatiquement les cinémas quand la ville change
   useEffect(() => {
     if (availableCinemas.length > 0) {
-      setSelectedCinemas(availableCinemas.map((c) => c.id));
+      // Limiter à 10 cinémas maximum pour éviter trop de requêtes simultanées
+      const cinemasToSelect = availableCinemas.slice(0, 10);
+      setSelectedCinemas(cinemasToSelect.map((c) => c.id));
     } else {
       setSelectedCinemas([]);
     }
-  }, [selectedCity]); // Se déclenche uniquement quand la ville change
-
-  // Sélectionner automatiquement au premier chargement si aucun cinéma n'est sélectionné
-  useEffect(() => {
-    if (availableCinemas.length > 0 && selectedCinemas.length === 0) {
-      setSelectedCinemas(availableCinemas.map((c) => c.id));
-    }
-  }, [availableCinemas.length]); // Se déclenche uniquement quand le nombre de cinémas change
+  }, [selectedCity, availableCinemas.length]); // Dépendre des deux pour éviter les conditions de course
 
   // Refs pour accéder aux valeurs actuelles dans l'event listener
   const showDrawerRef = useRef(showSelectedMoviesDrawer);

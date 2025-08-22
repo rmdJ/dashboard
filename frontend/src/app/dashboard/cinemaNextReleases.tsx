@@ -16,6 +16,7 @@ export const CinemaNextReleases = () => {
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
 
+
   const handleMovieClick = (movieId: number) => {
     setSelectedMovieId(movieId);
   };
