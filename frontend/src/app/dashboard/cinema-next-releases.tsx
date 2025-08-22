@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MovieDetailsDrawer } from "@/components/movie-details-drawer";
+import { MovieDetailsDrawer } from "@/components/cinema/movie-details-drawer";
 import { Calendar, Film, ChevronDown, ChevronUp } from "lucide-react";
 
 export const CinemaNextReleases = () => {
@@ -136,10 +136,7 @@ export const CinemaNextReleases = () => {
         <div className="md:hidden">
           <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">
             {sortedMovies.map((movie) => (
-              <div
-                key={movie.id}
-                className="flex-shrink-0 w-48"
-              >
+              <div key={movie.id} className="flex-shrink-0 w-48">
                 <div
                   className="cursor-pointer group transition-all duration-200 hover:bg-muted/50 rounded-lg p-3 -m-3"
                   onClick={() => handleMovieClick(movie.id)}

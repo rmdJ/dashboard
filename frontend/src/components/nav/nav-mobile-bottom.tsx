@@ -23,7 +23,7 @@ const navigationItems = [
   },
 ];
 
-export function MobileBottomNav() {
+export function NavMobileBottom() {
   const location = useLocation();
   const navigate = useNavigate();
 

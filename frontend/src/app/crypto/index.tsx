@@ -26,12 +26,12 @@ import {
   type SignalDataItem,
 } from "@/hooks/useSignal";
 import { usePortfolioHistory } from "@/hooks/usePortfolioHistory";
-import { ChartAppFiguresRank } from "@/components/chart-appfigures-rank";
-import { ChartTradingViewBTCD } from "@/components/chart-tradingview-btcd";
-import { ChartNewHedgeMVRV } from "@/components/chart-newhedge-mvrv";
-import { ChartTradingViewETHBTC } from "@/components/chart-tradingview-ethbtc";
-import { ChartEvolution } from "@/components/chart-evolution";
-import { ChartEthEvolution } from "@/components/chart-eth-evolution";
+import { ChartAppFiguresRank } from "@/components/crypto/chart/chart-appfigures-rank";
+import { ChartTradingViewBTCD } from "@/components/crypto/chart/chart-tradingview-btcd";
+import { ChartNewHedgeMVRV } from "@/components/crypto/chart/chart-newhedge-mvrv";
+import { ChartTradingViewETHBTC } from "@/components/crypto/chart/chart-tradingview-ethbtc";
+import { ChartEvolution } from "@/components/crypto/chart/chart-evolution";
+import { ChartEthEvolution } from "@/components/crypto/chart/chart-eth-evolution";
 
 const getCardData = (
   prices: Record<string, number>,
@@ -108,9 +108,13 @@ const getCardData = (
               Math.max(0, (currentValues["BTC Value"] / btcObjective) * 100)
             )
           : 0,
-      missingPercentage: currentValues["BTC Value"] > 0 && currentValues["BTC Value"] < btcObjective
-        ? ((btcObjective - currentValues["BTC Value"]) / currentValues["BTC Value"]) * 100
-        : 0,
+      missingPercentage:
+        currentValues["BTC Value"] > 0 &&
+        currentValues["BTC Value"] < btcObjective
+          ? ((btcObjective - currentValues["BTC Value"]) /
+              currentValues["BTC Value"]) *
+            100
+          : 0,
       icon: DollarSign,
     },
     {
@@ -143,9 +147,10 @@ const getCardData = (
         200,
         Math.max(0, (portfolioValue / initialInvestment) * 100)
       ),
-      missingPercentage: portfolioValue > 0 && portfolioValue < initialInvestment
-        ? ((initialInvestment - portfolioValue) / portfolioValue) * 100
-        : 0,
+      missingPercentage:
+        portfolioValue > 0 && portfolioValue < initialInvestment
+          ? ((initialInvestment - portfolioValue) / portfolioValue) * 100
+          : 0,
       icon: DollarSign,
     },
 
@@ -279,7 +284,8 @@ export function Crypto() {
       prices[usdtPair] || prices[btcPair] || prices[ethPair] || 0;
     const currentValue = currentPrice * asset.quantity;
     const athValue = asset.ath * asset.quantity;
-    const potentialAthValue = currentPrice > asset.ath ? currentValue : asset.quantity * asset.ath;
+    const potentialAthValue =
+      currentPrice > asset.ath ? currentValue : asset.quantity * asset.ath;
     const unrealizedPnL = currentValue - athValue * 0.5; // Estimation basée sur 50% de l'ATH comme prix d'achat moyen
     const pnlPercentage =
       athValue > 0
@@ -464,11 +470,13 @@ export function Crypto() {
                           className="h-2"
                           isLoading={card.progress === null}
                         />
-                        {card.missingPercentage !== undefined && card.missingPercentage > 0 && (
-                          <div className="text-xs text-red-600 mt-1">
-                            Il faut +{card.missingPercentage.toFixed(1)}% pour atteindre l'objectif
-                          </div>
-                        )}
+                        {card.missingPercentage !== undefined &&
+                          card.missingPercentage > 0 && (
+                            <div className="text-xs text-red-600 mt-1">
+                              Il faut +{card.missingPercentage.toFixed(1)}% pour
+                              atteindre l'objectif
+                            </div>
+                          )}
                       </div>
                     )}
 
@@ -530,11 +538,13 @@ export function Crypto() {
                         className="h-2"
                         isLoading={card.progress === null}
                       />
-                      {card.missingPercentage !== undefined && card.missingPercentage > 0 && (
-                        <div className="text-xs text-red-600 mt-1">
-                          Il faut +{card.missingPercentage.toFixed(1)}% pour atteindre l'objectif
-                        </div>
-                      )}
+                      {card.missingPercentage !== undefined &&
+                        card.missingPercentage > 0 && (
+                          <div className="text-xs text-red-600 mt-1">
+                            Il faut +{card.missingPercentage.toFixed(1)}% pour
+                            atteindre l'objectif
+                          </div>
+                        )}
                     </div>
                   )}
 
@@ -831,7 +841,13 @@ export function Crypto() {
                   })}
                 </TableCell>
                 <TableCell className="font-bold text-green-600">
-                  +{((totalPotentialAthValue - totalCurrentValue) / totalCurrentValue * 100).toFixed(0)}%
+                  +
+                  {(
+                    ((totalPotentialAthValue - totalCurrentValue) /
+                      totalCurrentValue) *
+                    100
+                  ).toFixed(0)}
+                  %
                 </TableCell>
               </TableRow>
             </TableBody>

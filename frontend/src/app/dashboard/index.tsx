@@ -1,5 +1,5 @@
-import { CinemaNextReleases } from "@/components/cinema-next-releases";
-import { CryptoOverview } from "@/components/crypto-overview";
+import { CinemaNextReleases } from "@/app/dashboard/cinema-next-releases";
+import { CryptoOverview } from "@/app/dashboard/crypto-overview";
 
 export const Dashboard = () => {
   return (
