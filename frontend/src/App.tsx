@@ -5,7 +5,7 @@ import Cinema from "./app/cinema";
 import { ThemeProvider } from "@/provider/theme";
 import { QueryProvider } from "@/provider/query";
 import { BinanceProvider } from "@/provider/binance";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { AppSidebar } from "@/components/sidebar";
 import { NavMobileBottom } from "@/components/nav/nav-mobile-bottom";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
