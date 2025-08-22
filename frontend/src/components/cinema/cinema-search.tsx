@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Film as FilmIcon, ChevronUp } from "lucide-react";
 import {
   Card,
@@ -41,6 +41,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
     useState(false);
   const [showSelectedMoviesDrawer, setShowSelectedMoviesDrawer] =
     useState(false);
+  const [isClosingDrawer, setIsClosingDrawer] = useState(false);
 
   // Filtrer les cinémas par ville
   const availableCinemas = cinemasData.filter((cinema) => {
@@ -67,12 +68,33 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
     }
   }, [availableCinemas.length]); // Se déclenche uniquement quand le nombre de cinémas change
 
-  // Gérer la touche Escape pour désélectionner les films
+  // Refs pour accéder aux valeurs actuelles dans l'event listener
+  const showDrawerRef = useRef(showSelectedMoviesDrawer);
+  const selectedMoviesRef = useRef(selectedMovies);
+  
+  // Mettre à jour les refs
+  useEffect(() => {
+    showDrawerRef.current = showSelectedMoviesDrawer;
+  }, [showSelectedMoviesDrawer]);
+  
+  useEffect(() => {
+    selectedMoviesRef.current = selectedMovies;
+  }, [selectedMovies]);
+
+  // Gérer la touche Escape
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && selectedMovies.length > 0) {
-        setSelectedMovies([]);
-        setShowSelectedMoviesDrawer(false);
+      if (event.key === "Escape") {
+        if (showDrawerRef.current) {
+          // Si le drawer est ouvert, le fermer seulement
+          setIsClosingDrawer(true);
+          setShowSelectedMoviesDrawer(false);
+          // Remettre le flag à false après un délai
+          setTimeout(() => setIsClosingDrawer(false), 100);
+        } else if (selectedMoviesRef.current.length > 0 && !isClosingDrawer) {
+          // Si le drawer est fermé et qu'il y a des films sélectionnés, les désélectionner
+          setSelectedMovies([]);
+        }
       }
     };
 
@@ -80,7 +102,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedMovies.length]);
+  }, [isClosingDrawer]); // Dépendance sur isClosingDrawer
 
   // Calculer le dayShift (nombre de jours depuis aujourd'hui)
   const today = new Date();
@@ -524,7 +546,12 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
       <SelectedMoviesDrawer
         movies={selectedMovies}
         isOpen={showSelectedMoviesDrawer}
-        onClose={() => setShowSelectedMoviesDrawer(false)}
+        onClose={() => {
+          setIsClosingDrawer(true);
+          setShowSelectedMoviesDrawer(false);
+          // Remettre le flag à false après un délai
+          setTimeout(() => setIsClosingDrawer(false), 100);
+        }}
         onRemoveMovie={(movie, cinemaId) => handleMovieSelect(movie, cinemaId)}
         zipCode={selectedCity}
         date={selectedDate}
