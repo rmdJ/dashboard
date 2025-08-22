@@ -26,12 +26,12 @@ import {
   type SignalDataItem,
 } from "@/hooks/useSignal";
 import { usePortfolioHistory } from "@/hooks/usePortfolioHistory";
-import { ChartAppFiguresRank } from "@/components/crypto/chart/chart-appfigures-rank";
-import { ChartTradingViewBTCD } from "@/components/crypto/chart/chart-tradingview-btcd";
-import { ChartNewHedgeMVRV } from "@/components/crypto/chart/chart-newhedge-mvrv";
-import { ChartTradingViewETHBTC } from "@/components/crypto/chart/chart-tradingview-ethbtc";
-import { ChartEvolution } from "@/components/crypto/chart/chart-evolution";
-import { ChartEthEvolution } from "@/components/crypto/chart/chart-eth-evolution";
+import { ChartAppFiguresRank } from "@/components/crypto/chartAppfiguresRank";
+import { ChartTradingViewBTCD } from "@/components/crypto/chartTradingviewBtcd";
+import { ChartNewHedgeMVRV } from "@/components/crypto/chartNewhedgeMvrv";
+import { ChartTradingViewETHBTC } from "@/components/crypto/chartTradingviewEthbtc";
+import { ChartEvolution } from "@/components/crypto/chartEvolution";
+import { ChartEthEvolution } from "@/components/crypto/chartEthEvolution";
 
 const getCardData = (
   prices: Record<string, number>,

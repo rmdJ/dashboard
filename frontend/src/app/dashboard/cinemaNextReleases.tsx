@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MovieDetailsDrawer } from "@/components/cinema/movie-details-drawer";
+import { MovieDetailsDrawer } from "@/components/cinema/movieDetailsDrawer";
 import { Calendar, Film, ChevronDown, ChevronUp } from "lucide-react";
 
 export const CinemaNextReleases = () => {

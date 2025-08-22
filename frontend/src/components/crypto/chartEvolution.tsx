@@ -1,14 +1,9 @@
-import * as React from "react";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  ReferenceLine,
-} from "recharts";
+"use client";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import * as React from "react";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+
+import { useIsMobile } from "@/hooks/useMobile";
 import {
   Card,
   CardAction,
@@ -31,20 +26,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useSignalData } from "@/hooks/useSignal";
-import { signalObjectives } from "@/assets/constants/crypto";
+import { useEvolution } from "@/hooks/useEvolution";
 
 const chartConfig = {
-  rank: {
-    label: "AppFigures Finance Rank",
-    color: "var(--primary)",
+  roadTo10k: {
+    label: "Road to 10k",
+    color: "#8884d8",
+  },
+  roadTo1btc: {
+    label: "Road to 1 BTC",
+    color: "#82ca9d",
   },
 } satisfies ChartConfig;
 
-export function ChartAppFiguresRank() {
+interface ChartDataPoint {
+  date: string;
+  roadTo10k: number;
+  roadTo1btc: number;
+}
+
+export function ChartEvolution() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("all");
-  const { data: signalData } = useSignalData();
+  const { data: evolutionData, isLoading, error } = useEvolution();
 
   React.useEffect(() => {
     if (isMobile) {
@@ -52,51 +56,43 @@ export function ChartAppFiguresRank() {
     }
   }, [isMobile]);
 
-  // Transformer les données Signal en format pour le graphique
+  // Combiner les données des deux collections par date
   const chartData = React.useMemo(() => {
-    if (!signalData || signalData.length === 0) return [];
+    if (!evolutionData) return [];
 
-    // Créer un map des données existantes avec AppFigures Finance Rank
-    const dataMap = new Map<string, number>();
+    const dateMap = new Map<string, ChartDataPoint>();
 
-    signalData.forEach((entry) => {
-      const appFiguresItem = entry.data?.find(
-        (item) => item.source === "AppFigures Finance Rank"
-      );
-      if (appFiguresItem) {
-        dataMap.set(entry.date, appFiguresItem.value);
+    // Ajouter les données road-to-10k
+    evolutionData.roadTo10k.forEach((point: any) => {
+      const dateKey = new Date(point.date).toISOString().split("T")[0];
+      if (!dateMap.has(dateKey)) {
+        dateMap.set(dateKey, {
+          date: dateKey,
+          roadTo10k: 0,
+          roadTo1btc: 0,
+        });
       }
+      dateMap.get(dateKey)!.roadTo10k = point.data?.currentValue || 0;
     });
 
-    // Créer une liste complète de toutes les dates disponibles
-    const allDates = signalData
-      .map((entry) => entry.date)
-      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-
-    const processedData: Array<{ date: string; rank: number }> = [];
-    let lastValidRank: number | null = null;
-
-    // Parcourir toutes les dates et combler les trous
-    for (const date of allDates) {
-      if (dataMap.has(date)) {
-        // Données disponibles, utiliser la vraie valeur
-        lastValidRank = dataMap.get(date)!;
-        processedData.push({
-          date,
-          rank: lastValidRank,
-        });
-      } else if (lastValidRank !== null) {
-        // Données manquantes, utiliser la dernière valeur valide
-        processedData.push({
-          date,
-          rank: lastValidRank,
+    // Ajouter les données road-to-1btc
+    evolutionData.roadTo1btc.forEach((point: any) => {
+      const dateKey = new Date(point.date).toISOString().split("T")[0];
+      if (!dateMap.has(dateKey)) {
+        dateMap.set(dateKey, {
+          date: dateKey,
+          roadTo10k: 0,
+          roadTo1btc: 0,
         });
       }
-      // Si pas de donnée et pas de valeur précédente, ignorer cette entrée
-    }
+      dateMap.get(dateKey)!.roadTo1btc = point.data?.btcValue || 0;
+    });
 
-    return processedData;
-  }, [signalData]);
+    // Convertir en array et trier par date
+    return Array.from(dateMap.values()).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }, [evolutionData]);
 
   const filteredData = React.useMemo(() => {
     if (chartData.length === 0) return [];
@@ -128,20 +124,47 @@ export function ChartAppFiguresRank() {
     });
   }, [chartData, timeRange]);
 
-  // Récupérer l'objectif depuis les constantes
-  const objective =
-    signalObjectives.find((obj) => obj.name === "AppFigures Finance Rank")
-      ?.value || 4;
+  if (isLoading) {
+    return (
+      <Card className="@container/card">
+        <CardHeader>
+          <CardTitle>Evolution Road to 10k & 1 BTC</CardTitle>
+          <CardDescription>Portfolio evolution tracking</CardDescription>
+        </CardHeader>
+        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+          <div className="flex h-[250px] items-center justify-center text-muted-foreground">
+            Loading evolution data...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error || !evolutionData) {
+    return (
+      <Card className="@container/card">
+        <CardHeader>
+          <CardTitle>Evolution Road to 10k & 1 BTC</CardTitle>
+          <CardDescription>Portfolio evolution tracking</CardDescription>
+        </CardHeader>
+        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+          <div className="flex h-[250px] items-center justify-center text-muted-foreground">
+            Erreur lors du chargement des données d'évolution
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>AppFigures Finance Rank</CardTitle>
+        <CardTitle>Evolution BTC Vs Portfolio</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            App store ranking evolution with objective at #{objective}
+            Portfolio evolution with dual-axis tracking ($USD / ₿BTC)
           </span>
-          <span className="@[540px]/card:hidden">Ranking evolution</span>
+          <span className="@[540px]/card:hidden">Portfolio evolution</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -197,15 +220,27 @@ export function ChartAppFiguresRank() {
           >
             <AreaChart data={filteredData}>
               <defs>
-                <linearGradient id="fillRank" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="fillRoadTo10k" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--color-rank)"
+                    stopColor="var(--color-roadTo10k)"
                     stopOpacity={0.8}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--color-rank)"
+                    stopColor="var(--color-roadTo10k)"
+                    stopOpacity={0.1}
+                  />
+                </linearGradient>
+                <linearGradient id="fillRoadTo1btc" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor="var(--color-roadTo1btc)"
+                    stopOpacity={0.8}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--color-roadTo1btc)"
                     stopOpacity={0.1}
                   />
                 </linearGradient>
@@ -226,9 +261,18 @@ export function ChartAppFiguresRank() {
                 }}
               />
               <YAxis
+                yAxisId="left"
+                orientation="left"
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `#${Math.round(value)}`}
+                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `₿${(value / 1000).toFixed(0)}k`}
               />
               <ChartTooltip
                 cursor={false}
@@ -241,30 +285,36 @@ export function ChartAppFiguresRank() {
                         year: "numeric",
                       });
                     }}
-                    formatter={(value) => [
-                      `#${Math.round(value as number)}`,
-                      "Rank",
-                    ]}
+                    formatter={(value, name) => {
+                      if (name === "roadTo1btc") {
+                        return [
+                          `₿${Math.round(value as number).toLocaleString()}`,
+                          "Road to 1 BTC",
+                        ];
+                      }
+                      return [
+                        `$${Math.round(value as number).toLocaleString()}`,
+                        "Road to 10k",
+                      ];
+                    }}
                     indicator="dot"
                   />
                 }
               />
-              {/* Ligne horizontale pour l'objectif */}
-              <ReferenceLine
-                y={objective}
-                stroke="var(--color-rank)"
-                strokeDasharray="5 5"
+              <Area
+                yAxisId="left"
+                dataKey="roadTo10k"
+                type="natural"
+                fill="url(#fillRoadTo10k)"
+                stroke="var(--color-roadTo10k)"
                 strokeWidth={2}
-                label={{
-                  value: `Objective: #${objective}`,
-                  position: "top",
-                }}
               />
               <Area
-                dataKey="rank"
+                yAxisId="right"
+                dataKey="roadTo1btc"
                 type="natural"
-                fill="url(#fillRank)"
-                stroke="var(--color-rank)"
+                fill="url(#fillRoadTo1btc)"
+                stroke="var(--color-roadTo1btc)"
                 strokeWidth={2}
               />
             </AreaChart>

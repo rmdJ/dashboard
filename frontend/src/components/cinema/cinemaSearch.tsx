@@ -21,8 +21,8 @@ import {
   sortOptions,
 } from "@/components/ui/toggle-group-sort";
 import { ToggleYesNo } from "@/components/ui/toggle-yes-no";
-import { MovieCard } from "./movie-card";
-import { SelectedMoviesDrawer } from "./selected-movies-drawer";
+import { MovieCard } from "./movieCard";
+import { SelectedMoviesDrawer } from "./selectedMoviesDrawer";
 import { useMultipleCinemasShowtimes } from "../../hooks/useMultipleCinemasShowtimes";
 import type { Movie, SortOption } from "../../types/cinema";
 import cinemasData from "@/data/cinemas.json";

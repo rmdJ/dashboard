@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/provider/theme";
 import { QueryProvider } from "@/provider/query";
 import { BinanceProvider } from "@/provider/binance";
 import { AppSidebar } from "@/components/sidebar";
-import { NavMobileBottom } from "@/components/nav/nav-mobile-bottom";
+import { NavMobileBottom } from "@/components/nav/mobile-bottom";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
 function App() {

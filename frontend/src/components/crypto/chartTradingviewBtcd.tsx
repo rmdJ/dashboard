@@ -1,9 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ReferenceLine,
+} from "recharts";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 import {
   Card,
   CardAction,
@@ -26,29 +33,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useEvolution } from "@/hooks/useEvolution";
+import { useSignalData } from "@/hooks/useSignal";
+import { signalObjectives } from "@/assets/constants/crypto";
 
 const chartConfig = {
-  roadTo10k: {
-    label: "Road to 10k",
-    color: "#8884d8",
-  },
-  roadTo1btc: {
-    label: "Road to 1 BTC",
-    color: "#82ca9d",
+  btcd: {
+    label: "TradingView BTC.D",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
-interface ChartDataPoint {
-  date: string;
-  roadTo10k: number;
-  roadTo1btc: number;
-}
-
-export function ChartEvolution() {
+export function ChartTradingViewBTCD() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("all");
-  const { data: evolutionData, isLoading, error } = useEvolution();
+  const { data: signalData } = useSignalData();
 
   React.useEffect(() => {
     if (isMobile) {
@@ -56,43 +54,50 @@ export function ChartEvolution() {
     }
   }, [isMobile]);
 
-  // Combiner les données des deux collections par date
+  // Transformer les données Signal en format pour le graphique
   const chartData = React.useMemo(() => {
-    if (!evolutionData) return [];
+    if (!signalData || signalData.length === 0) return [];
 
-    const dateMap = new Map<string, ChartDataPoint>();
+    // Créer un map des données existantes avec TradingView BTC.D
+    const dataMap = new Map<string, number>();
 
-    // Ajouter les données road-to-10k
-    evolutionData.roadTo10k.forEach((point: any) => {
-      const dateKey = new Date(point.date).toISOString().split("T")[0];
-      if (!dateMap.has(dateKey)) {
-        dateMap.set(dateKey, {
-          date: dateKey,
-          roadTo10k: 0,
-          roadTo1btc: 0,
-        });
+    signalData.forEach((entry) => {
+      const btcdItem = entry.data?.find(
+        (item) => item.source === "TradingView BTC.D"
+      );
+      if (btcdItem) {
+        dataMap.set(entry.date, btcdItem.value);
       }
-      dateMap.get(dateKey)!.roadTo10k = point.data?.currentValue || 0;
     });
 
-    // Ajouter les données road-to-1btc
-    evolutionData.roadTo1btc.forEach((point: any) => {
-      const dateKey = new Date(point.date).toISOString().split("T")[0];
-      if (!dateMap.has(dateKey)) {
-        dateMap.set(dateKey, {
-          date: dateKey,
-          roadTo10k: 0,
-          roadTo1btc: 0,
+    // Créer une liste complète de toutes les dates disponibles
+    const allDates = signalData
+      .map((entry) => entry.date)
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+    const processedData: Array<{ date: string; btcd: number }> = [];
+    let lastValidValue: number | null = null;
+
+    // Parcourir toutes les dates et combler les trous
+    for (const date of allDates) {
+      if (dataMap.has(date)) {
+        // Données disponibles, utiliser la vraie valeur
+        lastValidValue = dataMap.get(date)!;
+        processedData.push({
+          date,
+          btcd: lastValidValue,
+        });
+      } else if (lastValidValue !== null) {
+        // Données manquantes, utiliser la dernière valeur valide
+        processedData.push({
+          date,
+          btcd: lastValidValue,
         });
       }
-      dateMap.get(dateKey)!.roadTo1btc = point.data?.btcValue || 0;
-    });
+    }
 
-    // Convertir en array et trier par date
-    return Array.from(dateMap.values()).sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
-  }, [evolutionData]);
+    return processedData;
+  }, [signalData]);
 
   const filteredData = React.useMemo(() => {
     if (chartData.length === 0) return [];
@@ -124,47 +129,20 @@ export function ChartEvolution() {
     });
   }, [chartData, timeRange]);
 
-  if (isLoading) {
-    return (
-      <Card className="@container/card">
-        <CardHeader>
-          <CardTitle>Evolution Road to 10k & 1 BTC</CardTitle>
-          <CardDescription>Portfolio evolution tracking</CardDescription>
-        </CardHeader>
-        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-          <div className="flex h-[250px] items-center justify-center text-muted-foreground">
-            Loading evolution data...
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error || !evolutionData) {
-    return (
-      <Card className="@container/card">
-        <CardHeader>
-          <CardTitle>Evolution Road to 10k & 1 BTC</CardTitle>
-          <CardDescription>Portfolio evolution tracking</CardDescription>
-        </CardHeader>
-        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-          <div className="flex h-[250px] items-center justify-center text-muted-foreground">
-            Erreur lors du chargement des données d'évolution
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Récupérer l'objectif depuis les constantes
+  const objective =
+    signalObjectives.find((obj) => obj.name === "TradingView BTC.D")?.value ||
+    41;
 
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>Evolution BTC Vs Portfolio</CardTitle>
+        <CardTitle>TradingView BTC.D</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Portfolio evolution with dual-axis tracking ($USD / ₿BTC)
+            Bitcoin dominance evolution with objective at {objective}%
           </span>
-          <span className="@[540px]/card:hidden">Portfolio evolution</span>
+          <span className="@[540px]/card:hidden">BTC dominance evolution</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -220,27 +198,15 @@ export function ChartEvolution() {
           >
             <AreaChart data={filteredData}>
               <defs>
-                <linearGradient id="fillRoadTo10k" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="fillBTCD" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--color-roadTo10k)"
+                    stopColor="var(--color-btcd)"
                     stopOpacity={0.8}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--color-roadTo10k)"
-                    stopOpacity={0.1}
-                  />
-                </linearGradient>
-                <linearGradient id="fillRoadTo1btc" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="var(--color-roadTo1btc)"
-                    stopOpacity={0.8}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="var(--color-roadTo1btc)"
+                    stopColor="var(--color-btcd)"
                     stopOpacity={0.1}
                   />
                 </linearGradient>
@@ -261,18 +227,9 @@ export function ChartEvolution() {
                 }}
               />
               <YAxis
-                yAxisId="left"
-                orientation="left"
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-              />
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => `₿${(value / 1000).toFixed(0)}k`}
+                tickFormatter={(value) => `${value.toFixed(1)}%`}
               />
               <ChartTooltip
                 cursor={false}
@@ -285,36 +242,27 @@ export function ChartEvolution() {
                         year: "numeric",
                       });
                     }}
-                    formatter={(value, name) => {
-                      if (name === "roadTo1btc") {
-                        return [
-                          `₿${Math.round(value as number).toLocaleString()}`,
-                          "Road to 1 BTC",
-                        ];
-                      }
-                      return [
-                        `$${Math.round(value as number).toLocaleString()}`,
-                        "Road to 10k",
-                      ];
-                    }}
+                    formatter={(value) => [
+                      `${(value as number).toFixed(1)}% `,
+                      "BTC.D",
+                    ]}
                     indicator="dot"
                   />
                 }
               />
-              <Area
-                yAxisId="left"
-                dataKey="roadTo10k"
-                type="natural"
-                fill="url(#fillRoadTo10k)"
-                stroke="var(--color-roadTo10k)"
+              {/* Ligne horizontale pour l'objectif */}
+              <ReferenceLine
+                y={objective}
+                stroke="var(--color-btcd)"
+                strokeDasharray="5 5"
                 strokeWidth={2}
+                label={{ value: `Objective: ${objective}%`, position: "top" }}
               />
               <Area
-                yAxisId="right"
-                dataKey="roadTo1btc"
+                dataKey="btcd"
                 type="natural"
-                fill="url(#fillRoadTo1btc)"
-                stroke="var(--color-roadTo1btc)"
+                fill="url(#fillBTCD)"
+                stroke="var(--color-btcd)"
                 strokeWidth={2}
               />
             </AreaChart>

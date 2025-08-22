@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { MapPin } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { SingleSelect } from "@/components/ui/single-select";
-import { CinemaSearch } from "../../components/cinema/cinema-search";
+import { CinemaSearch } from "@/components/cinema/cinemaSearch";
 import cinemas from "@/data/cinemas.json";
 import formerCities from "@/data/french-cities.json";
 

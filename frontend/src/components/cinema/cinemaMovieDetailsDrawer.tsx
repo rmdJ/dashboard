@@ -1,4 +1,7 @@
-import { BaseMovieDetailsDrawer, type BaseMovieData } from "@/components/common/base-movie-details-drawer";
+import {
+  BaseMovieDetailsDrawer,
+  type BaseMovieData,
+} from "@/components/cinema/baseMovieDetailsDrawer";
 import { Badge } from "@/components/ui/badge";
 import type { Movie } from "../../types/cinema";
 
@@ -38,8 +41,10 @@ export const CinemaMovieDetailsDrawer = ({
     posterUrl,
     relatedTags,
     ratings: {
-      press: pressRating > 0 ? { score: pressRating, count: pressCount } : undefined,
-      user: userRating > 0 ? { score: userRating, count: userCount } : undefined,
+      press:
+        pressRating > 0 ? { score: pressRating, count: pressCount } : undefined,
+      user:
+        userRating > 0 ? { score: userRating, count: userCount } : undefined,
     },
   };
 
@@ -53,14 +58,20 @@ export const CinemaMovieDetailsDrawer = ({
       {movie.showtimes && (
         <div className="space-y-4">
           <h3 className="font-semibold">Séances disponibles</h3>
-          
+
           {/* VF */}
           {movie.showtimes.dubbed && movie.showtimes.dubbed.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium mb-2">Version française (VF)</h4>
+              <h4 className="text-sm font-medium mb-2">
+                Version française (VF)
+              </h4>
               <div className="flex flex-wrap gap-2">
                 {movie.showtimes.dubbed.map((showtime, index) => (
-                  <Badge key={`vf-${index}`} variant="secondary" className="text-xs">
+                  <Badge
+                    key={`vf-${index}`}
+                    variant="secondary"
+                    className="text-xs"
+                  >
                     {new Date(showtime.startsAt).toLocaleTimeString("fr-FR", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -74,10 +85,16 @@ export const CinemaMovieDetailsDrawer = ({
           {/* VO */}
           {movie.showtimes.original && movie.showtimes.original.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium mb-2">Version originale (VO)</h4>
+              <h4 className="text-sm font-medium mb-2">
+                Version originale (VO)
+              </h4>
               <div className="flex flex-wrap gap-2">
                 {movie.showtimes.original.map((showtime, index) => (
-                  <Badge key={`vo-${index}`} variant="outline" className="text-xs">
+                  <Badge
+                    key={`vo-${index}`}
+                    variant="outline"
+                    className="text-xs"
+                  >
                     {new Date(showtime.startsAt).toLocaleTimeString("fr-FR", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -94,7 +111,11 @@ export const CinemaMovieDetailsDrawer = ({
               <h4 className="text-sm font-medium mb-2">Version locale</h4>
               <div className="flex flex-wrap gap-2">
                 {movie.showtimes.local.map((showtime, index) => (
-                  <Badge key={`local-${index}`} variant="secondary" className="text-xs">
+                  <Badge
+                    key={`local-${index}`}
+                    variant="secondary"
+                    className="text-xs"
+                  >
                     {new Date(showtime.startsAt).toLocaleTimeString("fr-FR", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -111,7 +132,11 @@ export const CinemaMovieDetailsDrawer = ({
               <h4 className="text-sm font-medium mb-2">Versions multiples</h4>
               <div className="flex flex-wrap gap-2">
                 {movie.showtimes.multiple.map((showtime, index) => (
-                  <Badge key={`multi-${index}`} variant="default" className="text-xs">
+                  <Badge
+                    key={`multi-${index}`}
+                    variant="default"
+                    className="text-xs"
+                  >
                     {new Date(showtime.startsAt).toLocaleTimeString("fr-FR", {
                       hour: "2-digit",
                       minute: "2-digit",

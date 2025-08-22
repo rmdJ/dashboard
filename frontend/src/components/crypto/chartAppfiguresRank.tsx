@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   Area,
@@ -10,7 +8,7 @@ import {
   ReferenceLine,
 } from "recharts";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 import {
   Card,
   CardAction,
@@ -37,13 +35,13 @@ import { useSignalData } from "@/hooks/useSignal";
 import { signalObjectives } from "@/assets/constants/crypto";
 
 const chartConfig = {
-  ethbtc: {
-    label: "TradingView ETH/BTC",
+  rank: {
+    label: "AppFigures Finance Rank",
     color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
-export function ChartTradingViewETHBTC() {
+export function ChartAppFiguresRank() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("all");
   const { data: signalData } = useSignalData();
@@ -58,15 +56,15 @@ export function ChartTradingViewETHBTC() {
   const chartData = React.useMemo(() => {
     if (!signalData || signalData.length === 0) return [];
 
-    // Créer un map des données existantes avec TradingView ETH/BTC
+    // Créer un map des données existantes avec AppFigures Finance Rank
     const dataMap = new Map<string, number>();
 
     signalData.forEach((entry) => {
-      const ethbtcItem = entry.data?.find(
-        (item) => item.source === "TradingView ETH/BTC"
+      const appFiguresItem = entry.data?.find(
+        (item) => item.source === "AppFigures Finance Rank"
       );
-      if (ethbtcItem) {
-        dataMap.set(entry.date, ethbtcItem.value);
+      if (appFiguresItem) {
+        dataMap.set(entry.date, appFiguresItem.value);
       }
     });
 
@@ -75,25 +73,26 @@ export function ChartTradingViewETHBTC() {
       .map((entry) => entry.date)
       .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-    const processedData: Array<{ date: string; ethbtc: number }> = [];
-    let lastValidValue: number | null = null;
+    const processedData: Array<{ date: string; rank: number }> = [];
+    let lastValidRank: number | null = null;
 
     // Parcourir toutes les dates et combler les trous
     for (const date of allDates) {
       if (dataMap.has(date)) {
         // Données disponibles, utiliser la vraie valeur
-        lastValidValue = dataMap.get(date)!;
+        lastValidRank = dataMap.get(date)!;
         processedData.push({
           date,
-          ethbtc: lastValidValue,
+          rank: lastValidRank,
         });
-      } else if (lastValidValue !== null) {
+      } else if (lastValidRank !== null) {
         // Données manquantes, utiliser la dernière valeur valide
         processedData.push({
           date,
-          ethbtc: lastValidValue,
+          rank: lastValidRank,
         });
       }
+      // Si pas de donnée et pas de valeur précédente, ignorer cette entrée
     }
 
     return processedData;
@@ -131,18 +130,18 @@ export function ChartTradingViewETHBTC() {
 
   // Récupérer l'objectif depuis les constantes
   const objective =
-    signalObjectives.find((obj) => obj.name === "TradingView ETH/BTC")?.value ||
-    0.0548;
+    signalObjectives.find((obj) => obj.name === "AppFigures Finance Rank")
+      ?.value || 4;
 
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>TradingView ETH/BTC</CardTitle>
+        <CardTitle>AppFigures Finance Rank</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            ETH/BTC ratio evolution with objective at {objective}
+            App store ranking evolution with objective at #{objective}
           </span>
-          <span className="@[540px]/card:hidden">ETH/BTC ratio evolution</span>
+          <span className="@[540px]/card:hidden">Ranking evolution</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -198,15 +197,15 @@ export function ChartTradingViewETHBTC() {
           >
             <AreaChart data={filteredData}>
               <defs>
-                <linearGradient id="fillETHBTC" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="fillRank" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--color-ethbtc)"
+                    stopColor="var(--color-rank)"
                     stopOpacity={0.8}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--color-ethbtc)"
+                    stopColor="var(--color-rank)"
                     stopOpacity={0.1}
                   />
                 </linearGradient>
@@ -229,7 +228,7 @@ export function ChartTradingViewETHBTC() {
               <YAxis
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => value.toFixed(4)}
+                tickFormatter={(value) => `#${Math.round(value)}`}
               />
               <ChartTooltip
                 cursor={false}
@@ -243,8 +242,8 @@ export function ChartTradingViewETHBTC() {
                       });
                     }}
                     formatter={(value) => [
-                      (value as number).toFixed(6),
-                      "ETH/BTC",
+                      `#${Math.round(value as number)}`,
+                      "Rank",
                     ]}
                     indicator="dot"
                   />
@@ -253,20 +252,19 @@ export function ChartTradingViewETHBTC() {
               {/* Ligne horizontale pour l'objectif */}
               <ReferenceLine
                 y={objective}
-                stroke="#ef4444"
+                stroke="var(--color-rank)"
                 strokeDasharray="5 5"
-                strokeWidth={3}
+                strokeWidth={2}
                 label={{
-                  value: `Objective: ${objective}`,
-                  position: "insideTopRight",
-                  style: { fill: "#ef4444", fontWeight: "bold" },
+                  value: `Objective: #${objective}`,
+                  position: "top",
                 }}
               />
               <Area
-                dataKey="ethbtc"
+                dataKey="rank"
                 type="natural"
-                fill="url(#fillETHBTC)"
-                stroke="var(--color-ethbtc)"
+                fill="url(#fillRank)"
+                stroke="var(--color-rank)"
                 strokeWidth={2}
               />
             </AreaChart>

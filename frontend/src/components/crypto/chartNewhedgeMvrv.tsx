@@ -1,9 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ReferenceLine,
+} from "recharts";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 import {
   Card,
   CardAction,
@@ -26,19 +33,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useEvolution } from "@/hooks/useEvolution";
+import { useSignalData } from "@/hooks/useSignal";
+import { signalObjectives } from "@/assets/constants/crypto";
 
 const chartConfig = {
-  ethTotal: {
-    label: "Portfolio ETH",
-    color: "#627eea",
+  mvrv: {
+    label: "NewHedge MVRV Z-Score",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
-export function ChartEthEvolution() {
+export function ChartNewHedgeMVRV() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("all");
-  const { data: evolutionData, isLoading, error } = useEvolution();
+  const { data: signalData } = useSignalData();
 
   React.useEffect(() => {
     if (isMobile) {
@@ -46,18 +54,50 @@ export function ChartEthEvolution() {
     }
   }, [isMobile]);
 
-  // Extraire les données ETH de roadTo1btc
+  // Transformer les données Signal en format pour le graphique
   const chartData = React.useMemo(() => {
-    if (!evolutionData || !evolutionData.roadTo1btc) return [];
+    if (!signalData || signalData.length === 0) return [];
 
-    return evolutionData.roadTo1btc
-      .filter((point: any) => point.data?.ethTotal !== undefined)
-      .map((point: any) => ({
-        date: new Date(point.date).toISOString().split("T")[0],
-        ethTotal: point.data.ethTotal || 0,
-      }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [evolutionData]);
+    // Créer un map des données existantes avec NewHedge MVRV Z-Score
+    const dataMap = new Map<string, number>();
+
+    signalData.forEach((entry) => {
+      const mvrvItem = entry.data?.find(
+        (item) => item.source === "NewHedge MVRV Z-Score"
+      );
+      if (mvrvItem) {
+        dataMap.set(entry.date, mvrvItem.value);
+      }
+    });
+
+    // Créer une liste complète de toutes les dates disponibles
+    const allDates = signalData
+      .map((entry) => entry.date)
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+    const processedData: Array<{ date: string; mvrv: number }> = [];
+    let lastValidValue: number | null = null;
+
+    // Parcourir toutes les dates et combler les trous
+    for (const date of allDates) {
+      if (dataMap.has(date)) {
+        // Données disponibles, utiliser la vraie valeur
+        lastValidValue = dataMap.get(date)!;
+        processedData.push({
+          date,
+          mvrv: lastValidValue,
+        });
+      } else if (lastValidValue !== null) {
+        // Données manquantes, utiliser la dernière valeur valide
+        processedData.push({
+          date,
+          mvrv: lastValidValue,
+        });
+      }
+    }
+
+    return processedData;
+  }, [signalData]);
 
   const filteredData = React.useMemo(() => {
     if (chartData.length === 0) return [];
@@ -89,47 +129,20 @@ export function ChartEthEvolution() {
     });
   }, [chartData, timeRange]);
 
-  if (isLoading) {
-    return (
-      <Card className="@container/card">
-        <CardHeader>
-          <CardTitle>Portfolio ETH Evolution</CardTitle>
-          <CardDescription>ETH value tracking over time</CardDescription>
-        </CardHeader>
-        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-          <div className="flex h-[250px] items-center justify-center text-muted-foreground">
-            Loading ETH evolution data...
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error || !evolutionData) {
-    return (
-      <Card className="@container/card">
-        <CardHeader>
-          <CardTitle>Portfolio ETH Evolution</CardTitle>
-          <CardDescription>ETH value tracking over time</CardDescription>
-        </CardHeader>
-        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-          <div className="flex h-[250px] items-center justify-center text-muted-foreground">
-            Erreur lors du chargement des données ETH
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Récupérer l'objectif depuis les constantes
+  const objective =
+    signalObjectives.find((obj) => obj.name === "NewHedge MVRV Z-Score")
+      ?.value || 5.8;
 
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>Portfolio ETH Evolution</CardTitle>
+        <CardTitle>NewHedge MVRV Z-Score</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Portfolio value evolution tracked in Ethereum (ETH)
+            Bitcoin MVRV Z-Score evolution with objective at {objective}
           </span>
-          <span className="@[540px]/card:hidden">ETH evolution</span>
+          <span className="@[540px]/card:hidden">MVRV Z-Score evolution</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -176,7 +189,7 @@ export function ChartEthEvolution() {
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {filteredData.length === 0 ? (
           <div className="flex h-[250px] items-center justify-center text-muted-foreground">
-            No ETH data available for the selected period
+            No data available for the selected period
           </div>
         ) : (
           <ChartContainer
@@ -185,15 +198,15 @@ export function ChartEthEvolution() {
           >
             <AreaChart data={filteredData}>
               <defs>
-                <linearGradient id="fillEthTotal" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="fillMVRV" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--color-ethTotal)"
+                    stopColor="var(--color-mvrv)"
                     stopOpacity={0.8}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--color-ethTotal)"
+                    stopColor="var(--color-mvrv)"
                     stopOpacity={0.1}
                   />
                 </linearGradient>
@@ -216,7 +229,7 @@ export function ChartEthEvolution() {
               <YAxis
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `Ξ${value.toFixed(2)}`}
+                tickFormatter={(value) => value.toFixed(1)}
               />
               <ChartTooltip
                 cursor={false}
@@ -230,18 +243,30 @@ export function ChartEthEvolution() {
                       });
                     }}
                     formatter={(value) => [
-                      `Ξ${(value as number).toFixed(4)}`,
-                      "Portfolio ETH",
+                      (value as number).toFixed(2),
+                      "MVRV Z-Score",
                     ]}
                     indicator="dot"
                   />
                 }
               />
+              {/* Ligne horizontale pour l'objectif */}
+              <ReferenceLine
+                y={objective}
+                stroke="#ef4444"
+                strokeDasharray="5 5"
+                strokeWidth={3}
+                label={{
+                  value: `Objective: ${objective}`,
+                  position: "insideTopRight",
+                  style: { fill: "#ef4444", fontWeight: "bold" },
+                }}
+              />
               <Area
-                dataKey="ethTotal"
+                dataKey="mvrv"
                 type="natural"
-                fill="url(#fillEthTotal)"
-                stroke="var(--color-ethTotal)"
+                fill="url(#fillMVRV)"
+                stroke="var(--color-mvrv)"
                 strokeWidth={2}
               />
             </AreaChart>

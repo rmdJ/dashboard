@@ -15,7 +15,7 @@ export interface BaseMovieData {
   title: string;
   originalTitle?: string;
   synopsis?: string;
-  runtime?: string | number;
+  runtime?: string | number | null;
   posterUrl?: string;
   backdropUrl?: string;
   releaseDate?: string;

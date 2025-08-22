@@ -10,7 +10,7 @@ import {
   ReferenceLine,
 } from "recharts";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 import {
   Card,
   CardAction,
@@ -37,13 +37,13 @@ import { useSignalData } from "@/hooks/useSignal";
 import { signalObjectives } from "@/assets/constants/crypto";
 
 const chartConfig = {
-  mvrv: {
-    label: "NewHedge MVRV Z-Score",
+  ethbtc: {
+    label: "TradingView ETH/BTC",
     color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
-export function ChartNewHedgeMVRV() {
+export function ChartTradingViewETHBTC() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("all");
   const { data: signalData } = useSignalData();
@@ -58,15 +58,15 @@ export function ChartNewHedgeMVRV() {
   const chartData = React.useMemo(() => {
     if (!signalData || signalData.length === 0) return [];
 
-    // Créer un map des données existantes avec NewHedge MVRV Z-Score
+    // Créer un map des données existantes avec TradingView ETH/BTC
     const dataMap = new Map<string, number>();
 
     signalData.forEach((entry) => {
-      const mvrvItem = entry.data?.find(
-        (item) => item.source === "NewHedge MVRV Z-Score"
+      const ethbtcItem = entry.data?.find(
+        (item) => item.source === "TradingView ETH/BTC"
       );
-      if (mvrvItem) {
-        dataMap.set(entry.date, mvrvItem.value);
+      if (ethbtcItem) {
+        dataMap.set(entry.date, ethbtcItem.value);
       }
     });
 
@@ -75,7 +75,7 @@ export function ChartNewHedgeMVRV() {
       .map((entry) => entry.date)
       .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-    const processedData: Array<{ date: string; mvrv: number }> = [];
+    const processedData: Array<{ date: string; ethbtc: number }> = [];
     let lastValidValue: number | null = null;
 
     // Parcourir toutes les dates et combler les trous
@@ -85,13 +85,13 @@ export function ChartNewHedgeMVRV() {
         lastValidValue = dataMap.get(date)!;
         processedData.push({
           date,
-          mvrv: lastValidValue,
+          ethbtc: lastValidValue,
         });
       } else if (lastValidValue !== null) {
         // Données manquantes, utiliser la dernière valeur valide
         processedData.push({
           date,
-          mvrv: lastValidValue,
+          ethbtc: lastValidValue,
         });
       }
     }
@@ -131,18 +131,18 @@ export function ChartNewHedgeMVRV() {
 
   // Récupérer l'objectif depuis les constantes
   const objective =
-    signalObjectives.find((obj) => obj.name === "NewHedge MVRV Z-Score")
-      ?.value || 5.8;
+    signalObjectives.find((obj) => obj.name === "TradingView ETH/BTC")?.value ||
+    0.0548;
 
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>NewHedge MVRV Z-Score</CardTitle>
+        <CardTitle>TradingView ETH/BTC</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Bitcoin MVRV Z-Score evolution with objective at {objective}
+            ETH/BTC ratio evolution with objective at {objective}
           </span>
-          <span className="@[540px]/card:hidden">MVRV Z-Score evolution</span>
+          <span className="@[540px]/card:hidden">ETH/BTC ratio evolution</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -198,15 +198,15 @@ export function ChartNewHedgeMVRV() {
           >
             <AreaChart data={filteredData}>
               <defs>
-                <linearGradient id="fillMVRV" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="fillETHBTC" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--color-mvrv)"
+                    stopColor="var(--color-ethbtc)"
                     stopOpacity={0.8}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--color-mvrv)"
+                    stopColor="var(--color-ethbtc)"
                     stopOpacity={0.1}
                   />
                 </linearGradient>
@@ -229,7 +229,7 @@ export function ChartNewHedgeMVRV() {
               <YAxis
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => value.toFixed(1)}
+                tickFormatter={(value) => value.toFixed(4)}
               />
               <ChartTooltip
                 cursor={false}
@@ -243,8 +243,8 @@ export function ChartNewHedgeMVRV() {
                       });
                     }}
                     formatter={(value) => [
-                      (value as number).toFixed(2),
-                      "MVRV Z-Score",
+                      (value as number).toFixed(6),
+                      "ETH/BTC",
                     ]}
                     indicator="dot"
                   />
@@ -263,10 +263,10 @@ export function ChartNewHedgeMVRV() {
                 }}
               />
               <Area
-                dataKey="mvrv"
+                dataKey="ethbtc"
                 type="natural"
-                fill="url(#fillMVRV)"
-                stroke="var(--color-mvrv)"
+                fill="url(#fillETHBTC)"
+                stroke="var(--color-ethbtc)"
                 strokeWidth={2}
               />
             </AreaChart>

@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 import {
   Card,
   CardAction,
@@ -26,20 +26,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useSignalData } from "@/hooks/useSignal";
-import { signalObjectives } from "@/assets/constants/crypto";
+import { useEvolution } from "@/hooks/useEvolution";
 
 const chartConfig = {
-  btcd: {
-    label: "TradingView BTC.D",
-    color: "var(--primary)",
+  ethTotal: {
+    label: "Portfolio ETH",
+    color: "#627eea",
   },
 } satisfies ChartConfig;
 
-export function ChartTradingViewBTCD() {
+export function ChartEthEvolution() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("all");
-  const { data: signalData } = useSignalData();
+  const { data: evolutionData, isLoading, error } = useEvolution();
 
   React.useEffect(() => {
     if (isMobile) {
@@ -47,50 +46,18 @@ export function ChartTradingViewBTCD() {
     }
   }, [isMobile]);
 
-  // Transformer les données Signal en format pour le graphique
+  // Extraire les données ETH de roadTo1btc
   const chartData = React.useMemo(() => {
-    if (!signalData || signalData.length === 0) return [];
+    if (!evolutionData || !evolutionData.roadTo1btc) return [];
 
-    // Créer un map des données existantes avec TradingView BTC.D
-    const dataMap = new Map<string, number>();
-
-    signalData.forEach((entry) => {
-      const btcdItem = entry.data?.find(
-        (item) => item.source === "TradingView BTC.D"
-      );
-      if (btcdItem) {
-        dataMap.set(entry.date, btcdItem.value);
-      }
-    });
-
-    // Créer une liste complète de toutes les dates disponibles
-    const allDates = signalData
-      .map((entry) => entry.date)
-      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-
-    const processedData: Array<{ date: string; btcd: number }> = [];
-    let lastValidValue: number | null = null;
-
-    // Parcourir toutes les dates et combler les trous
-    for (const date of allDates) {
-      if (dataMap.has(date)) {
-        // Données disponibles, utiliser la vraie valeur
-        lastValidValue = dataMap.get(date)!;
-        processedData.push({
-          date,
-          btcd: lastValidValue,
-        });
-      } else if (lastValidValue !== null) {
-        // Données manquantes, utiliser la dernière valeur valide
-        processedData.push({
-          date,
-          btcd: lastValidValue,
-        });
-      }
-    }
-
-    return processedData;
-  }, [signalData]);
+    return evolutionData.roadTo1btc
+      .filter((point: any) => point.data?.ethTotal !== undefined)
+      .map((point: any) => ({
+        date: new Date(point.date).toISOString().split("T")[0],
+        ethTotal: point.data.ethTotal || 0,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }, [evolutionData]);
 
   const filteredData = React.useMemo(() => {
     if (chartData.length === 0) return [];
@@ -122,20 +89,47 @@ export function ChartTradingViewBTCD() {
     });
   }, [chartData, timeRange]);
 
-  // Récupérer l'objectif depuis les constantes
-  const objective =
-    signalObjectives.find((obj) => obj.name === "TradingView BTC.D")?.value ||
-    41;
+  if (isLoading) {
+    return (
+      <Card className="@container/card">
+        <CardHeader>
+          <CardTitle>Portfolio ETH Evolution</CardTitle>
+          <CardDescription>ETH value tracking over time</CardDescription>
+        </CardHeader>
+        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+          <div className="flex h-[250px] items-center justify-center text-muted-foreground">
+            Loading ETH evolution data...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error || !evolutionData) {
+    return (
+      <Card className="@container/card">
+        <CardHeader>
+          <CardTitle>Portfolio ETH Evolution</CardTitle>
+          <CardDescription>ETH value tracking over time</CardDescription>
+        </CardHeader>
+        <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+          <div className="flex h-[250px] items-center justify-center text-muted-foreground">
+            Erreur lors du chargement des données ETH
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>TradingView BTC.D</CardTitle>
+        <CardTitle>Portfolio ETH Evolution</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Bitcoin dominance evolution with objective at {objective}%
+            Portfolio value evolution tracked in Ethereum (ETH)
           </span>
-          <span className="@[540px]/card:hidden">BTC dominance evolution</span>
+          <span className="@[540px]/card:hidden">ETH evolution</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -182,7 +176,7 @@ export function ChartTradingViewBTCD() {
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {filteredData.length === 0 ? (
           <div className="flex h-[250px] items-center justify-center text-muted-foreground">
-            No data available for the selected period
+            No ETH data available for the selected period
           </div>
         ) : (
           <ChartContainer
@@ -191,15 +185,15 @@ export function ChartTradingViewBTCD() {
           >
             <AreaChart data={filteredData}>
               <defs>
-                <linearGradient id="fillBTCD" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="fillEthTotal" x1="0" y1="0" x2="0" y2="1">
                   <stop
                     offset="5%"
-                    stopColor="var(--color-btcd)"
+                    stopColor="var(--color-ethTotal)"
                     stopOpacity={0.8}
                   />
                   <stop
                     offset="95%"
-                    stopColor="var(--color-btcd)"
+                    stopColor="var(--color-ethTotal)"
                     stopOpacity={0.1}
                   />
                 </linearGradient>
@@ -222,7 +216,7 @@ export function ChartTradingViewBTCD() {
               <YAxis
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `${value.toFixed(1)}%`}
+                tickFormatter={(value) => `Ξ${value.toFixed(2)}`}
               />
               <ChartTooltip
                 cursor={false}
@@ -236,26 +230,18 @@ export function ChartTradingViewBTCD() {
                       });
                     }}
                     formatter={(value) => [
-                      `${(value as number).toFixed(1)}% `,
-                      "BTC.D",
+                      `Ξ${(value as number).toFixed(4)}`,
+                      "Portfolio ETH",
                     ]}
                     indicator="dot"
                   />
                 }
               />
-              {/* Ligne horizontale pour l'objectif */}
-              <ReferenceLine
-                y={objective}
-                stroke="var(--color-btcd)"
-                strokeDasharray="5 5"
-                strokeWidth={2}
-                label={{ value: `Objective: ${objective}%`, position: "top" }}
-              />
               <Area
-                dataKey="btcd"
+                dataKey="ethTotal"
                 type="natural"
-                fill="url(#fillBTCD)"
-                stroke="var(--color-btcd)"
+                fill="url(#fillEthTotal)"
+                stroke="var(--color-ethTotal)"
                 strokeWidth={2}
               />
             </AreaChart>
