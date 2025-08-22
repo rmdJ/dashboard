@@ -8,7 +8,6 @@ import { BinanceProvider } from "@/provider/binance";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-// import { SiteHeader } from "@/components/header/site-header";
 
 function App() {
   return (
@@ -21,7 +20,6 @@ function App() {
               <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
-                  {/* <SiteHeader /> */}
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/crypto" element={<Crypto />} />
