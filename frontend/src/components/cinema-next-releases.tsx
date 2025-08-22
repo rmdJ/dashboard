@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MovieDetailsDrawer } from "@/components/movie-details-drawer";
 import { Calendar, Film, ChevronDown, ChevronUp } from "lucide-react";
-import HorizontalScroll from "./layout/horizontalScroll";
+import { MobileMovieSlider } from "./mobile-movie-slider";
 
 export const CinemaNextReleases = () => {
   const { data, isLoading, error } = useCinemaNextReleases();
@@ -133,39 +133,11 @@ export const CinemaNextReleases = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Mobile Horizontal Scroll */}
-        <div className="block md:hidden">
-          <HorizontalScroll>
-            {sortedMovies.map((movie) => (
-              <div
-                key={movie.id}
-                className="cursor-pointer group transition-all duration-200 hover:bg-muted/50 rounded-lg p-3 -m-3 w-full min-w-full"
-                onClick={() => handleMovieClick(movie.id)}
-              >
-                <div className="flex flex-col items-center w-full px-4">
-                  <div className="h-12 flex items-center mb-3 w-full">
-                    <h3 className="font-semibold text-center text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2 w-full">
-                      {movie.title}
-                    </h3>
-                  </div>
-                  {movie.poster_path ? (
-                    <div className="w-full max-w-sm md:h-72 rounded-lg shadow-lg overflow-hidden">
-                      <img
-                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                        alt={movie.title}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full max-w-sm h-72 bg-gray-200 dark:bg-gray-700 rounded-lg shadow-lg flex items-center justify-center">
-                      <Film className="h-16 w-16 text-gray-400 dark:text-gray-500" />
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </HorizontalScroll>
-        </div>
+        {/* Mobile Movie Slider */}
+        <MobileMovieSlider
+          movies={sortedMovies}
+          onMovieClick={handleMovieClick}
+        />
 
         {/* Desktop Grid */}
         <div className="hidden md:block">
