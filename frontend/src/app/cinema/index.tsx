@@ -1,19 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MapPin } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useQueryClient } from "@tanstack/react-query";
+import { SingleSelect } from "@/components/ui/single-select";
 import { CinemaSearch } from "../../components/cinema/cinema-search";
-import frenchCities from "../../data/french-cities.json";
+import cinemas from "@/data/cinemas.json";
+import formerCities from "@/data/french-cities.json";
 
 export default function Cinema() {
+  const queryClient = useQueryClient();
   const [selectedCity, setSelectedCity] = useState<string>(() => {
     return localStorage.getItem("VITE_ZIP_CODE") || "";
   });
+
+  // Fonction pour changer de ville et invalider le cache
+  const handleCityChange = (newCity: string) => {
+    setSelectedCity(newCity);
+    // Invalider toutes les queries de cinéma pour forcer le rechargement
+    queryClient.invalidateQueries({ queryKey: ["cinema"] });
+  };
 
   // Sauvegarder la ville dans localStorage
   useEffect(() => {
@@ -21,6 +25,21 @@ export default function Cinema() {
       localStorage.setItem("VITE_ZIP_CODE", selectedCity);
     }
   }, [selectedCity]);
+
+  const frenchCities = useMemo(() => {
+    const additionalCities = Array.from(
+      new Set(cinemas.map((cinema) => cinema.ville))
+    )
+      .filter((ville) => !formerCities.some((v) => v.name === ville))
+      .map((ville, index) => ({
+        id: (100000 + index).toString(),
+        name: ville,
+      }));
+
+    return [...formerCities, ...additionalCities].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }, []);
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-8 md:pt-6">
@@ -34,25 +53,15 @@ export default function Cinema() {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium">Ville sélectionnée</label>
-          <Select value={selectedCity} onValueChange={setSelectedCity}>
-            <SelectTrigger>
-              <div className="flex items-center gap-2">
-                <SelectValue placeholder="Sélectionnez une ville" />
-              </div>
-            </SelectTrigger>
-            <SelectContent>
-              <div className="max-h-80 overflow-y-auto">
-                {frenchCities.map((city) => (
-                  <SelectItem key={city.id} value={city.id}>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-3 w-3 text-muted-foreground" />
-                      <span>{city.name}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </div>
-            </SelectContent>
-          </Select>
+          <SingleSelect
+            options={frenchCities.map((city) => ({
+              value: city.id,
+              label: city.name,
+            }))}
+            selected={selectedCity}
+            onChange={handleCityChange}
+            placeholder="Rechercher une ville..."
+          />
         </div>
       </div>
 

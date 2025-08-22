@@ -63,29 +63,14 @@ export const useMultipleCinemasShowtimes = (
     error: queries[index].error,
   }));
 
-  // Consolider tous les films de tous les cinémas (pour compatibilité)
-  const movieMap = new Map<number, Movie>();
+  // Consolider tous les films de tous les cinémas SANS fusion des showtimes
+  const allMovies: Movie[] = [];
 
   queries.forEach((query) => {
     if (query.data?.results) {
-      query.data.results.forEach((movie) => {
-        if (!movieMap.has(movie.internalId)) {
-          movieMap.set(movie.internalId, movie);
-        } else {
-          // Fusionner les séances si le film existe déjà
-          const existingMovie = movieMap.get(movie.internalId)!;
-          Object.keys(movie.showtimes).forEach((version) => {
-            const versionKey = version as keyof typeof existingMovie.showtimes;
-            existingMovie.showtimes[versionKey].push(
-              ...movie.showtimes[versionKey]
-            );
-          });
-        }
-      });
+      allMovies.push(...query.data.results);
     }
   });
-
-  const allMovies = Array.from(movieMap.values());
 
   return {
     data: allMovies, // Pour compatibilité avec le code existant

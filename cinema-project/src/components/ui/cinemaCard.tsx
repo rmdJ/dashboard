@@ -19,7 +19,7 @@ export const CinemaCard = ({
   isMovieSelected: boolean;
 }) => {
   return (
-    <Card className="flex flex-col h-full w-[260px] md:w-full">
+    <Card className="flex flex-col h-full w-[260px] md:w-full" >
       <CardHeader className="p-0 relative">
         <img
           alt={`${movie.title} poster`}

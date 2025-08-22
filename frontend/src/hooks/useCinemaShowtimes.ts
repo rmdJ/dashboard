@@ -34,6 +34,8 @@ const fetchCinemaShowtimes = async (
     throw new Error("Erreur lors de la récupération des séances");
   }
   const result: ApiResponse = await response.json();
+
+
   return result.data;
 };
 

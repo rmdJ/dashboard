@@ -30,7 +30,9 @@ export const fetchAllPages = async (url, params) => {
       
       // Vérifier si data.results existe avant de l'utiliser
       if (data.results && Array.isArray(data.results)) {
-        allResults = allResults.concat(data.results);
+        // Deep clone pour éviter les mutations partagées
+        const clonedResults = data.results.map(movie => JSON.parse(JSON.stringify(movie)));
+        allResults = allResults.concat(clonedResults);
       }
 
       if (data.pagination && data.pagination.totalPages > page) {

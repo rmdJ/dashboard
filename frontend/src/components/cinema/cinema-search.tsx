@@ -36,7 +36,7 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedCinemas, setSelectedCinemas] = useState<string[]>([]);
   const [selectedMovies, setSelectedMovies] = useState<Movie[]>([]);
-  const [sortOption, setSortOption] = useState<SortOption>("pressRating");
+  const [sortOption, setSortOption] = useState<SortOption>("userRating");
   const [shouldFilterChildrenMovies, setShouldFilterChildrenMovies] =
     useState(false);
   const [showSelectedMoviesDrawer, setShowSelectedMoviesDrawer] =
@@ -51,12 +51,21 @@ export function CinemaSearch({ selectedCity }: CinemaSearchProps) {
     return cityName ? cinema.ville === cityName : false;
   });
 
-  // Sélectionner automatiquement tous les cinémas au début
+  // Sélectionner automatiquement les cinémas quand la ville change
+  useEffect(() => {
+    if (availableCinemas.length > 0) {
+      setSelectedCinemas(availableCinemas.map((c) => c.id));
+    } else {
+      setSelectedCinemas([]);
+    }
+  }, [selectedCity]); // Se déclenche uniquement quand la ville change
+
+  // Sélectionner automatiquement au premier chargement si aucun cinéma n'est sélectionné
   useEffect(() => {
     if (availableCinemas.length > 0 && selectedCinemas.length === 0) {
-      setSelectedCinemas(availableCinemas.slice(0, 3).map((c) => c.id)); // Prendre les 3 premiers
+      setSelectedCinemas(availableCinemas.map((c) => c.id));
     }
-  }, [availableCinemas, selectedCinemas]);
+  }, [availableCinemas.length]); // Se déclenche uniquement quand le nombre de cinémas change
 
   // Gérer la touche Escape pour désélectionner les films
   useEffect(() => {

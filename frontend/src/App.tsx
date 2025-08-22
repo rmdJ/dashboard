@@ -33,7 +33,9 @@ function App() {
 
             {/* Mobile Layout avec navigation bottom */}
             <div className="md:hidden">
-              <div className="pb-16"> {/* Padding pour éviter que le contenu soit masqué par la nav */}
+              <div className="md:pb-16">
+                {" "}
+                {/* Padding pour éviter que le contenu soit masqué par la nav */}
                 <Routes>
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/crypto" element={<Crypto />} />
