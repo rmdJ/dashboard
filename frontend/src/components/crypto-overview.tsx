@@ -48,11 +48,6 @@ export function CryptoOverview() {
     0
   );
 
-  const totalPnLPercentage =
-    initialInvestment > 0
-      ? ((totalCurrentValue - initialInvestment) / initialInvestment) * 100
-      : 0;
-
   // Récupérer les valeurs d'hier depuis le localStorage
   const yesterdayValues = getYesterdayValues();
 
