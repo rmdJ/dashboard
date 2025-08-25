@@ -6,9 +6,15 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Home, TrendingUp, Calendar, DollarSign, Info } from "lucide-react";
 
 // Import your JSON files
@@ -25,12 +31,14 @@ interface MonthlyPayment {
   montantPaye: number;
   coutAppartement: number;
   moyenneMensuelle: number;
+  exitAmount: number;
 }
 
 const columnHelper = createColumnHelper<MonthlyPayment>();
 
 const CreditsTable: React.FC = () => {
   const [inputValue, setInputValue] = useState<number>(320000);
+  const [calculatedPrice, setCalculatedPrice] = useState<number>(320000);
 
   // Traitement des données pour créer le tableau mensuel combiné
   const monthlyData = useMemo(() => {
@@ -158,25 +166,42 @@ const CreditsTable: React.FC = () => {
           (1000 * 60 * 60 * 24 * 30.44)
       );
 
-      // Calculer la moyenne mensuelle (coût total du prêt + charges fixes)
+      // Ajustement basé sur le prix de vente (prix de référence : 320000€)
+      const prixReference = 320000;
+      const ajustementPrixVente = prixReference - calculatedPrice;
+
+      // Capital remboursé ajusté selon l'évolution du prix de vente estimé
+      const capitalRembourseAjuste =
+        cumulCapitalRembourse - ajustementPrixVente;
+
+      // Calculer le capital restant dû pour ce mois
+      const capitalInitialTotal = 196299; // Capital total emprunté
+      const capitalRestantDu = capitalInitialTotal - cumulCapitalRembourse;
+
+      // Calculer le montant récupéré si vente à ce moment (prix de vente - capital restant dû)
+      const exitAmount = calculatedPrice - capitalRestantDu;
+
+      // Calculer la moyenne mensuelle (coût total du prêt + charges fixes + ajustement prix)
       const coutTotalAppartement = cumulMontantPaye + cumulChargesFixes;
       const moyenneMensuelle =
-        (coutTotalAppartement + 24000) / moisEcoulesDepuisMai2021;
+        (coutTotalAppartement + 24000 + ajustementPrixVente) /
+        moisEcoulesDepuisMai2021;
 
       data.push({
         date: monthKey,
         formattedDate,
         mensualite: mensualiteTotal,
         assurance: assuranceMensuelle,
-        montantRembourse: cumulCapitalRembourse,
+        montantRembourse: capitalRembourseAjuste,
         montantPaye: cumulMontantPaye,
         coutAppartement: cumulChargesFixes,
         moyenneMensuelle,
+        exitAmount,
       });
     });
 
     return data;
-  }, []);
+  }, [calculatedPrice]);
 
   const columns = [
     columnHelper.accessor("formattedDate", {
@@ -184,7 +209,7 @@ const CreditsTable: React.FC = () => {
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor("montantRembourse", {
-      header: "Capital remboursé (cumulé)",
+      header: "Capital remboursé",
       cell: (info) => {
         const value = info.getValue();
         return (
@@ -195,7 +220,7 @@ const CreditsTable: React.FC = () => {
       },
     }),
     columnHelper.accessor("montantPaye", {
-      header: "Intérêt + assurance (cumulé)",
+      header: "Intérêt + assurance",
       cell: (info) => {
         const value = info.getValue();
         return (
@@ -206,7 +231,7 @@ const CreditsTable: React.FC = () => {
       },
     }),
     columnHelper.accessor("coutAppartement", {
-      header: "Charges fixes (cumulé)",
+      header: "Charges fixes",
       cell: (info) => {
         const value = info.getValue();
         return (
@@ -219,7 +244,7 @@ const CreditsTable: React.FC = () => {
     columnHelper.accessor("moyenneMensuelle", {
       header: () => (
         <div className="flex items-center gap-1">
-          <span>Moyenne mensuelle</span>
+          <span>Moyenne</span>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -227,7 +252,8 @@ const CreditsTable: React.FC = () => {
               </TooltipTrigger>
               <TooltipContent>
                 <p className="text-sm">
-                  (Intérêt + assurance cumulé + Charges fixes cumulé + frais de notaires) / nombre de mois
+                  (Intérêt + assurance + charges fixes + frais de notaires) /
+                  nombre de mois
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -239,6 +265,37 @@ const CreditsTable: React.FC = () => {
         return (
           <span className="text-black-600 font-medium">
             {value.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €/mois
+          </span>
+        );
+      },
+    }),
+    columnHelper.accessor("exitAmount", {
+      header: () => (
+        <div className="flex items-center gap-1">
+          <span>Exit</span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-sm">
+                  Prix de vente estimé - Capital restant dû
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      ),
+      cell: (info) => {
+        const value = info.getValue();
+        const apportInitial = 150000;
+        const colorClass =
+          value >= apportInitial ? "text-green-600" : "text-red-600";
+        return (
+          <span className={`font-medium ${colorClass}`}>
+            {value >= 0 ? "+" : ""}
+            {value.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
           </span>
         );
       },
@@ -333,7 +390,10 @@ const CreditsTable: React.FC = () => {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">20 000 €</div>
+              <div className="text-2xl font-bold">150 000 €</div>
+              <p className="text-xs text-muted-foreground">
+                130 000 € d'Aurélie et 20 000 € de Romuald
+              </p>
             </CardContent>
           </Card>
 
@@ -435,7 +495,10 @@ const CreditsTable: React.FC = () => {
             className="w-40"
             placeholder="320000"
           />
-          <span className="text-sm text-muted-foreground">€</span>
+          <span className="text-sm text-muted-foreground mr-6">€</span>
+          <Button onClick={() => setCalculatedPrice(inputValue)} size="sm">
+            Calculer
+          </Button>
         </div>
       </div>
 
