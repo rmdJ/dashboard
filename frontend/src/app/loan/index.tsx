@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -6,7 +6,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home, TrendingUp, Calendar, DollarSign } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Home, TrendingUp, Calendar, DollarSign, Info } from "lucide-react";
 
 // Import your JSON files
 import creditPrincipal from "@/data/loan/main.json";
@@ -20,16 +23,20 @@ interface MonthlyPayment {
   assurance: number;
   montantRembourse: number;
   montantPaye: number;
+  coutAppartement: number;
   moyenneMensuelle: number;
 }
 
 const columnHelper = createColumnHelper<MonthlyPayment>();
 
 const CreditsTable: React.FC = () => {
+  const [inputValue, setInputValue] = useState<number>(320000);
+
   // Traitement des données pour créer le tableau mensuel combiné
   const monthlyData = useMemo(() => {
     const data: MonthlyPayment[] = [];
     const assuranceMensuelle = 50.0;
+    const chargesFixesMensuelles = 182.0; // 980€ copro + 1200€ taxe foncière = 2180€/an = 182€/mois
 
     // Capital déjà remboursé depuis mai 2021
     // Calcul basé sur les montants "restant" de juillet 2024 (première échéance disponible)
@@ -86,6 +93,7 @@ const CreditsTable: React.FC = () => {
     // Initialiser avec les montants déjà payés depuis mai 2021
     let cumulCapitalRembourse = capitalDejaRembourseTotal;
     let cumulMontantPaye = montantDejaPayeTotal;
+    let cumulChargesFixes = 37 * chargesFixesMensuelles; // Charges fixes depuis mai 2021
 
     const sortedMonths = Object.keys(groupedByMonth).sort();
 
@@ -108,6 +116,7 @@ const CreditsTable: React.FC = () => {
 
       cumulCapitalRembourse += capitalTotal;
       cumulMontantPaye += assuranceMensuelle + interetsTotal;
+      cumulChargesFixes += chargesFixesMensuelles;
     });
 
     // Filtrer pour commencer à partir du mois actuel (août 2025)
@@ -133,6 +142,7 @@ const CreditsTable: React.FC = () => {
       // Mettre à jour les cumuls
       cumulCapitalRembourse += capitalTotal;
       cumulMontantPaye += assuranceMensuelle + interetsTotal;
+      cumulChargesFixes += chargesFixesMensuelles;
 
       // Formater la date pour l'affichage
       const formattedDate = date.toLocaleDateString("fr-FR", {
@@ -148,8 +158,10 @@ const CreditsTable: React.FC = () => {
           (1000 * 60 * 60 * 24 * 30.44)
       );
 
-      // Calculer la moyenne mensuelle
-      const moyenneMensuelle = cumulMontantPaye / moisEcoulesDepuisMai2021;
+      // Calculer la moyenne mensuelle (coût total du prêt + charges fixes)
+      const coutTotalAppartement = cumulMontantPaye + cumulChargesFixes;
+      const moyenneMensuelle =
+        (coutTotalAppartement + 24000) / moisEcoulesDepuisMai2021;
 
       data.push({
         date: monthKey,
@@ -158,6 +170,7 @@ const CreditsTable: React.FC = () => {
         assurance: assuranceMensuelle,
         montantRembourse: cumulCapitalRembourse,
         montantPaye: cumulMontantPaye,
+        coutAppartement: cumulChargesFixes,
         moyenneMensuelle,
       });
     });
@@ -182,7 +195,18 @@ const CreditsTable: React.FC = () => {
       },
     }),
     columnHelper.accessor("montantPaye", {
-      header: "Coût total (cumulé)",
+      header: "Intérêt + assurance (cumulé)",
+      cell: (info) => {
+        const value = info.getValue();
+        return (
+          <span className="text-black-600 font-medium">
+            {value.toLocaleString("fr-FR", { minimumFractionDigits: 2 })} €
+          </span>
+        );
+      },
+    }),
+    columnHelper.accessor("coutAppartement", {
+      header: "Charges fixes (cumulé)",
       cell: (info) => {
         const value = info.getValue();
         return (
@@ -193,7 +217,23 @@ const CreditsTable: React.FC = () => {
       },
     }),
     columnHelper.accessor("moyenneMensuelle", {
-      header: "Moyenne mensuelle",
+      header: () => (
+        <div className="flex items-center gap-1">
+          <span>Moyenne mensuelle</span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-sm">
+                  (Intérêt + assurance cumulé + Charges fixes cumulé + frais de notaires) / nombre de mois
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      ),
       cell: (info) => {
         const value = info.getValue();
         return (
@@ -267,7 +307,7 @@ const CreditsTable: React.FC = () => {
 
       {/* Main Cards Grid */}
       {totalStats && (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -279,6 +319,9 @@ const CreditsTable: React.FC = () => {
               <div className="text-2xl font-bold">
                 {totalStats.capitalTotal.toLocaleString("fr-FR")} €
               </div>
+              <p className="text-xs text-muted-foreground">
+                {Math.round(totalStats.dureeTotal / 12)} ans / TEG: 1.2%
+              </p>
             </CardContent>
           </Card>
 
@@ -306,11 +349,23 @@ const CreditsTable: React.FC = () => {
                 {totalStats.capitalRembourse.toLocaleString("fr-FR")} €
               </div>
               <p className="text-xs text-muted-foreground">
-                {Math.round(
-                  (totalStats.capitalRembourse / totalStats.capitalTotal) * 100
-                )}
+                {(
+                  (totalStats.capitalRembourse / totalStats.capitalTotal) *
+                  100
+                ).toFixed(2)}
                 % du prêt
               </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Frais de notaire
+              </CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">24 000 €</div>
             </CardContent>
           </Card>
         </div>
@@ -335,23 +390,8 @@ const CreditsTable: React.FC = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Durée totale
+                Intérêt + assurance
               </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {Math.round(totalStats.dureeTotal / 12)} ans
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {totalStats.dureeTotal} mois
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Coût total</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -359,12 +399,45 @@ const CreditsTable: React.FC = () => {
                 {totalStats.interetsEtAssuranceTotal.toLocaleString("fr-FR")} €
               </div>
               <p className="text-xs text-muted-foreground">
-                Intérêt + assurance
+                115€ d'intérêt + 50€ d'assurance
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Charges fixes
+              </CardTitle>
+              <Home className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">182 €/mois</div>
+              <p className="text-xs text-muted-foreground">
+                980€ copro + 1200€ taxe
               </p>
             </CardContent>
           </Card>
         </div>
       )}
+
+      {/* Input Section */}
+      <div className="space-y-2">
+        <Label htmlFor="price-input" className="text-sm font-medium">
+          Prix de vente estimé
+        </Label>
+        <div className="flex items-center space-x-2">
+          <Input
+            id="price-input"
+            type="number"
+            value={inputValue}
+            onChange={(e) => setInputValue(Number(e.target.value))}
+            className="w-40"
+            placeholder="320000"
+          />
+          <span className="text-sm text-muted-foreground">€</span>
+        </div>
+      </div>
 
       {/* Tableau */}
       <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
