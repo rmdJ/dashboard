@@ -73,104 +73,93 @@ export function CryptoOverview() {
       : 0;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Crypto</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Portfolio vs Investment Card */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Portfolio vs Investment
-              </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                <div className="flex items-baseline gap-2">
-                  <span>
-                    $
-                    {totalCurrentValue.toLocaleString(undefined, {
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                </div>
-              </div>
+    <div className="grid gap-4 md:grid-cols-2">
+      {/* Portfolio vs Investment Card */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Portfolio vs Investment
+          </CardTitle>
+          <DollarSign className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          <div className="text-2xl font-bold">
+            <div className="flex items-baseline gap-2">
+              <span>
+                $
+                {totalCurrentValue.toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+            </div>
+          </div>
 
-              {/* Progress bar pour Portfolio vs Investment */}
-              <div className="mt-2">
-                <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                  <span>Objectif: ${initialInvestment.toLocaleString()}</span>
-                  <span>{Math.round(portfolioProgress)}%</span>
-                </div>
-                <Progress value={portfolioProgress} className="h-2" />
-                {portfolioMissingPercentage > 0 && (
-                  <div className="text-xs text-red-600 mt-1">
-                    Il faut +{portfolioMissingPercentage.toFixed(1)}% pour
-                    atteindre l'objectif
-                  </div>
-                )}
-              </div>
+          {/* Progress bar pour Portfolio vs Investment */}
+          <div className="flex justify-between text-xs text-muted-foreground mb-1">
+            <span>Objectif: ${initialInvestment.toLocaleString()}</span>
+            <span>{Math.round(portfolioProgress)}%</span>
+          </div>
+          <Progress value={portfolioProgress} className="h-2" />
+          {portfolioMissingPercentage > 0 && (
+            <div className="text-xs text-red-600 mt-1">
+              Il faut +{portfolioMissingPercentage.toFixed(1)}% pour atteindre
+              l'objectif
+            </div>
+          )}
 
-              {/* Valeur d'hier */}
-              {yesterdayValues?.portfolioUSD && (
-                <div className="mt-2">
-                  <p className="text-xs text-muted-foreground">
-                    Hier:{" "}
-                    <span className="font-mono">
-                      $
-                      {yesterdayValues.portfolioUSD.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          {/* BTC Value Card */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">BTC Value</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {btcValue ? `$${btcValue.toLocaleString()}` : "Loading..."}
-              </div>
+          {/* Valeur d'hier */}
+          {yesterdayValues?.portfolioUSD && (
+            <p className="text-xs text-muted-foreground">
+              Hier:{" "}
+              <span className="font-mono">
+                $
+                {yesterdayValues.portfolioUSD.toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+            </p>
+          )}
+        </CardContent>
+      </Card>
+      {/* BTC Value Card */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">BTC Value</CardTitle>
+          <DollarSign className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          <div className="text-2xl font-bold">
+            {btcValue ? `$${btcValue.toLocaleString()}` : "Loading..."}
+          </div>
 
-              {/* Progress bar pour BTC Value */}
-              <div className="mt-2">
-                <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                  <span>Objectif: ${btcObjective.toLocaleString()}</span>
-                  <span>{Math.round(btcProgress)}%</span>
-                </div>
-                <Progress value={btcProgress} className="h-2" />
-                {btcMissingPercentage > 0 && (
-                  <div className="text-xs text-red-600 mt-1">
-                    Il faut +{btcMissingPercentage.toFixed(1)}% pour atteindre
-                    l'objectif
-                  </div>
-                )}
+          {/* Progress bar pour BTC Value */}
+          <div className="mt-2">
+            <div className="flex justify-between text-xs text-muted-foreground mb-1">
+              <span>Objectif: ${btcObjective.toLocaleString()}</span>
+              <span>{Math.round(btcProgress)}%</span>
+            </div>
+            <Progress value={btcProgress} className="h-2" />
+            {btcMissingPercentage > 0 && (
+              <div className="text-xs text-red-600 mt-1">
+                Il faut +{btcMissingPercentage.toFixed(1)}% pour atteindre
+                l'objectif
               </div>
+            )}
+          </div>
 
-              {/* Valeur d'hier */}
-              {yesterdayValues?.btcValue && (
-                <div className="mt-2">
-                  <p className="text-xs text-muted-foreground">
-                    Hier:{" "}
-                    <span className="font-mono">
-                      ${yesterdayValues.btcValue.toLocaleString()}
-                    </span>
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </CardContent>
-    </Card>
+          {/* Valeur d'hier */}
+          {yesterdayValues?.btcValue && (
+            <div className="mt-2">
+              <p className="text-xs text-muted-foreground">
+                Hier:{" "}
+                <span className="font-mono">
+                  ${yesterdayValues.btcValue.toLocaleString()}
+                </span>
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

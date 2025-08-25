@@ -3,7 +3,6 @@ import { useCinemaNextReleases } from "@/hooks/useCinemaNextReleases";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -15,7 +14,6 @@ export const CinemaNextReleases = () => {
   const { data, isLoading, error } = useCinemaNextReleases();
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
-
 
   const handleMovieClick = (movieId: number) => {
     setSelectedMovieId(movieId);
@@ -32,13 +30,7 @@ export const CinemaNextReleases = () => {
   if (isLoading) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Prochaines sorties cinéma
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
           </div>
@@ -50,13 +42,7 @@ export const CinemaNextReleases = () => {
   if (error) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Prochaines sorties cinéma
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <p className="text-red-500">Erreur lors du chargement des données</p>
         </CardContent>
       </Card>
@@ -125,12 +111,11 @@ export const CinemaNextReleases = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calendar className="h-5 w-5" />
-          Prochaines sorties cinéma
+          {data.period.isCurrentWeek
+            ? "Cette semaine"
+            : "Semaine prochaine"} - {formatDate(data.period.start)} au{" "}
+          {formatDate(data.period.end)}
         </CardTitle>
-        <CardDescription>
-          {data.period.isCurrentWeek ? "Cette semaine" : "Semaine prochaine"} -{" "}
-          {formatDate(data.period.start)} au {formatDate(data.period.end)}
-        </CardDescription>
       </CardHeader>
       <CardContent>
         {/* Version mobile : slider horizontal */}
