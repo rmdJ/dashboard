@@ -16,6 +16,7 @@ import {
   IconUsers,
   IconCurrencyBitcoin,
   IconDeviceTv,
+  IconHome,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav/documents";
@@ -53,6 +54,11 @@ const data = {
       title: "Cinéma",
       url: "/cinema",
       icon: IconDeviceTv,
+    },
+    {
+      title: "Prêts",
+      url: "/loan",
+      icon: IconHome,
     },
     {
       title: "Analytics",

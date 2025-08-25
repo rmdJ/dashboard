@@ -3,6 +3,7 @@ import {
   IconDashboard,
   IconCurrencyBitcoin,
   IconDeviceTv,
+  IconHome,
 } from "@tabler/icons-react";
 
 const navigationItems = [
@@ -20,6 +21,11 @@ const navigationItems = [
     name: "Cinéma",
     href: "/cinema",
     icon: IconDeviceTv,
+  },
+  {
+    name: "Prêts",
+    href: "/loan",
+    icon: IconHome,
   },
 ];
 
