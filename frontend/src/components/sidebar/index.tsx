@@ -14,6 +14,7 @@ import {
   IconCurrencyBitcoin,
   IconDeviceTv,
   IconHome,
+  IconCalendar,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav/main";
@@ -44,9 +45,14 @@ const data = {
       icon: IconCurrencyBitcoin,
     },
     {
-      title: "Cinéma",
+      title: "Séances cinéma",
       url: "/cinema",
       icon: IconDeviceTv,
+    },
+    {
+      title: "Agenda cinéma",
+      url: "/cinema-agenda",
+      icon: IconCalendar,
     },
     {
       title: "Prêts",

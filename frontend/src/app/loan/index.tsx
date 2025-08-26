@@ -22,6 +22,18 @@ import creditPrincipal from "@/data/loan/main.json";
 import creditComplementaire from "@/data/loan/other_main.json";
 import creditZero from "@/data/loan/zero_percent.json";
 
+// Import constants
+import {
+  capitalTotal,
+  capitalDejaRembourseTotal,
+  assuranceMensuelle,
+  chargesFixesMensuelles,
+  fraisNotaire,
+  apportInitial,
+  moisEcoulesAvantDonnees,
+  currentMonth,
+} from "@/assets/constants/loan";
+
 interface MonthlyPayment {
   date: string;
   formattedDate: string;
@@ -43,27 +55,12 @@ const CreditsTable: React.FC = () => {
   // Traitement des données pour créer le tableau mensuel combiné
   const monthlyData = useMemo(() => {
     const data: MonthlyPayment[] = [];
-    const assuranceMensuelle = 50.0;
-    const chargesFixesMensuelles = 182.0; // 980€ copro + 1200€ taxe foncière = 2180€/an = 182€/mois
-
-    // Capital déjà remboursé depuis mai 2021
-    // Calcul basé sur les montants "restant" de juillet 2024 (première échéance disponible)
-    const restantJuillet2024Principal = 55428.52; // Crédit principal
-    const restantJuillet2024Complementaire = 96347.09; // Crédit complémentaire
-    const restantJuillet2024Zero = 15383.46; // Crédit 0%
-
-    const totalRestantJuillet2024 =
-      restantJuillet2024Principal +
-      restantJuillet2024Complementaire +
-      restantJuillet2024Zero;
-    const capitalDejaRembourseTotal = 196299 - totalRestantJuillet2024; // Capital déjà payé = Total - Restant
 
     // Montant déjà payé en intérêts et assurance depuis mai 2021 (estimation)
-    const moisEcoules = 37; // De mai 2021 à juin 2024
-    const assuranceDejaPayee = moisEcoules * assuranceMensuelle; // 37 * 50 = 1850€
+    const assuranceDejaPayee = moisEcoulesAvantDonnees * assuranceMensuelle; // 37 * 50 = 1850€
     // Estimation des intérêts déjà payés (basée sur les intérêts moyens actuels)
     const interetsMensuelMoyen = 30.27 + 84.33 + 0; // Intérêts moyens par mois des 3 crédits
-    const interetsDejaPayes = moisEcoules * interetsMensuelMoyen;
+    const interetsDejaPayes = moisEcoulesAvantDonnees * interetsMensuelMoyen;
     const montantDejaPayeTotal = assuranceDejaPayee + interetsDejaPayes;
 
     // Combiner toutes les échéances de tous les crédits
@@ -101,12 +98,9 @@ const CreditsTable: React.FC = () => {
     // Initialiser avec les montants déjà payés depuis mai 2021
     let cumulCapitalRembourse = capitalDejaRembourseTotal;
     let cumulMontantPaye = montantDejaPayeTotal;
-    let cumulChargesFixes = 37 * chargesFixesMensuelles; // Charges fixes depuis mai 2021
+    let cumulChargesFixes = moisEcoulesAvantDonnees * chargesFixesMensuelles; // Charges fixes depuis mai 2021
 
     const sortedMonths = Object.keys(groupedByMonth).sort();
-
-    // Calculer les cumuls jusqu'au mois actuel (août 2025)
-    const currentMonth = "2025-08"; // Mois actuel
     const monthsUntilCurrent = sortedMonths.filter(
       (monthKey) => monthKey < currentMonth
     );
@@ -175,8 +169,7 @@ const CreditsTable: React.FC = () => {
         cumulCapitalRembourse - ajustementPrixVente;
 
       // Calculer le capital restant dû pour ce mois
-      const capitalInitialTotal = 196299; // Capital total emprunté
-      const capitalRestantDu = capitalInitialTotal - cumulCapitalRembourse;
+      const capitalRestantDu = capitalTotal - cumulCapitalRembourse;
 
       // Calculer le montant récupéré si vente à ce moment (prix de vente - capital restant dû)
       const exitAmount = calculatedPrice - capitalRestantDu;
@@ -184,7 +177,7 @@ const CreditsTable: React.FC = () => {
       // Calculer la moyenne mensuelle (coût total du prêt + charges fixes + ajustement prix)
       const coutTotalAppartement = cumulMontantPaye + cumulChargesFixes;
       const moyenneMensuelle =
-        (coutTotalAppartement + 24000 + ajustementPrixVente) /
+        (coutTotalAppartement + fraisNotaire + ajustementPrixVente) /
         moisEcoulesDepuisMai2021;
 
       data.push({
@@ -289,7 +282,6 @@ const CreditsTable: React.FC = () => {
       ),
       cell: (info) => {
         const value = info.getValue();
-        const apportInitial = 150000;
         const colorClass =
           value >= apportInitial ? "text-green-600" : "text-red-600";
         return (
@@ -331,18 +323,15 @@ const CreditsTable: React.FC = () => {
       totalEcheancesZero
     );
 
-    const moisDepuisMai2021 = 37 + totalEcheancesDisponibles; // 37 mois écoulés + toutes les échéances disponibles
+    const moisDepuisMai2021 = moisEcoulesAvantDonnees + totalEcheancesDisponibles; // mois écoulés + toutes les échéances disponibles
 
     // Pour le tableau (coût restant), calculer seulement les échéances futures depuis août 2025
     const totalMensualitesRestantes = totalMensualites;
 
-    // Capital total emprunté - montant initial confirmé par l'utilisateur
-    const capitalTotalEmprunt = 196299.0;
-
     return {
       dureeTotal: moisDepuisMai2021,
       dureeDepuisJuillet2024: monthlyData.length,
-      capitalTotal: capitalTotalEmprunt,
+      capitalTotal: capitalTotal,
       capitalRembourse: firstRow.montantRembourse, // Capital remboursé au mois actuel (août 2025)
       interetsEtAssuranceTotal: lastRow.montantPaye,
       mensualitesTotales: totalMensualitesRestantes,
@@ -390,7 +379,7 @@ const CreditsTable: React.FC = () => {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">150 000 €</div>
+              <div className="text-2xl font-bold">{apportInitial.toLocaleString("fr-FR")} €</div>
               <p className="text-xs text-muted-foreground">
                 130 000 € d'Aurélie et 20 000 € de Romuald
               </p>
@@ -425,7 +414,7 @@ const CreditsTable: React.FC = () => {
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">24 000 €</div>
+              <div className="text-2xl font-bold">{fraisNotaire.toLocaleString("fr-FR")} €</div>
             </CardContent>
           </Card>
         </div>
@@ -472,7 +461,7 @@ const CreditsTable: React.FC = () => {
               <Home className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">182 €/mois</div>
+              <div className="text-2xl font-bold">{chargesFixesMensuelles} €/mois</div>
               <p className="text-xs text-muted-foreground">
                 980€ copro + 1200€ taxe
               </p>
