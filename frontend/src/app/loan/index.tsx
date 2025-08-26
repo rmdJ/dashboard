@@ -323,7 +323,8 @@ const CreditsTable: React.FC = () => {
       totalEcheancesZero
     );
 
-    const moisDepuisMai2021 = moisEcoulesAvantDonnees + totalEcheancesDisponibles; // mois écoulés + toutes les échéances disponibles
+    const moisDepuisMai2021 =
+      moisEcoulesAvantDonnees + totalEcheancesDisponibles; // mois écoulés + toutes les échéances disponibles
 
     // Pour le tableau (coût restant), calculer seulement les échéances futures depuis août 2025
     const totalMensualitesRestantes = totalMensualites;
@@ -379,7 +380,9 @@ const CreditsTable: React.FC = () => {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{apportInitial.toLocaleString("fr-FR")} €</div>
+              <div className="text-2xl font-bold">
+                {apportInitial.toLocaleString("fr-FR")} €
+              </div>
               <p className="text-xs text-muted-foreground">
                 130 000 € d'Aurélie et 20 000 € de Romuald
               </p>
@@ -414,7 +417,9 @@ const CreditsTable: React.FC = () => {
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{fraisNotaire.toLocaleString("fr-FR")} €</div>
+              <div className="text-2xl font-bold">
+                {fraisNotaire.toLocaleString("fr-FR")} €
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -461,7 +466,9 @@ const CreditsTable: React.FC = () => {
               <Home className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{chargesFixesMensuelles} €/mois</div>
+              <div className="text-2xl font-bold">
+                {chargesFixesMensuelles} €/mois
+              </div>
               <p className="text-xs text-muted-foreground">
                 980€ copro + 1200€ taxe
               </p>

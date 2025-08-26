@@ -12,7 +12,6 @@ import {
 
 export const LoanOverview = () => {
   const capitalRembourse = (() => {
-
     // Grouper les échéances par mois pour calculer le capital remboursé jusqu'à août 2025
     const allEchances = [
       ...creditPrincipal.echances.map((e) => ({
@@ -63,7 +62,9 @@ export const LoanOverview = () => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">Capital remboursé</CardTitle>
+        <CardTitle className="text-sm font-medium">
+          Capital prêt remboursé
+        </CardTitle>
         <TrendingUp className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
