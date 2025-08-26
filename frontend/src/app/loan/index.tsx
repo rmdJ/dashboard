@@ -24,7 +24,7 @@ import creditZero from "@/data/loan/zero_percent.json";
 
 // Import constants
 import {
-  capitalTotal,
+  capitalTotal as capitalTotalEmprunte,
   capitalDejaRembourseTotal,
   assuranceMensuelle,
   chargesFixesMensuelles,
@@ -168,8 +168,8 @@ const CreditsTable: React.FC = () => {
       const capitalRembourseAjuste =
         cumulCapitalRembourse - ajustementPrixVente;
 
-      // Calculer le capital restant dû pour ce mois
-      const capitalRestantDu = capitalTotal - cumulCapitalRembourse;
+      // Calculer le capital restant dû pour ce mois (capital total emprunté - capital cumulé remboursé)  
+      const capitalRestantDu = capitalTotalEmprunte - cumulCapitalRembourse;
 
       // Calculer le montant récupéré si vente à ce moment (prix de vente - capital restant dû)
       const exitAmount = calculatedPrice - capitalRestantDu;
@@ -332,7 +332,7 @@ const CreditsTable: React.FC = () => {
     return {
       dureeTotal: moisDepuisMai2021,
       dureeDepuisJuillet2024: monthlyData.length,
-      capitalTotal: capitalTotal,
+      capitalTotal: capitalTotalEmprunte,
       capitalRembourse: firstRow.montantRembourse, // Capital remboursé au mois actuel (août 2025)
       interetsEtAssuranceTotal: lastRow.montantPaye,
       mensualitesTotales: totalMensualitesRestantes,
