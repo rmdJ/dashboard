@@ -4,9 +4,12 @@ import { Crypto } from "./app/crypto";
 import Cinema from "./app/cinema";
 import { CinemaAgenda } from "./app/cinema-agenda";
 import Loan from "./app/loan";
+import { LoginForm } from "./app/login";
 import { ThemeProvider } from "@/provider/theme";
 import { QueryProvider } from "@/provider/query";
 import { BinanceProvider } from "@/provider/binance";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppSidebar } from "@/components/sidebar";
 import { NavMobileBottom } from "@/components/nav/mobile-bottom";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -16,39 +19,49 @@ function App() {
     <QueryProvider>
       <BinanceProvider>
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <BrowserRouter>
-            {/* Desktop Layout avec sidebar */}
-            <div className="hidden md:block">
-              <SidebarProvider>
-                <AppSidebar />
-                <SidebarInset>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/crypto" element={<Crypto />} />
-                    <Route path="/cinema" element={<Cinema />} />
-                    <Route path="/cinema-agenda" element={<CinemaAgenda />} />
-                    <Route path="/loan" element={<Loan />} />
-                  </Routes>
-                </SidebarInset>
-              </SidebarProvider>
-            </div>
+          <AuthProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/login" element={<LoginForm />} />
+                <Route
+                  path="/*"
+                  element={
+                    <ProtectedRoute>
+                      {/* Desktop Layout avec sidebar */}
+                      <div className="hidden md:block">
+                        <SidebarProvider>
+                          <AppSidebar />
+                          <SidebarInset>
+                            <Routes>
+                              <Route path="/" element={<Dashboard />} />
+                              <Route path="/crypto" element={<Crypto />} />
+                              <Route path="/cinema" element={<Cinema />} />
+                              <Route path="/cinema-agenda" element={<CinemaAgenda />} />
+                              <Route path="/loan" element={<Loan />} />
+                            </Routes>
+                          </SidebarInset>
+                        </SidebarProvider>
+                      </div>
 
-            {/* Mobile Layout avec navigation bottom */}
-            <div className="md:hidden">
-              <div className="md:pb-16">
-                {" "}
-                {/* Padding pour éviter que le contenu soit masqué par la nav */}
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/crypto" element={<Crypto />} />
-                  <Route path="/cinema" element={<Cinema />} />
-                  <Route path="/cinema-agenda" element={<CinemaAgenda />} />
-                  <Route path="/loan" element={<Loan />} />
-                </Routes>
-              </div>
-              <NavMobileBottom />
-            </div>
-          </BrowserRouter>
+                      {/* Mobile Layout avec navigation bottom */}
+                      <div className="md:hidden">
+                        <div className="md:pb-16">
+                          <Routes>
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/crypto" element={<Crypto />} />
+                            <Route path="/cinema" element={<Cinema />} />
+                            <Route path="/cinema-agenda" element={<CinemaAgenda />} />
+                            <Route path="/loan" element={<Loan />} />
+                          </Routes>
+                        </div>
+                        <NavMobileBottom />
+                      </div>
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </BrowserRouter>
+          </AuthProvider>
         </ThemeProvider>
       </BinanceProvider>
     </QueryProvider>

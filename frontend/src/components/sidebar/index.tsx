@@ -15,12 +15,16 @@ import {
   IconDeviceTv,
   IconHome,
   IconCalendar,
+  IconLogout,
 } from "@tabler/icons-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 import { NavMain } from "@/components/nav/main";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -145,6 +149,14 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -165,9 +177,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      {/* <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter> */}
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleLogout} className="text-red-600 hover:text-red-700">
+              <IconLogout className="!size-4" />
+              <span>Déconnexion</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

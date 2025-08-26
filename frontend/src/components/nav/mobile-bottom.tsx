@@ -5,7 +5,9 @@ import {
   IconDeviceTv,
   IconHome,
   IconCalendar,
+  IconLogout,
 } from "@tabler/icons-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navigationItems = [
   {
@@ -38,9 +40,15 @@ const navigationItems = [
 export function NavMobileBottom() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleNavigation = (href: string) => {
     navigate(href);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -49,39 +57,59 @@ export function NavMobileBottom() {
       <div className="bg-white/95 backdrop-blur-sm border-t border-gray-200/50">
         {/* Container principal */}
         <div className="px-4 py-0 pb-safe">
-          <div className="flex items-center justify-around">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.href;
+          <div className="flex items-center justify-between">
+            {/* Navigation items */}
+            <div className="flex items-center justify-around flex-1">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.href;
 
-              return (
-                <button
-                  key={item.name}
-                  onClick={() => handleNavigation(item.href)}
-                  className="flex flex-col items-center justify-center py-2 px-4 transition-colors duration-200"
-                  aria-label={item.name}
-                >
-                  {/* Icône */}
-                  <div className="mb-1">
-                    <Icon
-                      className={`h-6 w-6 transition-colors duration-200 ${
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => handleNavigation(item.href)}
+                    className="flex flex-col items-center justify-center py-2 px-4 transition-colors duration-200"
+                    aria-label={item.name}
+                  >
+                    {/* Icône */}
+                    <div className="mb-1">
+                      <Icon
+                        className={`h-6 w-6 transition-colors duration-200 ${
+                          isActive ? "text-blue-600" : "text-gray-600"
+                        }`}
+                        strokeWidth={1.5}
+                      />
+                    </div>
+
+                    {/* Label */}
+                    <span
+                      className={`text-xs font-medium transition-colors duration-200 ${
                         isActive ? "text-blue-600" : "text-gray-600"
                       }`}
-                      strokeWidth={1.5}
-                    />
-                  </div>
-
-                  {/* Label */}
-                  <span
-                    className={`text-xs font-medium transition-colors duration-200 ${
-                      isActive ? "text-blue-600" : "text-gray-600"
-                    }`}
-                  >
-                    {item.name}
-                  </span>
-                </button>
-              );
-            })}
+                    >
+                      {item.name}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            
+            {/* Logout button */}
+            <button
+              onClick={handleLogout}
+              className="flex flex-col items-center justify-center py-2 px-4 transition-colors duration-200"
+              aria-label="Déconnexion"
+            >
+              <div className="mb-1">
+                <IconLogout
+                  className="h-6 w-6 text-red-600 transition-colors duration-200"
+                  strokeWidth={1.5}
+                />
+              </div>
+              <span className="text-xs font-medium text-red-600">
+                Logout
+              </span>
+            </button>
           </div>
         </div>
       </div>
