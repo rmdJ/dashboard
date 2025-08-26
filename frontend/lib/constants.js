@@ -1,6 +1,7 @@
 // Constantes partagées entre les différents environnements
 
-export const TMDB_API_KEY = process.env.TMDB_API_KEY || "500872ffa0b37b774999a902d34bdd04";
+export const TMDB_API_KEY =
+  process.env.TMDB_API_KEY || "500872ffa0b37b774999a902d34bdd04";
 
 export const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -8,7 +9,7 @@ export const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 export const getNextWednesday = () => {
   const today = new Date();
   const dayOfWeek = today.getDay(); // 0 = dimanche, 3 = mercredi
-  
+
   if (dayOfWeek === 3) {
     // Si c'est mercredi, on retourne aujourd'hui
     return today;
@@ -31,23 +32,23 @@ export const getNextWednesday = () => {
 export const getWednesdayForWeek = (weekOffset = 0) => {
   const nextWednesday = getNextWednesday();
   const targetWednesday = new Date(nextWednesday);
-  targetWednesday.setDate(nextWednesday.getDate() + (weekOffset * 7));
+  targetWednesday.setDate(nextWednesday.getDate() + weekOffset * 7);
   return targetWednesday;
 };
 
 // Fonction utilitaire pour construire l'URL TMDB avec pagination
 export const buildTMDBDiscoverUrl = (startDateStr, endDateStr, page = 1) => {
-  return `${TMDB_BASE_URL}/discover/movie?region=FR&language=fr&primary_release_date.gte=${startDateStr}&primary_release_date.lte=${endDateStr}&api_key=${TMDB_API_KEY}&page=${page}`;
+  return `${TMDB_BASE_URL}/discover/movie?region=fr&language=fr&primary_release_date.gte=${startDateStr}&primary_release_date.lte=${endDateStr}&api_key=${TMDB_API_KEY}&page=${page}`;
 };
 
 // Fonction utilitaire pour formatter une date
 export const formatDate = (date) => {
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 };
 
 // Configuration CORS partagée
 export const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type"
+  "Access-Control-Allow-Headers": "Content-Type",
 };

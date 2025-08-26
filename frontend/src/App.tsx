@@ -3,7 +3,7 @@ import { Dashboard } from "./app/dashboard";
 import { Crypto } from "./app/crypto";
 import Cinema from "./app/cinema";
 import { CinemaAgenda } from "./app/cinema-agenda";
-import { Fiches } from "./app/fiches";
+import { Sheets } from "./app/sheets";
 import Loan from "./app/loan";
 import { LoginForm } from "./app/login";
 import { ThemeProvider } from "@/provider/theme";
@@ -39,7 +39,7 @@ function App() {
                               <Route path="/crypto" element={<Crypto />} />
                               <Route path="/cinema" element={<Cinema />} />
                               <Route path="/cinema-agenda" element={<CinemaAgenda />} />
-                              <Route path="/fiches" element={<Fiches />} />
+                              <Route path="/sheets" element={<Sheets />} />
                               <Route path="/loan" element={<Loan />} />
                             </Routes>
                           </SidebarInset>
@@ -54,7 +54,7 @@ function App() {
                             <Route path="/crypto" element={<Crypto />} />
                             <Route path="/cinema" element={<Cinema />} />
                             <Route path="/cinema-agenda" element={<CinemaAgenda />} />
-                            <Route path="/fiches" element={<Fiches />} />
+                            <Route path="/sheets" element={<Sheets />} />
                             <Route path="/loan" element={<Loan />} />
                           </Routes>
                         </div>

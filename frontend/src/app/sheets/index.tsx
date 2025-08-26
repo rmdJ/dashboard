@@ -1,55 +1,55 @@
 import { useState } from "react";
-import { useFiches, type Fiche } from "@/hooks/useFiches";
-import { FicheModal } from "@/components/fiches/ficheModal";
-import { FicheCard } from "@/components/fiches/ficheCard";
+import { useSheets, type Sheet } from "@/hooks/useSheets";
+import { SheetModal } from "@/components/sheets/sheetModal";
+import { SheetCard } from "@/components/sheets/sheetCard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, FileText } from "lucide-react";
 
-export const Fiches = () => {
-  const { data: fiches, isLoading, error } = useFiches();
-  
+export const Sheets = () => {
+  const { data: sheets, isLoading, error } = useSheets();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
-  const [editingFiche, setEditingFiche] = useState<Fiche | null>(null);
+  const [editingSheet, setEditingSheet] = useState<Sheet | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleCreateClick = () => {
     setModalMode("create");
-    setEditingFiche(null);
+    setEditingSheet(null);
     setIsModalOpen(true);
   };
 
-  const handleEditClick = (fiche: Fiche) => {
+  const handleEditClick = (sheet: Sheet) => {
     setModalMode("edit");
-    setEditingFiche(fiche);
+    setEditingSheet(sheet);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setEditingFiche(null);
+    setEditingSheet(null);
   };
 
-  // Filtrer les fiches selon le terme de recherche
-  const filteredFiches = fiches?.filter(
-    (fiche) =>
-      fiche.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fiche.content.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filtrer les sheets selon le terme de recherche
+  const filteredSheets = sheets?.filter(
+    (sheet) =>
+      sheet.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      sheet.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const renderHeader = () => (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div>
-        <h1 className="text-3xl font-bold">Mes Fiches</h1>
+        <h1 className="text-3xl font-bold">Mes fiches</h1>
         <p className="text-muted-foreground">
           Gérez vos notes et mémos personnels
         </p>
       </div>
       <Button onClick={handleCreateClick} className="w-fit">
         <Plus className="mr-2 h-4 w-4" />
-        Nouvelle fiche
+        Nouveau sheet
       </Button>
     </div>
   );
@@ -83,7 +83,7 @@ export const Fiches = () => {
         {renderHeader()}
         <Card>
           <CardContent className="p-6 text-center">
-            <p className="text-red-500">Erreur lors du chargement des fiches</p>
+            <p className="text-red-500">Erreur lors du chargement des sheets</p>
           </CardContent>
         </Card>
       </div>
@@ -98,7 +98,7 @@ export const Fiches = () => {
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
-          placeholder="Rechercher dans les fiches..."
+          placeholder="Rechercher dans les sheets..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
@@ -106,43 +106,39 @@ export const Fiches = () => {
       </div>
 
       {/* Content */}
-      {!filteredFiches || filteredFiches.length === 0 ? (
+      {!filteredSheets || filteredSheets.length === 0 ? (
         <Card>
           <CardContent className="p-12 text-center">
             <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              {searchTerm ? "Aucun résultat" : "Aucune fiche"}
+              {searchTerm ? "Aucun résultat" : "Aucun sheet"}
             </h3>
             <p className="text-muted-foreground mb-4">
               {searchTerm
-                ? "Aucune fiche ne correspond à votre recherche"
-                : "Commencez par créer votre première fiche"}
+                ? "Aucun sheet ne correspond à votre recherche"
+                : "Commencez par créer votre premier sheet"}
             </p>
             {!searchTerm && (
               <Button onClick={handleCreateClick}>
                 <Plus className="mr-2 h-4 w-4" />
-                Créer une fiche
+                Créer un sheet
               </Button>
             )}
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredFiches.map((fiche) => (
-            <FicheCard
-              key={fiche.id}
-              fiche={fiche}
-              onEdit={handleEditClick}
-            />
+          {filteredSheets.map((sheet) => (
+            <SheetCard key={sheet.id} sheet={sheet} onEdit={handleEditClick} />
           ))}
         </div>
       )}
 
       {/* Modal */}
-      <FicheModal
+      <SheetModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        fiche={editingFiche}
+        sheet={editingSheet}
         mode={modalMode}
       />
     </div>

@@ -10,16 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_26_092101) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_26_122448) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "fiches", force: :cascade do |t|
+  create_table "sheets", force: :cascade do |t|
     t.string "title", null: false
     t.text "content", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_fiches_on_created_at"
-    t.index ["title"], name: "index_fiches_on_title"
+    t.index ["created_at"], name: "index_sheets_on_created_at"
+    t.index ["title"], name: "index_sheets_on_title"
   end
 end

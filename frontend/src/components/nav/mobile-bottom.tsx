@@ -32,8 +32,8 @@ const navigationItems = [
     icon: IconCalendar,
   },
   {
-    name: "Fiches",
-    href: "/fiches",
+    name: "Sheets",
+    href: "/sheets",
     icon: IconNotes,
   },
   {

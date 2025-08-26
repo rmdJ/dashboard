@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FicheModal } from "./ficheModal";
+import { SheetModal } from "./sheetModal";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
@@ -36,14 +36,14 @@ export const QuickCreateButton = ({
         className={className}
       >
         <Plus className="h-4 w-4" />
-        {showText && <span className="ml-2">Quick Create</span>}
+        {showText && <span className="ml-2">Quick Create Sheet</span>}
       </Button>
 
-      <FicheModal
+      <SheetModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         mode="create"
-        fiche={null}
+        sheet={null}
       />
     </>
   );

@@ -65,8 +65,8 @@ const data = {
       icon: IconCalendar,
     },
     {
-      title: "Fiches",
-      url: "/fiches",
+      title: "Sheets",
+      url: "/sheets",
       icon: IconNotes,
     },
   ],

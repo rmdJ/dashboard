@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDeleteFiche, type Fiche } from "@/hooks/useFiches";
+import { useDeleteSheet, type Sheet } from "@/hooks/useSheets";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,19 +21,19 @@ import {
 import { MoreVertical, Edit, Trash2, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
-interface FicheCardProps {
-  fiche: Fiche;
-  onEdit: (fiche: Fiche) => void;
+interface SheetCardProps {
+  sheet: Sheet;
+  onEdit: (sheet: Sheet) => void;
 }
 
-export const FicheCard = ({ fiche, onEdit }: FicheCardProps) => {
+export const SheetCard = ({ sheet, onEdit }: SheetCardProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const deleteFiche = useDeleteFiche();
+  const deleteSheet = useDeleteSheet();
 
   const handleDelete = async () => {
     try {
-      await deleteFiche.mutateAsync(fiche.id);
-      toast.success("Fiche supprimée avec succès");
+      await deleteSheet.mutateAsync(sheet.id);
+      toast.success("Sheet supprimé avec succès");
       setShowDeleteDialog(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Une erreur est survenue");
@@ -61,7 +61,7 @@ export const FicheCard = ({ fiche, onEdit }: FicheCardProps) => {
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <CardTitle className="text-lg font-semibold line-clamp-2">
-              {fiche.title}
+              {sheet.title}
             </CardTitle>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -71,7 +71,7 @@ export const FicheCard = ({ fiche, onEdit }: FicheCardProps) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => onEdit(fiche)}
+                  onClick={() => onEdit(sheet)}
                   className="cursor-pointer"
                 >
                   <Edit className="mr-2 h-4 w-4" />
@@ -92,12 +92,12 @@ export const FicheCard = ({ fiche, onEdit }: FicheCardProps) => {
         <CardContent className="pt-0">
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-              {truncateContent(fiche.content)}
+              {truncateContent(sheet.content)}
             </p>
             
             <div className="flex items-center text-xs text-muted-foreground">
               <Calendar className="mr-1 h-3 w-3" />
-              Créé le {formatDate(fiche.created_at)}
+              Créé le {formatDate(sheet.created_at)}
             </div>
           </div>
         </CardContent>
@@ -106,19 +106,19 @@ export const FicheCard = ({ fiche, onEdit }: FicheCardProps) => {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer la fiche</AlertDialogTitle>
+            <AlertDialogTitle>Supprimer le sheet</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer cette fiche ? Cette action est irréversible.
+              Êtes-vous sûr de vouloir supprimer ce sheet ? Cette action est irréversible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              disabled={deleteFiche.isPending}
+              disabled={deleteSheet.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleteFiche.isPending ? "Suppression..." : "Supprimer"}
+              {deleteSheet.isPending ? "Suppression..." : "Supprimer"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

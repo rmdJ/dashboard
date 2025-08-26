@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useCreateFiche, useUpdateFiche, type Fiche } from "@/hooks/useFiches";
+import { useCreateSheet, useUpdateSheet, type Sheet } from "@/hooks/useSheets";
 import {
   Dialog,
   DialogContent,
@@ -14,37 +14,42 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-interface FicheModalProps {
+interface SheetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  fiche?: Fiche | null;
+  sheet?: Sheet | null;
   mode: "create" | "edit";
 }
 
-export const FicheModal = ({ isOpen, onClose, fiche, mode }: FicheModalProps) => {
+export const SheetModal = ({
+  isOpen,
+  onClose,
+  sheet,
+  mode,
+}: SheetModalProps) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  const createFiche = useCreateFiche();
-  const updateFiche = useUpdateFiche();
+  const createSheet = useCreateSheet();
+  const updateSheet = useUpdateSheet();
 
-  const isLoading = createFiche.isPending || updateFiche.isPending;
+  const isLoading = createSheet.isPending || updateSheet.isPending;
 
   useEffect(() => {
     if (isOpen) {
-      if (mode === "edit" && fiche) {
-        setTitle(fiche.title);
-        setContent(fiche.content);
+      if (mode === "edit" && sheet) {
+        setTitle(sheet.title);
+        setContent(sheet.content);
       } else {
         setTitle("");
         setContent("");
       }
     }
-  }, [isOpen, mode, fiche]);
+  }, [isOpen, mode, sheet]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!title.trim() || !content.trim()) {
       toast.error("Veuillez remplir tous les champs");
       return;
@@ -52,22 +57,24 @@ export const FicheModal = ({ isOpen, onClose, fiche, mode }: FicheModalProps) =>
 
     try {
       if (mode === "create") {
-        await createFiche.mutateAsync({
+        await createSheet.mutateAsync({
           title: title.trim(),
           content: content.trim(),
         });
-        toast.success("Fiche créée avec succès");
-      } else if (mode === "edit" && fiche) {
-        await updateFiche.mutateAsync({
-          id: fiche.id,
+        toast.success("Sheet créé avec succès");
+      } else if (mode === "edit" && sheet) {
+        await updateSheet.mutateAsync({
+          id: sheet.id,
           title: title.trim(),
           content: content.trim(),
         });
-        toast.success("Fiche modifiée avec succès");
+        toast.success("Sheet modifié avec succès");
       }
       handleClose();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Une erreur est survenue");
+      toast.error(
+        error instanceof Error ? error.message : "Une erreur est survenue"
+      );
     }
   };
 
@@ -83,10 +90,10 @@ export const FicheModal = ({ isOpen, onClose, fiche, mode }: FicheModalProps) =>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
-              {mode === "create" ? "Créer une fiche" : "Modifier la fiche"}
+              {mode === "create" ? "Créer un sheet" : "Modifier le sheet"}
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="title">Titre</Label>
@@ -99,7 +106,7 @@ export const FicheModal = ({ isOpen, onClose, fiche, mode }: FicheModalProps) =>
                 maxLength={255}
               />
             </div>
-            
+
             <div className="grid gap-2">
               <Label htmlFor="content">Contenu</Label>
               <Textarea
