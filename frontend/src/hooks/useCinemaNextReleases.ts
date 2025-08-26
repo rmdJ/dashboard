@@ -18,6 +18,7 @@ interface CinemaData {
   results: Movie[];
   total_pages: number;
   total_results: number;
+  page?: number;
   period: {
     start: string;
     end: string;
