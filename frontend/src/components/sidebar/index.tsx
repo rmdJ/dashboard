@@ -16,6 +16,7 @@ import {
   IconHome,
   IconCalendar,
   IconLogout,
+  IconNotes,
 } from "@tabler/icons-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -62,6 +63,11 @@ const data = {
       title: "Agenda cinéma",
       url: "/cinema-agenda",
       icon: IconCalendar,
+    },
+    {
+      title: "Fiches",
+      url: "/fiches",
+      icon: IconNotes,
     },
   ],
   navClouds: [

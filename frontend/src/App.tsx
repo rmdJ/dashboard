@@ -3,6 +3,7 @@ import { Dashboard } from "./app/dashboard";
 import { Crypto } from "./app/crypto";
 import Cinema from "./app/cinema";
 import { CinemaAgenda } from "./app/cinema-agenda";
+import { Fiches } from "./app/fiches";
 import Loan from "./app/loan";
 import { LoginForm } from "./app/login";
 import { ThemeProvider } from "@/provider/theme";
@@ -13,6 +14,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppSidebar } from "@/components/sidebar";
 import { NavMobileBottom } from "@/components/nav/mobile-bottom";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   return (
@@ -37,6 +39,7 @@ function App() {
                               <Route path="/crypto" element={<Crypto />} />
                               <Route path="/cinema" element={<Cinema />} />
                               <Route path="/cinema-agenda" element={<CinemaAgenda />} />
+                              <Route path="/fiches" element={<Fiches />} />
                               <Route path="/loan" element={<Loan />} />
                             </Routes>
                           </SidebarInset>
@@ -51,6 +54,7 @@ function App() {
                             <Route path="/crypto" element={<Crypto />} />
                             <Route path="/cinema" element={<Cinema />} />
                             <Route path="/cinema-agenda" element={<CinemaAgenda />} />
+                            <Route path="/fiches" element={<Fiches />} />
                             <Route path="/loan" element={<Loan />} />
                           </Routes>
                         </div>
@@ -62,6 +66,7 @@ function App() {
               </Routes>
             </BrowserRouter>
           </AuthProvider>
+          <Toaster />
         </ThemeProvider>
       </BinanceProvider>
     </QueryProvider>

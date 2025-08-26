@@ -7,15 +7,13 @@ WORKDIR /app
 # Copier les fichiers de configuration des dépendances
 COPY package.json package-lock.json* yarn.lock* ./
 
-# Installer les dépendances
-RUN if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
-    elif [ -f package-lock.json ]; then npm ci; \
-    else npm install; fi
+# Installer les dépendances avec npm ci pour une installation plus fiable
+RUN npm ci
 
 # Copier le code source
 COPY . .
 
-# Exposer le port 5173 (port par défaut de Vite)
+# Exposer le port 5174
 EXPOSE 5174
 
 # Commande de démarrage pour le mode développement

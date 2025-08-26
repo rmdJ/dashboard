@@ -6,6 +6,7 @@ import {
   IconHome,
   IconCalendar,
   IconLogout,
+  IconNotes,
 } from "@tabler/icons-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -29,6 +30,11 @@ const navigationItems = [
     name: "Agenda",
     href: "/cinema-agenda",
     icon: IconCalendar,
+  },
+  {
+    name: "Fiches",
+    href: "/fiches",
+    icon: IconNotes,
   },
   {
     name: "Prêts",
