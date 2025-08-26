@@ -1,9 +1,11 @@
+import { getWednesdayForWeek, formatDate, CORS_HEADERS, buildTMDBDiscoverUrl } from "../lib/constants.js";
+
 // API route pour récupérer les prochaines sorties cinéma
 export default async function handler(req, res) {
   // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  Object.entries(CORS_HEADERS).forEach(([key, value]) => {
+    res.setHeader(key, value);
+  });
 
   if (req.method === "OPTIONS") {
     res.status(200).end();
@@ -15,47 +17,19 @@ export default async function handler(req, res) {
     return;
   }
 
-  try {
-    // Calculer la date du prochain mercredi ou aujourd'hui si c'est mercredi
-    const getNextWednesday = () => {
-      const today = new Date();
-      const dayOfWeek = today.getDay(); // 0 = dimanche, 3 = mercredi
-      
-      if (dayOfWeek === 3) {
-        // Si c'est mercredi, on retourne aujourd'hui
-        return today;
-      } else if (dayOfWeek < 3) {
-        // Si on est avant mercredi, on va au mercredi de cette semaine
-        const daysUntilWednesday = 3 - dayOfWeek;
-        const nextWednesday = new Date(today);
-        nextWednesday.setDate(today.getDate() + daysUntilWednesday);
-        return nextWednesday;
-      } else {
-        // Si on est après mercredi, on va au mercredi de la semaine suivante
-        const daysUntilNextWednesday = 7 - dayOfWeek + 3;
-        const nextWednesday = new Date(today);
-        nextWednesday.setDate(today.getDate() + daysUntilNextWednesday);
-        return nextWednesday;
-      }
-    };
+  const { page = 1, week = 0 } = req.query;
+  const weekOffset = parseInt(week) || 0;
 
-    const startDate = getNextWednesday();
+  try {
+    const startDate = getWednesdayForWeek(weekOffset);
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 6); // Une semaine après
-
-    // Formatter les dates pour l'API TMDB
-    const formatDate = (date) => {
-      return date.toISOString().split('T')[0];
-    };
 
     const startDateStr = formatDate(startDate);
     const endDateStr = formatDate(endDate);
 
-    // API key depuis les variables d'environnement ou la clé fournie
-    const apiKey = process.env.TMDB_API_KEY || "500872ffa0b37b774999a902d34bdd04";
-    
-    // Appel à l'API TMDB
-    const tmdbUrl = `https://api.themoviedb.org/3/discover/movie?region=FR&language=fr&primary_release_date.gte=${startDateStr}&primary_release_date.lte=${endDateStr}&api_key=${apiKey}`;
+    // Appel à l'API TMDB avec pagination
+    const tmdbUrl = buildTMDBDiscoverUrl(startDateStr, endDateStr, page);
     
     const response = await fetch(tmdbUrl);
     

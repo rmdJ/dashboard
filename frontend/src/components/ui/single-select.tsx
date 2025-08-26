@@ -23,18 +23,22 @@ interface SingleSelectOption {
 
 interface SingleSelectProps {
   options: SingleSelectOption[];
-  selected: string;
+  selected?: string;
+  value?: string;
   onChange: (selected: string) => void;
   placeholder?: string;
   className?: string;
+  enableSearch?: boolean;
 }
 
 export function SingleSelect({
   options,
   selected,
+  value,
   onChange,
   placeholder = "Sélectionner...",
   className,
+  enableSearch = true,
 }: SingleSelectProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -43,7 +47,8 @@ export function SingleSelect({
     setOpen(false);
   };
 
-  const selectedOption = options.find((option) => option.value === selected);
+  const currentValue = value || selected;
+  const selectedOption = options.find((option) => option.value === currentValue);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -66,9 +71,9 @@ export function SingleSelect({
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Rechercher..." />
+          {enableSearch && <CommandInput placeholder="Rechercher..." />}
           <CommandList>
-            <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
+            {enableSearch && <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>}
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
@@ -79,7 +84,7 @@ export function SingleSelect({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selected === option.value ? "opacity-100" : "opacity-0"
+                      currentValue === option.value ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {option.label}

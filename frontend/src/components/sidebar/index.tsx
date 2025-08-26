@@ -49,6 +49,11 @@ const data = {
       icon: IconCurrencyBitcoin,
     },
     {
+      title: "Prêts",
+      url: "/loan",
+      icon: IconHome,
+    },
+    {
       title: "Séances cinéma",
       url: "/cinema",
       icon: IconDeviceTv,
@@ -57,11 +62,6 @@ const data = {
       title: "Agenda cinéma",
       url: "/cinema-agenda",
       icon: IconCalendar,
-    },
-    {
-      title: "Prêts",
-      url: "/loan",
-      icon: IconHome,
     },
   ],
   navClouds: [
@@ -180,7 +180,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout} className="text-red-600 hover:text-red-700">
+            <SidebarMenuButton
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-700"
+            >
               <IconLogout className="!size-4" />
               <span>Déconnexion</span>
             </SidebarMenuButton>

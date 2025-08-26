@@ -40,21 +40,28 @@ export async function handleApiRequest(req, res) {
       const data = await getEvolutionData();
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
-      res.end(JSON.stringify({
-        success: true,
-        data: data
-      }));
+      res.end(
+        JSON.stringify({
+          success: true,
+          data: data,
+        })
+      );
       return;
     }
 
     if (pathname === "/cinema-releases" && req.method === "GET") {
-      const data = await getCinemaNextReleases();
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      const page = url.searchParams.get('page') || 1;
+      const week = url.searchParams.get('week') || 0;
+      const data = await getCinemaNextReleases(page, parseInt(week));
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
-      res.end(JSON.stringify({
-        success: true,
-        data: data
-      }));
+      res.end(
+        JSON.stringify({
+          success: true,
+          data: data,
+        })
+      );
       return;
     }
 
@@ -63,33 +70,37 @@ export async function handleApiRequest(req, res) {
       const data = await getMovieDetails(movieId);
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
-      res.end(JSON.stringify({
-        success: true,
-        data: data
-      }));
+      res.end(
+        JSON.stringify({
+          success: true,
+          data: data,
+        })
+      );
       return;
     }
 
     if (pathname === "/movie-details" && req.method === "GET") {
-      const movieId = url.searchParams.get('id');
+      const movieId = url.searchParams.get("id");
       const data = await getMovieDetails(movieId);
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
-      res.end(JSON.stringify({
-        success: true,
-        data: data
-      }));
+      res.end(
+        JSON.stringify({
+          success: true,
+          data: data,
+        })
+      );
       return;
     }
 
     if (pathname === "/cinema-showtimes" && req.method === "GET") {
-      const cinemaId = url.searchParams.get('cinemaId');
-      const dayShift = url.searchParams.get('dayShift') || '0';
-      
+      const cinemaId = url.searchParams.get("cinemaId");
+      const dayShift = url.searchParams.get("dayShift") || "0";
+
       try {
         // Utiliser la vraie API cinema-showtimes
         const { fetchAllPages } = await import("../api/helpers.js");
-        
+
         // Convertir dayShift en format date si c'est un nombre
         let formattedDayShift = dayShift;
         if (!isNaN(dayShift)) {
@@ -105,30 +116,34 @@ export async function handleApiRequest(req, res) {
 
         res.setHeader("Content-Type", "application/json");
         res.statusCode = 200;
-        res.end(JSON.stringify({
-          success: true,
-          data: {
-            results: allMovies,
-            cinemaId,
-            dayShift
-          }
-        }));
+        res.end(
+          JSON.stringify({
+            success: true,
+            data: {
+              results: allMovies,
+              cinemaId,
+              dayShift,
+            },
+          })
+        );
       } catch (error) {
-        console.error('Erreur cinema-showtimes:', error);
+        console.error("Erreur cinema-showtimes:", error);
         res.setHeader("Content-Type", "application/json");
         res.statusCode = 500;
-        res.end(JSON.stringify({
-          error: "Erreur lors de la récupération des données",
-          message: error.message
-        }));
+        res.end(
+          JSON.stringify({
+            error: "Erreur lors de la récupération des données",
+            message: error.message,
+          })
+        );
       }
       return;
     }
 
     if (pathname === "/cinema-movie-details" && req.method === "GET") {
-      const movieId = url.searchParams.get('movieId');
-      const zipCode = url.searchParams.get('zipCode');
-      const dayShift = url.searchParams.get('dayShift') || '0';
+      const movieId = url.searchParams.get("movieId");
+      const zipCode = url.searchParams.get("zipCode");
+      const dayShift = url.searchParams.get("dayShift") || "0";
       // Pour le développement local, retourner des données mock
       const mockData = {
         movie: { title: "Film test", runtime: "2h", synopsis: "Synopsis test" },
@@ -136,14 +151,16 @@ export async function handleApiRequest(req, res) {
         pagination: { currentPage: 1, totalPages: 1, totalResults: 0 },
         movieId,
         zipCode,
-        dayShift
+        dayShift,
       };
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
-      res.end(JSON.stringify({
-        success: true,
-        data: mockData
-      }));
+      res.end(
+        JSON.stringify({
+          success: true,
+          data: mockData,
+        })
+      );
       return;
     }
 

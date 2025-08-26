@@ -1,19 +1,22 @@
 import { useState } from "react";
 import { useCinemaNextReleases } from "@/hooks/useCinemaNextReleases";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SingleSelect } from "@/components/ui/single-select";
 import { MovieDetailsDrawer } from "@/components/cinema/movieDetailsDrawer";
-import { Calendar, Film, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar, Film, ChevronRight } from "lucide-react";
 
 export const CinemaNextReleases = () => {
-  const { data, isLoading, error } = useCinemaNextReleases();
+  const [selectedWeek, setSelectedWeek] = useState(0);
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useCinemaNextReleases(selectedWeek);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
-  const [showAll, setShowAll] = useState(false);
 
   const handleMovieClick = (movieId: number) => {
     setSelectedMovieId(movieId);
@@ -23,8 +26,10 @@ export const CinemaNextReleases = () => {
     setSelectedMovieId(null);
   };
 
-  const toggleShowAll = () => {
-    setShowAll(!showAll);
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
   };
 
   if (isLoading) {
@@ -72,6 +77,21 @@ export const CinemaNextReleases = () => {
     });
   };
 
+  const weekOptions = [
+    { value: "0", label: "Semaine prochaine" },
+    { value: "1", label: "Semaine +2" },
+    { value: "2", label: "Semaine +3" },
+    { value: "3", label: "Semaine +4" },
+    { value: "4", label: "Semaine +5" },
+    { value: "5", label: "Semaine +6" },
+    { value: "6", label: "Semaine +7" },
+    { value: "7", label: "Semaine +8" },
+  ];
+
+  const handleWeekChange = (value: string) => {
+    setSelectedWeek(parseInt(value));
+  };
+
   if (!data || data.results.length === 0) {
     return (
       <Card>
@@ -90,32 +110,24 @@ export const CinemaNextReleases = () => {
 
   const sortedMovies = data.results.sort((a, b) => b.popularity - a.popularity);
 
-  // Calculer le nombre de films par ligne selon la breakpoint
-  const getItemsPerRow = () => {
-    if (typeof window === "undefined") return 6; // SSR fallback
-    const width = window.innerWidth;
-    if (width >= 1536) return 6; // 2xl
-    if (width >= 1280) return 5; // xl
-    if (width >= 1024) return 4; // lg
-    return 3; // md
-  };
-
-  const itemsPerRow = getItemsPerRow();
-  const moviesToShow = showAll
-    ? sortedMovies
-    : sortedMovies.slice(0, itemsPerRow);
-  const hasMoreMovies = sortedMovies.length > itemsPerRow;
-
   return (
     <Card className="h-[100vh] md:h-auto">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calendar className="h-5 w-5" />
-          {data.period.isCurrentWeek
-            ? "Cette semaine"
-            : "Semaine prochaine"} - {formatDate(data.period.start)} au{" "}
-          {formatDate(data.period.end)}
-        </CardTitle>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            {formatDate(data.period.start)} au {formatDate(data.period.end)}
+          </CardTitle>
+          <div className="w-48">
+            <SingleSelect
+              options={weekOptions}
+              value={selectedWeek.toString()}
+              onChange={handleWeekChange}
+              placeholder="Choisir la semaine"
+              enableSearch={false}
+            />
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         {/* Version mobile : slider horizontal */}
@@ -155,21 +167,11 @@ export const CinemaNextReleases = () => {
 
         {/* Desktop Grid */}
         <div className="hidden md:block">
-          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 transition-all duration-500 ease-in-out">
-            {moviesToShow.map((movie, index) => (
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+            {sortedMovies.map((movie) => (
               <div
                 key={movie.id}
                 className="cursor-pointer group transition-all duration-200 hover:bg-muted/50 rounded-lg p-3 -m-3"
-                style={{
-                  animation:
-                    showAll && index >= itemsPerRow
-                      ? `slideUp 300ms ease-out ${
-                          (index - itemsPerRow) * 50
-                        }ms both`
-                      : index < itemsPerRow
-                      ? `slideUp 300ms ease-out ${index * 50}ms both`
-                      : "none",
-                }}
                 onClick={() => handleMovieClick(movie.id)}
               >
                 <div className="flex flex-col items-center">
@@ -196,22 +198,23 @@ export const CinemaNextReleases = () => {
             ))}
           </div>
 
-          {hasMoreMovies && (
+          {hasNextPage && (
             <div className="flex justify-center mt-6">
               <Button
                 variant="outline"
-                onClick={toggleShowAll}
+                onClick={handleLoadMore}
+                disabled={isFetchingNextPage}
                 className="flex items-center gap-2 transition-all duration-200 hover:scale-105"
               >
-                {showAll ? (
+                {isFetchingNextPage ? (
                   <>
-                    <ChevronUp className="h-4 w-4 transition-transform duration-200" />
-                    Voir moins
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                    Chargement...
                   </>
                 ) : (
                   <>
-                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
-                    Voir tous les films ({sortedMovies.length})
+                    <ChevronRight className="h-4 w-4 transition-transform duration-200" />
+                    Voir plus de films
                   </>
                 )}
               </Button>

@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 interface Movie {
   id: number;
@@ -29,8 +30,9 @@ interface ApiResponse {
   data: CinemaData;
 }
 
-const fetchCinemaNextReleases = async (): Promise<CinemaData> => {
-  const response = await fetch("/api/cinema-releases");
+const fetchCinemaNextReleases = async ({ pageParam = 1, queryKey }: { pageParam: number; queryKey: any[] }): Promise<CinemaData> => {
+  const [, , weekOffset] = queryKey;
+  const response = await fetch(`/api/cinema-releases?page=${pageParam}&week=${weekOffset}`);
   if (!response.ok) {
     throw new Error("Erreur lors de la récupération des données");
   }
@@ -38,11 +40,40 @@ const fetchCinemaNextReleases = async (): Promise<CinemaData> => {
   return result.data;
 };
 
-export const useCinemaNextReleases = () => {
-  return useQuery({
-    queryKey: ["cinema", "next-releases"],
+export const useCinemaNextReleases = (weekOffset: number = 0) => {
+  const query = useInfiniteQuery({
+    queryKey: ["cinema", "next-releases", weekOffset],
     queryFn: fetchCinemaNextReleases,
     staleTime: 1000 * 60 * 30, // 30 minutes
     gcTime: 1000 * 60 * 60, // 1 heure
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.page && lastPage.page < lastPage.total_pages) {
+        return lastPage.page + 1;
+      }
+      return undefined;
+    },
   });
+
+  // Fusionner tous les résultats des pages
+  const data = useMemo(() => {
+    if (!query.data?.pages?.length) return null;
+    
+    const firstPage = query.data.pages[0];
+    const allResults = query.data.pages.flatMap(page => page.results);
+    
+    return {
+      ...firstPage,
+      results: allResults,
+    };
+  }, [query.data]);
+
+  return {
+    data,
+    isLoading: query.isLoading,
+    error: query.error,
+    fetchNextPage: query.fetchNextPage,
+    hasNextPage: query.hasNextPage,
+    isFetchingNextPage: query.isFetchingNextPage,
+  };
 };
