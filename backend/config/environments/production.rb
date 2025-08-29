@@ -86,7 +86,9 @@ Rails.application.configure do
   # Enable DNS rebinding protection and other `Host` header attacks.
   config.hosts = [
     "dashboard-ut3o.onrender.com",
-    /.*\.onrender\.com/
+    /.*\.onrender\.com/,
+    "dashboard-production-4a14.up.railway.app",
+    /.*\.up\.railway\.app/
   ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
