@@ -1,0 +1,15 @@
+{
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "backend/Dockerfile"
+  },
+  "deploy": {
+    "sleepApplication": false,
+    "numReplicas": 1,
+    "multiRegionConfig": {
+      "europe-west4-drams3a": {
+        "numReplicas": 1
+      }
+    }
+  }
+}
