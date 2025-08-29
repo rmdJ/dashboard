@@ -7,7 +7,6 @@ import {
   IconCalendar,
   IconNotes,
 } from "@tabler/icons-react";
-import { useAuth } from "@/contexts/AuthContext";
 
 const navigationItems = [
   {
