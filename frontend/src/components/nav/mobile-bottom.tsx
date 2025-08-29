@@ -4,7 +4,6 @@ import {
   IconCurrencyBitcoin,
   IconDeviceTv,
   IconHome,
-  IconCalendar,
   IconNotes,
 } from "@tabler/icons-react";
 
@@ -28,11 +27,6 @@ const navigationItems = [
     name: "Cinéma",
     href: "/cinema",
     icon: IconDeviceTv,
-  },
-  {
-    name: "Agenda",
-    href: "/cinema-agenda",
-    icon: IconCalendar,
   },
   {
     name: "Sheets",

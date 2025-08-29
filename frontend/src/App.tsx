@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Dashboard } from "./app/dashboard";
 import { Crypto } from "./app/crypto";
 import Cinema from "./app/cinema";
-import { CinemaAgenda } from "./app/cinema-agenda";
 import { Sheets } from "./app/sheets";
 import Loan from "./app/loan";
 import { LoginForm } from "./app/login";
@@ -38,7 +37,6 @@ function App() {
                               <Route path="/" element={<Dashboard />} />
                               <Route path="/crypto" element={<Crypto />} />
                               <Route path="/cinema" element={<Cinema />} />
-                              <Route path="/cinema-agenda" element={<CinemaAgenda />} />
                               <Route path="/sheets" element={<Sheets />} />
                               <Route path="/loan" element={<Loan />} />
                             </Routes>
@@ -53,7 +51,6 @@ function App() {
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/crypto" element={<Crypto />} />
                             <Route path="/cinema" element={<Cinema />} />
-                            <Route path="/cinema-agenda" element={<CinemaAgenda />} />
                             <Route path="/sheets" element={<Sheets />} />
                             <Route path="/loan" element={<Loan />} />
                           </Routes>

@@ -14,7 +14,6 @@ import {
   IconCurrencyBitcoin,
   IconDeviceTv,
   IconHome,
-  IconCalendar,
   IconLogout,
   IconNotes,
 } from "@tabler/icons-react";
@@ -55,14 +54,9 @@ const data = {
       icon: IconHome,
     },
     {
-      title: "Séances cinéma",
+      title: "Cinéma",
       url: "/cinema",
       icon: IconDeviceTv,
-    },
-    {
-      title: "Agenda cinéma",
-      url: "/cinema-agenda",
-      icon: IconCalendar,
     },
     {
       title: "Sheets",
