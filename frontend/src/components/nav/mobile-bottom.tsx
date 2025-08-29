@@ -45,15 +45,9 @@ const navigationItems = [
 export function NavMobileBottom() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
 
   const handleNavigation = (href: string) => {
     navigate(href);
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
   };
 
   return (
