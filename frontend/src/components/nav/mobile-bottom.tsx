@@ -5,14 +5,13 @@ import {
   IconDeviceTv,
   IconHome,
   IconCalendar,
-  IconLogout,
   IconNotes,
 } from "@tabler/icons-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const navigationItems = [
   {
-    name: "Dashboard",
+    name: "Dash",
     href: "/",
     icon: IconDashboard,
   },
@@ -20,6 +19,11 @@ const navigationItems = [
     name: "Crypto",
     href: "/crypto",
     icon: IconCurrencyBitcoin,
+  },
+  {
+    name: "Prêts",
+    href: "/loan",
+    icon: IconHome,
   },
   {
     name: "Cinéma",
@@ -35,11 +39,6 @@ const navigationItems = [
     name: "Sheets",
     href: "/sheets",
     icon: IconNotes,
-  },
-  {
-    name: "Prêts",
-    href: "/loan",
-    icon: IconHome,
   },
 ];
 
@@ -62,7 +61,7 @@ export function NavMobileBottom() {
       {/* Backdrop avec bordure supérieure subtile */}
       <div className="bg-white/95 backdrop-blur-sm border-t border-gray-200/50">
         {/* Container principal */}
-        <div className="px-4 py-0 pb-safe">
+        <div className="py-0 px-safe">
           <div className="flex items-center justify-between">
             {/* Navigation items */}
             <div className="flex items-center justify-around flex-1">
@@ -99,23 +98,6 @@ export function NavMobileBottom() {
                 );
               })}
             </div>
-            
-            {/* Logout button */}
-            <button
-              onClick={handleLogout}
-              className="flex flex-col items-center justify-center py-2 px-4 transition-colors duration-200"
-              aria-label="Déconnexion"
-            >
-              <div className="mb-1">
-                <IconLogout
-                  className="h-6 w-6 text-red-600 transition-colors duration-200"
-                  strokeWidth={1.5}
-                />
-              </div>
-              <span className="text-xs font-medium text-red-600">
-                Logout
-              </span>
-            </button>
           </div>
         </div>
       </div>
