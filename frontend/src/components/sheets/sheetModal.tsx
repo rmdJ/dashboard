@@ -61,14 +61,14 @@ export const SheetModal = ({
           title: title.trim(),
           content: content.trim(),
         });
-        toast.success("Sheet créé avec succès");
+        toast.success("Fiche créée avec succès");
       } else if (mode === "edit" && sheet) {
         await updateSheet.mutateAsync({
           id: sheet.id,
           title: title.trim(),
           content: content.trim(),
         });
-        toast.success("Sheet modifié avec succès");
+        toast.success("Fiche modifiée avec succès");
       }
       handleClose();
     } catch (error) {
@@ -90,7 +90,7 @@ export const SheetModal = ({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
-              {mode === "create" ? "Créer un sheet" : "Modifier le sheet"}
+              {mode === "create" ? "Créer une fiche" : "Modifier la fiche"}
             </DialogTitle>
           </DialogHeader>
 

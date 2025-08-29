@@ -111,17 +111,17 @@ export const Sheets = () => {
           <CardContent className="p-12 text-center">
             <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              {searchTerm ? "Aucun résultat" : "Aucun sheet"}
+              {searchTerm ? "Aucun résultat" : "Aucune fiche"}
             </h3>
             <p className="text-muted-foreground mb-4">
               {searchTerm
-                ? "Aucun sheet ne correspond à votre recherche"
-                : "Commencez par créer votre premier sheet"}
+                ? "Aucune fiche ne correspond à votre recherche"
+                : "Commencez par créer votre première fiche"}
             </p>
             {!searchTerm && (
               <Button onClick={handleCreateClick}>
                 <Plus className="mr-2 h-4 w-4" />
-                Créer un sheet
+                Créer une fiche
               </Button>
             )}
           </CardContent>
