@@ -1,0 +1,202 @@
+{"timestamp":"2025-08-29T15:06:26.975Z","level":"info","message":"🚀 Démarrage du service de scraping Allociné"}
+{"timestamp":"2025-08-29T15:06:26.978Z","level":"info","message":"🧪 Test du scraper (1 semaine seulement)"}
+{"timestamp":"2025-08-29T15:06:26.980Z","level":"info","message":"🚀 Initialisation du scraper Allociné"}
+{"timestamp":"2025-08-29T15:06:30.452Z","level":"success","message":"✅ Browser et page initialisés"}
+{"timestamp":"2025-08-29T15:06:31.511Z","level":"info","message":"🎬 Début du scraping de 1 semaines sur Allociné"}
+{"timestamp":"2025-08-29T15:06:31.512Z","level":"info","message":"📅 Scraping de la semaine 1"}
+{"timestamp":"2025-08-29T15:06:35.156Z","level":"info","message":"📝 17 films extraits de la semaine 1"}
+{"timestamp":"2025-08-29T15:07:31.576Z","level":"info","message":"✅ Semaine 1: 17 films"}
+{"timestamp":"2025-08-29T15:07:31.581Z","level":"success","message":"🎉 Scraping terminé: 17 films en 60s"}
+{"timestamp":"2025-08-29T15:07:31.958Z","level":"success","message":"🚀 Scraping Allociné terminé avec succès: 17 films"}
+{"timestamp":"2025-08-29T15:07:32.155Z","level":"info","message":"🔒 Browser fermé"}
+{"timestamp":"2025-08-29T15:07:32.157Z","level":"success","message":"✅ Test terminé: 17 films trouvés"}
+{"timestamp":"2025-08-29T15:07:51.175Z","level":"info","message":"🚀 Démarrage du service de scraping Allociné"}
+{"timestamp":"2025-08-29T15:07:51.179Z","level":"info","message":"🔧 Lancement manuel du scraping"}
+{"timestamp":"2025-08-29T15:07:51.181Z","level":"info","message":"🚀 Initialisation du scraper Allociné"}
+{"timestamp":"2025-08-29T15:07:51.785Z","level":"success","message":"✅ Browser et page initialisés"}
+{"timestamp":"2025-08-29T15:07:52.810Z","level":"info","message":"🎬 Début du scraping de 12 semaines sur Allociné"}
+{"timestamp":"2025-08-29T15:07:52.812Z","level":"info","message":"📅 Scraping de la semaine 1"}
+{"timestamp":"2025-08-29T15:07:56.809Z","level":"info","message":"📝 17 films extraits de la semaine 1"}
+{"timestamp":"2025-08-29T15:08:53.841Z","level":"info","message":"✅ Semaine 1: 17 films"}
+{"timestamp":"2025-08-29T15:08:56.845Z","level":"info","message":"📅 Scraping de la semaine 2"}
+{"timestamp":"2025-08-29T15:08:56.859Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 2","data":{}}
+{"timestamp":"2025-08-29T15:08:56.867Z","level":"info","message":"✅ Semaine 2: 0 films"}
+{"timestamp":"2025-08-29T15:08:59.876Z","level":"info","message":"📅 Scraping de la semaine 3"}
+{"timestamp":"2025-08-29T15:08:59.882Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 3","data":{}}
+{"timestamp":"2025-08-29T15:08:59.887Z","level":"info","message":"✅ Semaine 3: 0 films"}
+{"timestamp":"2025-08-29T15:09:02.891Z","level":"info","message":"📅 Scraping de la semaine 4"}
+{"timestamp":"2025-08-29T15:09:02.895Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 4","data":{}}
+{"timestamp":"2025-08-29T15:09:02.898Z","level":"info","message":"✅ Semaine 4: 0 films"}
+{"timestamp":"2025-08-29T15:09:05.902Z","level":"info","message":"📅 Scraping de la semaine 5"}
+{"timestamp":"2025-08-29T15:09:05.927Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 5","data":{}}
+{"timestamp":"2025-08-29T15:09:05.934Z","level":"info","message":"✅ Semaine 5: 0 films"}
+{"timestamp":"2025-08-29T15:09:08.940Z","level":"info","message":"📅 Scraping de la semaine 6"}
+{"timestamp":"2025-08-29T15:09:08.944Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 6","data":{}}
+{"timestamp":"2025-08-29T15:09:08.955Z","level":"info","message":"✅ Semaine 6: 0 films"}
+{"timestamp":"2025-08-29T15:09:11.964Z","level":"info","message":"📅 Scraping de la semaine 7"}
+{"timestamp":"2025-08-29T15:09:11.972Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 7","data":{}}
+{"timestamp":"2025-08-29T15:09:11.976Z","level":"info","message":"✅ Semaine 7: 0 films"}
+{"timestamp":"2025-08-29T15:09:14.983Z","level":"info","message":"📅 Scraping de la semaine 8"}
+{"timestamp":"2025-08-29T15:09:14.995Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 8","data":{}}
+{"timestamp":"2025-08-29T15:09:15.003Z","level":"info","message":"✅ Semaine 8: 0 films"}
+{"timestamp":"2025-08-29T15:09:18.011Z","level":"info","message":"📅 Scraping de la semaine 9"}
+{"timestamp":"2025-08-29T15:09:18.024Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 9","data":{}}
+{"timestamp":"2025-08-29T15:09:18.033Z","level":"info","message":"✅ Semaine 9: 0 films"}
+{"timestamp":"2025-08-29T15:09:21.042Z","level":"info","message":"📅 Scraping de la semaine 10"}
+{"timestamp":"2025-08-29T15:09:21.061Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 10","data":{}}
+{"timestamp":"2025-08-29T15:09:21.073Z","level":"info","message":"✅ Semaine 10: 0 films"}
+{"timestamp":"2025-08-29T15:09:24.098Z","level":"info","message":"📅 Scraping de la semaine 11"}
+{"timestamp":"2025-08-29T15:09:24.116Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 11","data":{}}
+{"timestamp":"2025-08-29T15:09:24.127Z","level":"info","message":"✅ Semaine 11: 0 films"}
+{"timestamp":"2025-08-29T15:09:27.135Z","level":"info","message":"📅 Scraping de la semaine 12"}
+{"timestamp":"2025-08-29T15:09:27.148Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 12","data":{}}
+{"timestamp":"2025-08-29T15:09:27.160Z","level":"info","message":"✅ Semaine 12: 0 films"}
+{"timestamp":"2025-08-29T15:09:27.168Z","level":"success","message":"🎉 Scraping terminé: 17 films en 94s"}
+{"timestamp":"2025-08-29T15:09:27.465Z","level":"success","message":"🚀 Scraping Allociné terminé avec succès: 17 films"}
+{"timestamp":"2025-08-29T15:09:27.620Z","level":"info","message":"🔒 Browser fermé"}
+{"timestamp":"2025-08-29T15:09:27.622Z","level":"success","message":"✅ Scraping terminé: 17 films scrapés"}
+{"timestamp":"2025-08-29T15:10:11.056Z","level":"info","message":"🚀 Démarrage du service de scraping Allociné"}
+{"timestamp":"2025-08-29T15:10:11.061Z","level":"info","message":"🧪 Test du scraper (1 semaine seulement)"}
+{"timestamp":"2025-08-29T15:10:11.063Z","level":"info","message":"🚀 Initialisation du scraper Allociné"}
+{"timestamp":"2025-08-29T15:10:11.750Z","level":"success","message":"✅ Browser et page initialisés"}
+{"timestamp":"2025-08-29T15:10:12.767Z","level":"info","message":"🎬 Début du scraping de 1 semaines sur Allociné"}
+{"timestamp":"2025-08-29T15:10:12.768Z","level":"info","message":"📅 Scraping de la semaine 1"}
+{"timestamp":"2025-08-29T15:10:16.186Z","level":"info","message":"📝 17 films extraits de la semaine 1"}
+{"timestamp":"2025-08-29T15:11:13.036Z","level":"info","message":"✅ Semaine 1: 17 films"}
+{"timestamp":"2025-08-29T15:11:13.039Z","level":"success","message":"🎉 Scraping terminé: 17 films en 60s"}
+{"timestamp":"2025-08-29T15:11:13.377Z","level":"success","message":"🚀 Scraping Allociné terminé avec succès: 17 films"}
+{"timestamp":"2025-08-29T15:11:13.558Z","level":"info","message":"🔒 Browser fermé"}
+{"timestamp":"2025-08-29T15:11:13.560Z","level":"success","message":"✅ Test terminé: 17 films trouvés"}
+{"timestamp":"2025-08-29T15:11:26.605Z","level":"info","message":"🚀 Démarrage du service de scraping Allociné"}
+{"timestamp":"2025-08-29T15:11:26.608Z","level":"info","message":"🧪 Test du scraper (3 semaines seulement)"}
+{"timestamp":"2025-08-29T15:11:26.611Z","level":"info","message":"🚀 Initialisation du scraper Allociné"}
+{"timestamp":"2025-08-29T15:11:27.331Z","level":"success","message":"✅ Browser et page initialisés"}
+{"timestamp":"2025-08-29T15:11:28.375Z","level":"info","message":"🎬 Début du scraping de 3 semaines sur Allociné"}
+{"timestamp":"2025-08-29T15:11:28.375Z","level":"info","message":"📅 Scraping de la semaine 1"}
+{"timestamp":"2025-08-29T15:11:32.312Z","level":"info","message":"📝 17 films extraits de la semaine 1"}
+{"timestamp":"2025-08-29T15:12:29.284Z","level":"info","message":"✅ Semaine 1: 17 films"}
+{"timestamp":"2025-08-29T15:12:32.286Z","level":"info","message":"📅 Scraping de la semaine 2"}
+{"timestamp":"2025-08-29T15:12:32.298Z","level":"warn","message":"⚠️ Aucune option trouvée dans le sélecteur"}
+{"timestamp":"2025-08-29T15:12:32.311Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 2","data":{}}
+{"timestamp":"2025-08-29T15:12:32.323Z","level":"info","message":"✅ Semaine 2: 0 films"}
+{"timestamp":"2025-08-29T15:12:35.331Z","level":"info","message":"📅 Scraping de la semaine 3"}
+{"timestamp":"2025-08-29T15:12:35.339Z","level":"warn","message":"⚠️ Aucune option trouvée dans le sélecteur"}
+{"timestamp":"2025-08-29T15:12:35.344Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 3","data":{}}
+{"timestamp":"2025-08-29T15:12:35.346Z","level":"info","message":"✅ Semaine 3: 0 films"}
+{"timestamp":"2025-08-29T15:12:35.348Z","level":"success","message":"🎉 Scraping terminé: 17 films en 67s"}
+{"timestamp":"2025-08-29T15:12:35.663Z","level":"success","message":"🚀 Scraping Allociné terminé avec succès: 17 films"}
+{"timestamp":"2025-08-29T15:12:35.852Z","level":"info","message":"🔒 Browser fermé"}
+{"timestamp":"2025-08-29T15:12:35.856Z","level":"success","message":"✅ Test terminé: 17 films trouvés"}
+{"timestamp":"2025-08-29T15:12:54.889Z","level":"info","message":"🚀 Démarrage du service de scraping Allociné"}
+{"timestamp":"2025-08-29T15:12:54.899Z","level":"info","message":"🧪 Test du scraper (3 semaines seulement)"}
+{"timestamp":"2025-08-29T15:12:54.907Z","level":"info","message":"🚀 Initialisation du scraper Allociné"}
+{"timestamp":"2025-08-29T15:12:55.713Z","level":"success","message":"✅ Browser et page initialisés"}
+{"timestamp":"2025-08-29T15:12:56.768Z","level":"info","message":"🎬 Début du scraping de 3 semaines sur Allociné"}
+{"timestamp":"2025-08-29T15:12:56.770Z","level":"info","message":"📅 Scraping de la semaine 1"}
+{"timestamp":"2025-08-29T15:13:26.776Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 1","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-08-29T15:13:26.802Z","level":"info","message":"✅ Semaine 1: 0 films"}
+{"timestamp":"2025-08-29T15:13:29.805Z","level":"info","message":"📅 Scraping de la semaine 2"}
+{"timestamp":"2025-08-29T15:15:18.388Z","level":"info","message":"🚀 Démarrage du service de scraping Allociné"}
+{"timestamp":"2025-08-29T15:15:18.392Z","level":"info","message":"🧪 Test du scraper (12 semaines seulement)"}
+{"timestamp":"2025-08-29T15:15:18.399Z","level":"info","message":"🚀 Initialisation du scraper Allociné"}
+{"timestamp":"2025-08-29T15:15:19.521Z","level":"success","message":"✅ Browser et page initialisés"}
+{"timestamp":"2025-08-29T15:15:20.569Z","level":"info","message":"🎬 Début du scraping de 12 semaines sur Allociné"}
+{"timestamp":"2025-08-29T15:15:20.572Z","level":"info","message":"📅 Scraping de la semaine 1"}
+{"timestamp":"2025-08-29T15:15:23.002Z","level":"info","message":"📝 17 films extraits de la semaine 1"}
+{"timestamp":"2025-08-29T15:16:20.682Z","level":"info","message":"✅ Semaine 1: 17 films"}
+{"timestamp":"2025-08-29T15:16:23.705Z","level":"info","message":"📅 Scraping de la semaine 2"}
+{"timestamp":"2025-08-29T15:16:23.717Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 2"}
+{"timestamp":"2025-08-29T15:16:23.724Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 2, on continue"}
+{"timestamp":"2025-08-29T15:16:23.737Z","level":"info","message":"✅ Semaine 2: 0 films"}
+{"timestamp":"2025-08-29T15:16:26.741Z","level":"info","message":"📅 Scraping de la semaine 3"}
+{"timestamp":"2025-08-29T15:16:26.753Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 3"}
+{"timestamp":"2025-08-29T15:16:26.788Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 3, on continue"}
+{"timestamp":"2025-08-29T15:16:26.796Z","level":"info","message":"✅ Semaine 3: 0 films"}
+{"timestamp":"2025-08-29T15:16:29.801Z","level":"info","message":"📅 Scraping de la semaine 4"}
+{"timestamp":"2025-08-29T15:16:29.808Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 4"}
+{"timestamp":"2025-08-29T15:16:29.848Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 4, on continue"}
+{"timestamp":"2025-08-29T15:16:29.859Z","level":"info","message":"✅ Semaine 4: 0 films"}
+{"timestamp":"2025-08-29T15:16:32.866Z","level":"info","message":"📅 Scraping de la semaine 5"}
+{"timestamp":"2025-08-29T15:16:32.887Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 5"}
+{"timestamp":"2025-08-29T15:16:32.904Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 5, on continue"}
+{"timestamp":"2025-08-29T15:16:32.916Z","level":"info","message":"✅ Semaine 5: 0 films"}
+{"timestamp":"2025-08-29T15:16:35.920Z","level":"info","message":"📅 Scraping de la semaine 6"}
+{"timestamp":"2025-08-29T15:16:35.932Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 6"}
+{"timestamp":"2025-08-29T15:16:35.947Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 6, on continue"}
+{"timestamp":"2025-08-29T15:16:35.963Z","level":"info","message":"✅ Semaine 6: 0 films"}
+{"timestamp":"2025-08-29T15:16:38.970Z","level":"info","message":"📅 Scraping de la semaine 7"}
+{"timestamp":"2025-08-29T15:16:38.983Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 7"}
+{"timestamp":"2025-08-29T15:16:39.002Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 7, on continue"}
+{"timestamp":"2025-08-29T15:16:39.013Z","level":"info","message":"✅ Semaine 7: 0 films"}
+{"timestamp":"2025-08-29T15:16:42.017Z","level":"info","message":"📅 Scraping de la semaine 8"}
+{"timestamp":"2025-08-29T15:16:42.032Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 8"}
+{"timestamp":"2025-08-29T15:16:42.047Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 8, on continue"}
+{"timestamp":"2025-08-29T15:16:42.063Z","level":"info","message":"✅ Semaine 8: 0 films"}
+{"timestamp":"2025-08-29T15:16:45.072Z","level":"info","message":"📅 Scraping de la semaine 9"}
+{"timestamp":"2025-08-29T15:16:45.087Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 9"}
+{"timestamp":"2025-08-29T15:16:45.102Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 9, on continue"}
+{"timestamp":"2025-08-29T15:16:45.115Z","level":"info","message":"✅ Semaine 9: 0 films"}
+{"timestamp":"2025-08-29T15:16:48.122Z","level":"info","message":"📅 Scraping de la semaine 10"}
+{"timestamp":"2025-08-29T15:16:48.137Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 10"}
+{"timestamp":"2025-08-29T15:16:48.156Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 10, on continue"}
+{"timestamp":"2025-08-29T15:16:48.184Z","level":"info","message":"✅ Semaine 10: 0 films"}
+{"timestamp":"2025-08-29T15:16:51.198Z","level":"info","message":"📅 Scraping de la semaine 11"}
+{"timestamp":"2025-08-29T15:16:51.200Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 11"}
+{"timestamp":"2025-08-29T15:16:51.210Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 11, on continue"}
+{"timestamp":"2025-08-29T15:16:51.228Z","level":"info","message":"✅ Semaine 11: 0 films"}
+{"timestamp":"2025-08-29T15:16:54.236Z","level":"info","message":"📅 Scraping de la semaine 12"}
+{"timestamp":"2025-08-29T15:16:54.251Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 12"}
+{"timestamp":"2025-08-29T15:16:54.261Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 12, on continue"}
+{"timestamp":"2025-08-29T15:16:54.269Z","level":"info","message":"✅ Semaine 12: 0 films"}
+{"timestamp":"2025-08-29T15:16:54.271Z","level":"success","message":"🎉 Scraping terminé: 17 films en 94s"}
+{"timestamp":"2025-08-29T15:16:54.594Z","level":"success","message":"🚀 Scraping Allociné terminé avec succès: 17 films"}
+{"timestamp":"2025-08-29T15:16:54.786Z","level":"info","message":"🔒 Browser fermé"}
+{"timestamp":"2025-08-29T15:16:54.788Z","level":"success","message":"✅ Test terminé: 17 films trouvés"}
+{"timestamp":"2025-08-29T15:17:55.265Z","level":"info","message":"🚀 Démarrage du service de scraping Allociné"}
+{"timestamp":"2025-08-29T15:17:55.272Z","level":"info","message":"🧪 Test du scraper (12 semaines seulement)"}
+{"timestamp":"2025-08-29T15:17:55.275Z","level":"info","message":"🚀 Initialisation du scraper Allociné Simple"}
+{"timestamp":"2025-08-29T15:17:56.199Z","level":"success","message":"✅ Browser et page initialisés"}
+{"timestamp":"2025-08-29T15:17:57.224Z","level":"info","message":"🎬 Début du scraping de 12 semaines sur Allociné"}
+{"timestamp":"2025-08-29T15:17:57.225Z","level":"info","message":"📅 Scraping semaine 1 (03/09/2025)"}
+{"timestamp":"2025-08-29T15:18:00.642Z","level":"info","message":"📝 17 films extraits de la semaine 1"}
+{"timestamp":"2025-08-29T15:18:00.655Z","level":"info","message":"✅ Semaine 1: 17 films"}
+{"timestamp":"2025-08-29T15:18:02.671Z","level":"info","message":"📅 Scraping semaine 2 (10/09/2025)"}
+{"timestamp":"2025-08-29T15:18:05.865Z","level":"info","message":"📝 15 films extraits de la semaine 2"}
+{"timestamp":"2025-08-29T15:18:05.866Z","level":"info","message":"✅ Semaine 2: 15 films"}
+{"timestamp":"2025-08-29T15:18:07.869Z","level":"info","message":"📅 Scraping semaine 3 (17/09/2025)"}
+{"timestamp":"2025-08-29T15:18:11.046Z","level":"info","message":"📝 21 films extraits de la semaine 3"}
+{"timestamp":"2025-08-29T15:18:11.047Z","level":"info","message":"✅ Semaine 3: 21 films"}
+{"timestamp":"2025-08-29T15:18:13.057Z","level":"info","message":"📅 Scraping semaine 4 (24/09/2025)"}
+{"timestamp":"2025-08-29T15:18:16.256Z","level":"info","message":"📝 23 films extraits de la semaine 4"}
+{"timestamp":"2025-08-29T15:18:16.258Z","level":"info","message":"✅ Semaine 4: 23 films"}
+{"timestamp":"2025-08-29T15:18:18.266Z","level":"info","message":"📅 Scraping semaine 5 (01/10/2025)"}
+{"timestamp":"2025-08-29T15:18:21.461Z","level":"info","message":"📝 19 films extraits de la semaine 5"}
+{"timestamp":"2025-08-29T15:18:21.462Z","level":"warn","message":"⚠️ Film invalide ignoré: Avatar : la voie de l'eau","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-08-29T15:18:21.478Z","level":"info","message":"✅ Semaine 5: 18 films"}
+{"timestamp":"2025-08-29T15:18:23.490Z","level":"info","message":"📅 Scraping semaine 6 (08/10/2025)"}
+{"timestamp":"2025-08-29T15:18:26.683Z","level":"info","message":"📝 19 films extraits de la semaine 6"}
+{"timestamp":"2025-08-29T15:18:26.685Z","level":"warn","message":"⚠️ Film invalide ignoré: La Ferme des animaux","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-08-29T15:18:26.700Z","level":"info","message":"✅ Semaine 6: 18 films"}
+{"timestamp":"2025-08-29T15:18:28.709Z","level":"info","message":"📅 Scraping semaine 7 (15/10/2025)"}
+{"timestamp":"2025-08-29T15:18:31.934Z","level":"info","message":"📝 21 films extraits de la semaine 7"}
+{"timestamp":"2025-08-29T15:18:31.934Z","level":"info","message":"✅ Semaine 7: 21 films"}
+{"timestamp":"2025-08-29T15:18:33.937Z","level":"info","message":"📅 Scraping semaine 8 (22/10/2025)"}
+{"timestamp":"2025-08-29T15:18:37.113Z","level":"info","message":"📝 20 films extraits de la semaine 8"}
+{"timestamp":"2025-08-29T15:18:37.114Z","level":"info","message":"✅ Semaine 8: 20 films"}
+{"timestamp":"2025-08-29T15:18:39.126Z","level":"info","message":"📅 Scraping semaine 9 (29/10/2025)"}
+{"timestamp":"2025-08-29T15:18:42.314Z","level":"info","message":"📝 17 films extraits de la semaine 9"}
+{"timestamp":"2025-08-29T15:18:42.318Z","level":"info","message":"✅ Semaine 9: 17 films"}
+{"timestamp":"2025-08-29T15:18:44.323Z","level":"info","message":"📅 Scraping semaine 10 (05/11/2025)"}
+{"timestamp":"2025-08-29T15:18:47.484Z","level":"info","message":"📝 24 films extraits de la semaine 10"}
+{"timestamp":"2025-08-29T15:18:47.489Z","level":"warn","message":"⚠️ Film invalide ignoré: Hôtel de France","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-08-29T15:18:47.501Z","level":"info","message":"✅ Semaine 10: 23 films"}
+{"timestamp":"2025-08-29T15:18:49.505Z","level":"info","message":"📅 Scraping semaine 11 (12/11/2025)"}
+{"timestamp":"2025-08-29T15:18:52.666Z","level":"info","message":"📝 13 films extraits de la semaine 11"}
+{"timestamp":"2025-08-29T15:18:52.668Z","level":"info","message":"✅ Semaine 11: 13 films"}
+{"timestamp":"2025-08-29T15:18:54.688Z","level":"info","message":"📅 Scraping semaine 12 (19/11/2025)"}
+{"timestamp":"2025-08-29T15:18:57.848Z","level":"info","message":"📝 17 films extraits de la semaine 12"}
+{"timestamp":"2025-08-29T15:18:57.849Z","level":"info","message":"✅ Semaine 12: 17 films"}
+{"timestamp":"2025-08-29T15:18:59.853Z","level":"success","message":"🎉 Scraping terminé: 223 films en 63s"}
+{"timestamp":"2025-08-29T15:19:00.685Z","level":"success","message":"🚀 Scraping Allociné Simple terminé avec succès: 223 films"}
+{"timestamp":"2025-08-29T15:19:00.853Z","level":"info","message":"🔒 Browser fermé"}
+{"timestamp":"2025-08-29T15:19:00.855Z","level":"success","message":"✅ Test terminé: 223 films trouvés"}

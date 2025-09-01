@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useCinemaNextReleases } from "@/hooks/useCinemaNextReleases";
+import { useAllocineReleases } from "@/hooks/useAllocineReleases";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SingleSelect } from "@/components/ui/single-select";
 import { MovieDetailsDrawer } from "@/components/cinema/movieDetailsDrawer";
-import { Calendar, Film, ChevronRight } from "lucide-react";
+import { Calendar, Film, ChevronRight, ExternalLink } from "lucide-react";
 
 export const CinemaNextReleases = () => {
   const [selectedWeek, setSelectedWeek] = useState(0);
@@ -15,7 +15,7 @@ export const CinemaNextReleases = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useCinemaNextReleases(selectedWeek);
+  } = useAllocineReleases(selectedWeek);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
 
   const handleMovieClick = (movieId: number) => {
@@ -114,10 +114,16 @@ export const CinemaNextReleases = () => {
     <Card className="h-[100vh] md:h-auto">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            {formatDate(data.period.start)} au {formatDate(data.period.end)}
-          </CardTitle>
+          <div className="flex flex-col gap-2">
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              {formatDate(data.period.start)} au {formatDate(data.period.end)}
+            </CardTitle>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <ExternalLink className="h-4 w-4" />
+              <span>Données Allociné • {data.results.length} films</span>
+            </div>
+          </div>
           <div className="w-48">
             <SingleSelect
               options={weekOptions}
@@ -148,7 +154,7 @@ export const CinemaNextReleases = () => {
                     {movie.poster_path ? (
                       <div className="w-48 h-72 rounded-lg shadow-lg overflow-hidden">
                         <img
-                          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                          src={movie.poster_path}
                           alt={movie.title}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                         />
@@ -158,6 +164,20 @@ export const CinemaNextReleases = () => {
                         <Film className="h-16 w-16 text-gray-400 dark:text-gray-500" />
                       </div>
                     )}
+                    
+                    {/* Informations Allociné */}
+                    <div className="mt-3 space-y-1 text-center">
+                      {(movie as any).genre && (
+                        <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                          {(movie as any).genre}
+                        </div>
+                      )}
+                      {(movie as any).director && (
+                        <div className="text-xs text-muted-foreground">
+                          Par {(movie as any).director}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -183,7 +203,7 @@ export const CinemaNextReleases = () => {
                   {movie.poster_path ? (
                     <div className="w-48 h-72 rounded-lg shadow-lg overflow-hidden">
                       <img
-                        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                        src={movie.poster_path}
                         alt={movie.title}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                       />
@@ -193,6 +213,20 @@ export const CinemaNextReleases = () => {
                       <Film className="h-16 w-16 text-gray-400 dark:text-gray-500" />
                     </div>
                   )}
+                  
+                  {/* Informations Allociné */}
+                  <div className="mt-3 space-y-1 text-center">
+                    {(movie as any).genre && (
+                      <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                        {(movie as any).genre}
+                      </div>
+                    )}
+                    {(movie as any).director && (
+                      <div className="text-xs text-muted-foreground">
+                        Par {(movie as any).director}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

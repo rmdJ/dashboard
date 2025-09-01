@@ -1,0 +1,27 @@
+{"timestamp":"2025-08-29T15:12:32.298Z","level":"warn","message":"⚠️ Aucune option trouvée dans le sélecteur"}
+{"timestamp":"2025-08-29T15:12:35.339Z","level":"warn","message":"⚠️ Aucune option trouvée dans le sélecteur"}
+{"timestamp":"2025-08-29T15:16:23.717Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 2"}
+{"timestamp":"2025-08-29T15:16:23.724Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 2, on continue"}
+{"timestamp":"2025-08-29T15:16:26.753Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 3"}
+{"timestamp":"2025-08-29T15:16:26.788Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 3, on continue"}
+{"timestamp":"2025-08-29T15:16:29.808Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 4"}
+{"timestamp":"2025-08-29T15:16:29.848Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 4, on continue"}
+{"timestamp":"2025-08-29T15:16:32.887Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 5"}
+{"timestamp":"2025-08-29T15:16:32.904Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 5, on continue"}
+{"timestamp":"2025-08-29T15:16:35.932Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 6"}
+{"timestamp":"2025-08-29T15:16:35.947Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 6, on continue"}
+{"timestamp":"2025-08-29T15:16:38.983Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 7"}
+{"timestamp":"2025-08-29T15:16:39.002Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 7, on continue"}
+{"timestamp":"2025-08-29T15:16:42.032Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 8"}
+{"timestamp":"2025-08-29T15:16:42.047Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 8, on continue"}
+{"timestamp":"2025-08-29T15:16:45.087Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 9"}
+{"timestamp":"2025-08-29T15:16:45.102Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 9, on continue"}
+{"timestamp":"2025-08-29T15:16:48.137Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 10"}
+{"timestamp":"2025-08-29T15:16:48.156Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 10, on continue"}
+{"timestamp":"2025-08-29T15:16:51.200Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 11"}
+{"timestamp":"2025-08-29T15:16:51.210Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 11, on continue"}
+{"timestamp":"2025-08-29T15:16:54.251Z","level":"warn","message":"⚠️ Impossible de naviguer vers la semaine 12"}
+{"timestamp":"2025-08-29T15:16:54.261Z","level":"warn","message":"⚠️ Navigation échouée pour semaine 12, on continue"}
+{"timestamp":"2025-08-29T15:18:21.462Z","level":"warn","message":"⚠️ Film invalide ignoré: Avatar : la voie de l'eau","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-08-29T15:18:26.685Z","level":"warn","message":"⚠️ Film invalide ignoré: La Ferme des animaux","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-08-29T15:18:47.489Z","level":"warn","message":"⚠️ Film invalide ignoré: Hôtel de France","data":"Champs manquants: releaseDate"}

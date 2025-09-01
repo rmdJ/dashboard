@@ -5,6 +5,8 @@ import {
   getEvolutionData,
   getCinemaNextReleases,
   getMovieDetails,
+  getAllocineReleases,
+  getAllocineStats,
 } from "../lib/mongodb.js";
 
 export async function handleApiRequest(req, res) {
@@ -53,7 +55,44 @@ export async function handleApiRequest(req, res) {
       const url = new URL(req.url, `http://${req.headers.host}`);
       const page = url.searchParams.get('page') || 1;
       const week = url.searchParams.get('week') || 0;
-      const data = await getCinemaNextReleases(page, parseInt(week));
+      const source = url.searchParams.get('source') || 'tmdb'; // Par défaut TMDB
+      
+      let data;
+      if (source === 'allocine') {
+        data = await getAllocineReleases(page, parseInt(week));
+      } else {
+        data = await getCinemaNextReleases(page, parseInt(week));
+      }
+      
+      res.setHeader("Content-Type", "application/json");
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          success: true,
+          data: data,
+        })
+      );
+      return;
+    }
+
+    if (pathname === "/allocine-releases" && req.method === "GET") {
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      const page = url.searchParams.get('page') || 1;
+      const week = url.searchParams.get('week') || 0;
+      const data = await getAllocineReleases(page, parseInt(week));
+      res.setHeader("Content-Type", "application/json");
+      res.statusCode = 200;
+      res.end(
+        JSON.stringify({
+          success: true,
+          data: data,
+        })
+      );
+      return;
+    }
+
+    if (pathname === "/allocine-stats" && req.method === "GET") {
+      const data = await getAllocineStats();
       res.setHeader("Content-Type", "application/json");
       res.statusCode = 200;
       res.end(
