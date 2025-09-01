@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { MapPin } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router-dom";
 import { SingleSelect } from "@/components/ui/single-select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CinemaSearch } from "@/components/cinema/cinemaSearch";
@@ -10,9 +11,28 @@ import formerCities from "@/data/french-cities.json";
 
 export default function Cinema() {
   const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Déterminer l'onglet actuel selon l'URL
+  const getCurrentTab = () => {
+    if (location.pathname === "/cinema/agenda") return "agenda";
+    if (location.pathname === "/cinema/seances") return "seances";
+    return "seances"; // Par défaut
+  };
+
   const [selectedCity, setSelectedCity] = useState<string>(() => {
     return localStorage.getItem("VITE_ZIP_CODE") || "";
   });
+
+  // Fonction pour changer d'onglet et mettre à jour l'URL
+  const handleTabChange = useCallback((tabValue: string) => {
+    if (tabValue === "seances") {
+      navigate("/cinema/seances");
+    } else if (tabValue === "agenda") {
+      navigate("/cinema/agenda");
+    }
+  }, [navigate]);
 
   // Fonction pour changer de ville et invalider le cache (memoized)
   const handleCityChange = useCallback((newCity: string) => {
@@ -20,6 +40,13 @@ export default function Cinema() {
     // Invalider toutes les queries de cinéma pour forcer le rechargement
     queryClient.invalidateQueries({ queryKey: ["cinema"] });
   }, [queryClient]);
+
+  // Redirection automatique de /cinema vers /cinema/seances
+  useEffect(() => {
+    if (location.pathname === "/cinema") {
+      navigate("/cinema/seances", { replace: true });
+    }
+  }, [location.pathname, navigate]);
 
   // Sauvegarder la ville dans localStorage
   useEffect(() => {
@@ -53,7 +80,7 @@ export default function Cinema() {
         </h2>
       </div>
 
-      <Tabs defaultValue="seances" className="w-full">
+      <Tabs value={getCurrentTab()} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="seances">Séances</TabsTrigger>
           <TabsTrigger value="agenda">Agenda</TabsTrigger>

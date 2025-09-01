@@ -25,3 +25,15 @@
 {"timestamp":"2025-08-29T15:18:21.462Z","level":"warn","message":"⚠️ Film invalide ignoré: Avatar : la voie de l'eau","data":"Champs manquants: releaseDate"}
 {"timestamp":"2025-08-29T15:18:26.685Z","level":"warn","message":"⚠️ Film invalide ignoré: La Ferme des animaux","data":"Champs manquants: releaseDate"}
 {"timestamp":"2025-08-29T15:18:47.489Z","level":"warn","message":"⚠️ Film invalide ignoré: Hôtel de France","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T07:05:20.136Z","level":"warn","message":"⚠️ Film invalide ignoré: Avatar : la voie de l'eau","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T07:05:25.345Z","level":"warn","message":"⚠️ Film invalide ignoré: La Ferme des animaux","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T07:05:46.219Z","level":"warn","message":"⚠️ Film invalide ignoré: Hôtel de France","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T07:57:19.959Z","level":"warn","message":"⚠️ Aucun film trouvé sur https://www.allocine.fr/film/agenda/sem-0/"}
+{"timestamp":"2025-09-01T07:57:34.163Z","level":"warn","message":"⚠️ Aucun film trouvé sur https://www.allocine.fr/film/agenda/sem-1/"}
+{"timestamp":"2025-09-01T07:57:48.351Z","level":"warn","message":"⚠️ Aucun film trouvé sur https://www.allocine.fr/film/agenda/sem-2/"}
+{"timestamp":"2025-09-01T08:08:47.371Z","level":"warn","message":"⚠️ Film invalide ignoré: Avatar : la voie de l'eau","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T08:08:52.768Z","level":"warn","message":"⚠️ Film invalide ignoré: La Ferme des animaux","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T08:39:47.039Z","level":"warn","message":"⚠️ Film invalide ignoré: Avatar : la voie de l'eau","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T08:39:52.240Z","level":"warn","message":"⚠️ Film invalide ignoré: La Ferme des animaux","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T08:48:35.799Z","level":"warn","message":"⚠️ Film invalide ignoré: Avatar : la voie de l'eau","data":"Champs manquants: releaseDate"}
+{"timestamp":"2025-09-01T08:48:41.029Z","level":"warn","message":"⚠️ Film invalide ignoré: La Ferme des animaux","data":"Champs manquants: releaseDate"}

@@ -124,20 +124,25 @@ export async function getAllocineReleases(page = 1, weekOffset = 0) {
     const database = await connectDB("scrapper"); // Base où sont stockés les films Allociné
     const collection = database.collection("allocine_movies");
 
-    // Calculer les dates de la semaine demandée
+    // Calculer les dates de la semaine demandée  
     const startDate = getWednesdayForWeek(weekOffset);
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 6);
+    
+    // Étendre la fin de période pour inclure le lendemain matin (fuseau horaire)
+    const endDateWithBuffer = new Date(endDate);
+    endDateWithBuffer.setDate(endDate.getDate() + 1);
+    endDateWithBuffer.setHours(23, 59, 59, 999);
 
     // Pagination
     const pageSize = 20;
     const skip = (page - 1) * pageSize;
 
-    // Requête avec filtrage par date de sortie
+    // Requête avec filtrage par date de sortie (avec buffer pour fuseau horaire)
     const query = {
       releaseDate: {
         $gte: startDate,
-        $lte: endDate,
+        $lte: endDateWithBuffer,
       },
     };
 
@@ -151,33 +156,49 @@ export async function getAllocineReleases(page = 1, weekOffset = 0) {
     const totalCount = await collection.countDocuments(query);
     const totalPages = Math.ceil(totalCount / pageSize);
 
+    // Filtrer pour ne garder que les films avec des dates dans la bonne semaine
+    const filteredMovies = movies.filter(movie => {
+      if (!movie.releaseDate) return false;
+      
+      // Utiliser les dates en format string pour éviter les problèmes de fuseau horaire
+      const movieDate = new Date(movie.releaseDate);
+      const movieDateStr = formatDate(movieDate);
+      
+      const startDateStr = formatDate(startDate);
+      const endDateStr = formatDate(endDate);
+      
+      return movieDateStr >= startDateStr && movieDateStr <= endDateStr;
+    });
+
     // Convertir au format compatible avec votre frontend
-    const formattedMovies = movies.map((movie) => ({
+    const formattedMovies = filteredMovies.map((movie) => ({
       id: parseInt(movie.movieId) || Math.floor(Math.random() * 1000000),
       title: movie.title,
       overview: movie.synopsis || "",
-      poster_path: movie.imageUrl,
-      release_date: movie.releaseDate
-        ? movie.releaseDate.toISOString().split("T")[0]
-        : null,
+      poster_path: movie.imageUrl || null, // Garder l'URL originale d'Allociné
+      release_date: movie.releaseDate ? formatDate(new Date(movie.releaseDate)) : null,
       popularity: Math.random() * 100, // Valeur arbitraire pour le tri
       vote_average: Math.random() * 10,
       vote_count: Math.floor(Math.random() * 1000),
       genre_ids: [], // Allociné utilise des textes de genre
 
       // Données spécifiques Allociné
-      director: movie.director,
-      cast: movie.cast,
-      genre: movie.genre,
+      director: movie.director || "Non spécifié",
+      cast: movie.cast || "Non spécifié", 
+      genre: movie.genre || "Non spécifié",
       allocine_url: movie.url,
       source: "allocine",
       scraped_at: movie.scrapedAt,
     }));
 
+    // Recalculer les totaux basés sur les films filtrés
+    const actualTotalResults = formattedMovies.length;
+    const actualTotalPages = Math.max(1, Math.ceil(actualTotalResults / pageSize));
+
     return {
       results: formattedMovies,
-      total_pages: totalPages,
-      total_results: totalCount,
+      total_pages: actualTotalPages,
+      total_results: actualTotalResults,
       page: page,
       period: {
         start: formatDate(startDate),

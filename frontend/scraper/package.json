@@ -1,0 +1,19 @@
+{
+  "name": "allocine-scraper",
+  "version": "1.0.0",
+  "description": "Scraper pour récupérer les données de films d'Allociné avec images correctes",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "scrape": "node src/scrapers/allocineImageFixedScraper.js",
+    "test": "echo \"No test specified\""
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0",
+    "mongodb": "^6.0.0",
+    "node-cron": "^3.0.2"
+  },
+  "author": "",
+  "license": "MIT"
+}

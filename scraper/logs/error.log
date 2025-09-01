@@ -12,3 +12,18 @@
 {"timestamp":"2025-08-29T15:12:32.311Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 2","data":{}}
 {"timestamp":"2025-08-29T15:12:35.344Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 3","data":{}}
 {"timestamp":"2025-08-29T15:13:26.776Z","level":"error","message":"❌ Erreur lors du scraping de la semaine 1","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:41:32.467Z","level":"error","message":"❌ Erreur scraping semaine 1","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:42:19.482Z","level":"error","message":"❌ Erreur scraping semaine 2","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:43:06.497Z","level":"error","message":"❌ Erreur scraping semaine 3","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:43:53.525Z","level":"error","message":"❌ Erreur scraping semaine 4","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:44:40.549Z","level":"error","message":"❌ Erreur scraping semaine 5","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:45:27.566Z","level":"error","message":"❌ Erreur scraping semaine 6","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:46:14.586Z","level":"error","message":"❌ Erreur scraping semaine 7","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:47:01.614Z","level":"error","message":"❌ Erreur scraping semaine 8","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:47:48.631Z","level":"error","message":"❌ Erreur scraping semaine 9","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:48:35.657Z","level":"error","message":"❌ Erreur scraping semaine 10","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:49:22.677Z","level":"error","message":"❌ Erreur scraping semaine 11","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T07:50:09.707Z","level":"error","message":"❌ Erreur scraping semaine 12","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T08:32:56.315Z","level":"error","message":"❌ Erreur scraping semaine 0","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T08:33:18.331Z","level":"error","message":"❌ Erreur scraping semaine 1","data":{"name":"TimeoutError"}}
+{"timestamp":"2025-09-01T08:33:40.387Z","level":"error","message":"❌ Erreur scraping semaine 2","data":{"name":"TimeoutError"}}

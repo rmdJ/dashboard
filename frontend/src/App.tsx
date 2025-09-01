@@ -37,6 +37,8 @@ function App() {
                               <Route path="/" element={<Dashboard />} />
                               <Route path="/crypto" element={<Crypto />} />
                               <Route path="/cinema" element={<Cinema />} />
+                              <Route path="/cinema/seances" element={<Cinema />} />
+                              <Route path="/cinema/agenda" element={<Cinema />} />
                               <Route path="/sheets" element={<Sheets />} />
                               <Route path="/loan" element={<Loan />} />
                             </Routes>
@@ -51,6 +53,8 @@ function App() {
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/crypto" element={<Crypto />} />
                             <Route path="/cinema" element={<Cinema />} />
+                            <Route path="/cinema/seances" element={<Cinema />} />
+                            <Route path="/cinema/agenda" element={<Cinema />} />
                             <Route path="/sheets" element={<Sheets />} />
                             <Route path="/loan" element={<Loan />} />
                           </Routes>

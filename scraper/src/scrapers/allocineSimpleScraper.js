@@ -63,18 +63,23 @@ class AllocineSimpleScraper {
   }
 
   /**
-   * Génère les URLs pour les prochaines semaines basées sur la date courante
+   * Génère les URLs pour les prochaines semaines (format: sem-YYYY-MM-DD)
    */
   generateWeekUrls() {
     const urls = [];
     const today = new Date();
     
-    // Trouver le prochain mercredi (jour de sortie des films)
-    const nextWednesday = new Date(today);
-    const daysUntilWednesday = (3 - today.getDay() + 7) % 7 || 7;
-    nextWednesday.setDate(today.getDate() + daysUntilWednesday);
+    // Réduire le nombre de semaines pour éviter les timeouts
+    const maxWeeks = Math.min(this.maxWeeks, 6);
     
-    for (let week = 0; week < this.maxWeeks; week++) {
+    // Calculer le prochain mercredi (jour de sortie des films)
+    const nextWednesday = new Date(today);
+    const daysUntilWednesday = (3 - today.getDay() + 7) % 7;
+    if (daysUntilWednesday !== 0) {
+      nextWednesday.setDate(today.getDate() + daysUntilWednesday);
+    }
+    
+    for (let week = 0; week < maxWeeks; week++) {
       const weekDate = new Date(nextWednesday);
       weekDate.setDate(nextWednesday.getDate() + (week * 7));
       
@@ -85,7 +90,7 @@ class AllocineSimpleScraper {
       const url = `${this.baseUrl}sem-${year}-${month}-${day}/`;
       urls.push({
         url,
-        week: week + 1,
+        week: week,
         date: `${day}/${month}/${year}`
       });
     }
@@ -95,63 +100,113 @@ class AllocineSimpleScraper {
 
   async scrapeWeekUrl(weekInfo) {
     try {
-      logger.info(`📅 Scraping semaine ${weekInfo.week} (${weekInfo.date})`);
+      logger.info(`📅 Scraping semaine ${weekInfo.week} (${weekInfo.date}) - ${weekInfo.url}`);
       
+      // Charger la page de la semaine
       await this.page.goto(weekInfo.url, { 
         waitUntil: 'domcontentloaded', 
-        timeout: 45000 
+        timeout: 20000
       });
+      
       await delay(3000);
-
-      // Vérifier si la page existe (pas d'erreur 404)
+      
+      // Vérifier si la page existe
       const pageTitle = await this.page.title();
       if (pageTitle.includes('404') || pageTitle.includes('Erreur')) {
         logger.warn(`⚠️ Page non trouvée pour ${weekInfo.url}`);
         return [];
       }
-
-      // Extraction des films
+      
+      // Attendre que les films soient chargés
+      try {
+        await this.page.waitForSelector('body', { timeout: 10000 });
+      } catch (error) {
+        logger.warn(`⚠️ Timeout en attendant le chargement de ${weekInfo.url}`);
+        return [];
+      }
+      
+      // Extraire les films de la semaine
       const movies = await this.page.evaluate(() => {
-        const movieElements = document.querySelectorAll('.card.entity-card.entity-card-list');
+        // Chercher différents sélecteurs possibles pour les films
+        const possibleSelectors = [
+          '.card.entity-card.entity-card-list',
+          '.entity-card-list .card',
+          '.card.entity-card',
+          '.movie-card',
+          '.agenda-movie-card',
+          '[data-testid="movie-card"]',
+          '.thumbnail-container'
+        ];
+        
+        let movieElements = [];
+        
+        for (const selector of possibleSelectors) {
+          movieElements = document.querySelectorAll(selector);
+          if (movieElements.length > 0) break;
+        }
+        
         const results = [];
 
-        movieElements.forEach(element => {
+        movieElements.forEach((element, index) => {
           try {
-            const titleElement = element.querySelector('.thumbnail .thumbnail-link') || 
-                                element.querySelector('.meta-title-link');
-            const title = titleElement?.getAttribute('title')?.trim() || 
-                         titleElement?.textContent?.trim();
-            const url = titleElement?.getAttribute('href');
+            // Chercher le titre dans différents endroits
+            let title = null;
+            let url = null;
+            
+            const titleSelectors = [
+              '.thumbnail .thumbnail-link',
+              '.meta-title-link',
+              '.meta-title a',
+              'a[title]',
+              '.title a',
+              'h3 a'
+            ];
+            
+            for (const selector of titleSelectors) {
+              const titleElement = element.querySelector(selector);
+              if (titleElement) {
+                title = titleElement.getAttribute('title')?.trim() || titleElement.textContent?.trim();
+                url = titleElement.getAttribute('href');
+                if (title && url) break;
+              }
+            }
+            
+            if (!title) return;
 
-            if (!title || !url) return;
+            // Extraction améliorée de l'image
+            let imageUrl = null;
+            const imgElement = element.querySelector('img');
+            
+            if (imgElement) {
+              const src = imgElement.src || imgElement.getAttribute('src');
+              const dataSrc = imgElement.getAttribute('data-src') || 
+                            imgElement.getAttribute('data-lazy-src') ||
+                            imgElement.getAttribute('data-original');
+              
+              if (src && !src.startsWith('data:image')) {
+                imageUrl = src;
+              } else if (dataSrc && !dataSrc.startsWith('data:image')) {
+                imageUrl = dataSrc;
+              }
+            }
 
-            const imgElement = element.querySelector('.thumbnail img');
-            const imageUrl = imgElement?.src || imgElement?.getAttribute('data-src');
-
-            const dateElement = element.querySelector('.date');
+            // Date de sortie
+            const dateElement = element.querySelector('.date, .release-date, [class*="date"]');
             const releaseDateText = dateElement?.textContent?.trim();
 
-            const genreElement = element.querySelector('.meta-body-info a[href*="genre"]');
-            const genre = genreElement?.textContent?.trim();
-
-            const directorElement = element.querySelector('.meta-body-direction a');
-            const director = directorElement?.textContent?.trim();
-
-            const castElements = element.querySelectorAll('.meta-body-actor a');
-            const cast = Array.from(castElements).map(a => a.textContent.trim()).join(', ');
-
-            const synopsisElement = element.querySelector('.synopsis .content-txt');
+            // Autres informations
+            const synopsisElement = element.querySelector('.synopsis, .content-txt, [class*="synopsis"]');
             const synopsis = synopsisElement?.textContent?.trim();
 
             results.push({
               title,
-              url: url.startsWith('http') ? url : 'https://www.allocine.fr' + url,
+              url: url?.startsWith('http') ? url : 'https://www.allocine.fr' + url,
               imageUrl,
               releaseDateText,
-              genre,
-              synopsis,
-              director,
-              cast
+              synopsis: synopsis || 'Non spécifié',
+              director: 'Non spécifié',
+              genre: 'Non spécifié',
+              cast: 'Non spécifié'
             });
           } catch (error) {
             console.error('Erreur extraction film:', error);
@@ -161,7 +216,7 @@ class AllocineSimpleScraper {
         return results;
       });
 
-      logger.info(`📝 ${movies.length} films extraits de la semaine ${weekInfo.week}`);
+      logger.info(`📝 Semaine ${weekInfo.week}: ${movies.length} films extraits`);
       
       // Traitement des données
       const processedMovies = movies
@@ -169,6 +224,7 @@ class AllocineSimpleScraper {
         .filter(movie => movie !== null);
 
       return processedMovies;
+      
     } catch (error) {
       logger.error(`❌ Erreur scraping semaine ${weekInfo.week}`, error);
       return [];

@@ -30,7 +30,8 @@ export function parseReleaseDate(dateString) {
     const [, day, month, year] = longFormatMatch;
     const monthNum = frenchMonths[month];
     if (monthNum !== undefined) {
-      return new Date(parseInt(year), monthNum, parseInt(day));
+      // Utiliser UTC pour éviter les problèmes de fuseau horaire
+      return new Date(Date.UTC(parseInt(year), monthNum, parseInt(day), 22, 0, 0));
     }
   }
   
@@ -38,7 +39,8 @@ export function parseReleaseDate(dateString) {
   const shortFormatMatch = cleaned.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if (shortFormatMatch) {
     const [, day, month, year] = shortFormatMatch;
-    return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    // Utiliser UTC pour éviter les problèmes de fuseau horaire
+    return new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day), 22, 0, 0));
   }
   
   return null;

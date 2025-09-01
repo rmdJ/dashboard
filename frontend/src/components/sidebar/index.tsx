@@ -55,7 +55,7 @@ const data = {
     },
     {
       title: "Cinéma",
-      url: "/cinema",
+      url: "/cinema/seances",
       icon: IconDeviceTv,
     },
     {

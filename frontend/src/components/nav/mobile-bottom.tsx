@@ -25,7 +25,7 @@ const navigationItems = [
   },
   {
     name: "Cinéma",
-    href: "/cinema",
+    href: "/cinema/seances",
     icon: IconDeviceTv,
   },
   {
@@ -54,7 +54,10 @@ export function NavMobileBottom() {
             <div className="flex items-center justify-around flex-1">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = location.pathname === item.href;
+                // Logique spéciale pour les URLs cinema
+                const isActive = item.name === "Cinéma" 
+                  ? location.pathname.startsWith("/cinema")
+                  : location.pathname === item.href;
 
                 return (
                   <button
