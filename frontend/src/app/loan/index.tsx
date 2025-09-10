@@ -32,6 +32,7 @@ import {
   apportInitial,
   moisEcoulesAvantDonnees,
   currentMonth,
+  loanStartMonth,
 } from "@/assets/constants/loan";
 
 interface MonthlyPayment {
@@ -51,6 +52,47 @@ const columnHelper = createColumnHelper<MonthlyPayment>();
 const CreditsTable: React.FC = () => {
   const [inputValue, setInputValue] = useState<number>(320000);
   const [calculatedPrice, setCalculatedPrice] = useState<number>(320000);
+
+  const cumulatedRent = useMemo(() => {
+    const startDate = new Date("2025-02-01");
+    const currentDate = new Date(currentMonth);
+    const diffMois =
+      (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (currentDate.getMonth() - startDate.getMonth());
+
+    return diffMois * 980;
+  }, [currentMonth]);
+
+  const cumulatedRentRabelais = useMemo(() => {
+    const startDate = new Date("2025-02-01");
+    const currentDate = new Date(currentMonth);
+    const diffMois =
+      (currentDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (currentDate.getMonth() - startDate.getMonth());
+
+    return diffMois * 1350;
+  }, [currentMonth]);
+
+  const cumulatedChargesFixes = useMemo(() => {
+    const loanStartMonthDate = new Date(loanStartMonth);
+    const currentDate = new Date(currentMonth);
+    const diffMois =
+      (currentDate.getFullYear() - loanStartMonthDate.getFullYear()) * 12 +
+      (currentDate.getMonth() - loanStartMonthDate.getMonth());
+
+    return diffMois * chargesFixesMensuelles;
+  }, [loanStartMonth]);
+
+  const cumulatedInteretAssurance = useMemo(() => {
+    const loanStartMonthDate = new Date(loanStartMonth);
+    const currentDate = new Date(currentMonth);
+    const interetsMensuelMoyen = 30.27 + 84.33; // Intérêts moyens par mois des 3 crédits
+    const diffMois =
+      (currentDate.getFullYear() - loanStartMonthDate.getFullYear()) * 12 +
+      (currentDate.getMonth() - loanStartMonthDate.getMonth());
+
+    return diffMois * (assuranceMensuelle + interetsMensuelMoyen);
+  }, [loanStartMonth, currentMonth]);
 
   // Traitement des données pour créer le tableau mensuel combiné
   const monthlyData = useMemo(() => {
@@ -168,7 +210,7 @@ const CreditsTable: React.FC = () => {
       const capitalRembourseAjuste =
         cumulCapitalRembourse - ajustementPrixVente;
 
-      // Calculer le capital restant dû pour ce mois (capital total emprunté - capital cumulé remboursé)  
+      // Calculer le capital restant dû pour ce mois (capital total emprunté - capital cumulé remboursé)
       const capitalRestantDu = capitalTotalEmprunte - cumulCapitalRembourse;
 
       // Calculer le montant récupéré si vente à ce moment (prix de vente - capital restant dû)
@@ -354,7 +396,7 @@ const CreditsTable: React.FC = () => {
 
       {/* Main Cards Grid */}
       {totalStats && (
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -392,6 +434,72 @@ const CreditsTable: React.FC = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
+                Frais de notaire
+              </CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {fraisNotaire.toLocaleString("fr-FR")} €
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Mensualité</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">755,70 €</div>
+              <p className="text-xs text-muted-foreground">
+                dont 50€ assurance
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Intérêt + assurance cumulés
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {totalStats.interetsEtAssuranceTotal.toLocaleString("fr-FR")} €
+              </div>
+              <p className="text-xs text-muted-foreground">
+                115€ d'intérêt + 50€ d'assurance
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Loyer Rabelais cumulé depuis 02/2025
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {cumulatedRentRabelais.toLocaleString("fr-FR")} €
+              </div>
+              <p className="text-xs text-muted-foreground">
+                sur une base de 1350€/mois
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Secondary Cards Grid */}
+      {totalStats && (
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
                 Capital remboursé
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -409,48 +517,51 @@ const CreditsTable: React.FC = () => {
               </p>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Frais de notaire
+                Loyer cumulé depuis février 2025
               </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {fraisNotaire.toLocaleString("fr-FR")} €
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Secondary Cards Grid */}
-      {totalStats && (
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Mensualité</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">755,70 €</div>
+              <div className="text-2xl font-bold">
+                {cumulatedRent.toLocaleString("fr-FR")} €
+              </div>
               <p className="text-xs text-muted-foreground">
-                dont 50€ assurance
+                sur une base de 980€/mois
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-green-50">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Intérêt + assurance
+                Capital remboursé + loyer cumulé
               </CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {totalStats.interetsEtAssuranceTotal.toLocaleString("fr-FR")} €
+                {(totalStats.capitalRembourse + cumulatedRent).toLocaleString(
+                  "fr-FR"
+                )}
+                €
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Intérêt + assurance cumulés depuis mai 2021
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {cumulatedInteretAssurance.toLocaleString("fr-FR")} €
               </div>
               <p className="text-xs text-muted-foreground">
                 115€ d'intérêt + 50€ d'assurance
@@ -461,17 +572,37 @@ const CreditsTable: React.FC = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Charges fixes
+                Charges fixes cumulées
               </CardTitle>
               <Home className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {chargesFixesMensuelles} €/mois
+                {cumulatedChargesFixes.toLocaleString("fr-FR")} €
               </div>
               <p className="text-xs text-muted-foreground">
-                980€ copro + 1200€ taxe
+                980€ copro + 1200€ taxe soit{" "}
+                {cumulatedChargesFixes.toLocaleString("fr-FR")} €/mois
               </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-red-50">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Intérêt + assurance + charges fixes cumulées + frais de notaire
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {(
+                  cumulatedChargesFixes +
+                  cumulatedInteretAssurance +
+                  fraisNotaire
+                ).toLocaleString("fr-FR")}
+                €
+              </div>
             </CardContent>
           </Card>
         </div>

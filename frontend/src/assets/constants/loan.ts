@@ -22,6 +22,7 @@ export const chargesFixesMensuelles = 182.0; // 980€ copro + 1200€ taxe fonc
 export const fraisNotaire = 24000;
 export const apportInitial = 150000;
 export const moisEcoulesAvantDonnees = 37; // De mai 2021 à juin 2024
+export const loanStartMonth = "2021-05";
 export const currentMonth = new Date()
   .toISOString()
   .split("T")[0]
