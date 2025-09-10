@@ -9,9 +9,9 @@ export const restantJuillet2024Zero = 15383.46; // Crédit 0%
 export const capitalTotal = 196299;
 
 // Calcul du capital déjà remboursé depuis mai 2021
-export const totalRestantJuillet2024 = 
-  restantJuillet2024Principal + 
-  restantJuillet2024Complementaire + 
+export const totalRestantJuillet2024 =
+  restantJuillet2024Principal +
+  restantJuillet2024Complementaire +
   restantJuillet2024Zero;
 
 export const capitalDejaRembourseTotal = capitalTotal - totalRestantJuillet2024;
@@ -22,4 +22,9 @@ export const chargesFixesMensuelles = 182.0; // 980€ copro + 1200€ taxe fonc
 export const fraisNotaire = 24000;
 export const apportInitial = 150000;
 export const moisEcoulesAvantDonnees = 37; // De mai 2021 à juin 2024
-export const currentMonth = "2025-08"; // Mois actuel
+export const currentMonth = new Date()
+  .toISOString()
+  .split("T")[0]
+  .split("-")
+  .slice(0, 2)
+  .join("-");
